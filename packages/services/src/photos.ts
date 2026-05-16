@@ -1,5 +1,5 @@
 import { put } from '@vercel/blob';
-import { db, petPhotos } from '@scpets/db';
+import { db, petPhotos } from '@scmascotas/db';
 
 export const PhotosService = {
   async upload(petId: string, file: File, isPrimary = false) {

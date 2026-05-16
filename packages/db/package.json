@@ -1,5 +1,5 @@
 {
-  "name": "@scpets/db",
+  "name": "@scmascotas/db",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -18,7 +18,7 @@
     "drizzle-orm": "^0.44.0"
   },
   "devDependencies": {
-    "@scpets/typescript-config": "workspace:*",
+    "@scmascotas/typescript-config": "workspace:*",
     "dotenv": "^16.4.0",
     "drizzle-kit": "^0.31.0",
     "tsx": "^4.19.4",

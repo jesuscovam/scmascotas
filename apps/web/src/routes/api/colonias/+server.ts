@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { ColoniasService } from '@scpets/services';
+import { ColoniasService } from '@scmascotas/services';
 
 export async function GET() {
   const list = await ColoniasService.list();

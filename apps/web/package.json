@@ -16,14 +16,14 @@
 		"test:unit": "vitest"
 	},
 	"dependencies": {
-		"@scpets/db": "workspace:*",
-		"@scpets/schemas": "workspace:*",
-		"@scpets/services": "workspace:*",
-		"@scpets/ui": "workspace:*"
+		"@scmascotas/db": "workspace:*",
+		"@scmascotas/schemas": "workspace:*",
+		"@scmascotas/services": "workspace:*",
+		"@scmascotas/ui": "workspace:*"
 	},
 	"devDependencies": {
-		"@scpets/eslint-config": "workspace:*",
-		"@scpets/typescript-config": "workspace:*",
+		"@scmascotas/eslint-config": "workspace:*",
+		"@scmascotas/typescript-config": "workspace:*",
 		"@tailwindcss/vite": "^4.1.0",
 		"tailwindcss": "^4.1.0",
 		"@sveltejs/adapter-auto": "^7.0.1",

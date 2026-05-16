@@ -1,5 +1,5 @@
 {
-  "name": "@scpets/schemas",
+  "name": "@scmascotas/schemas",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "zod": "^3.25.0"
   },
   "devDependencies": {
-    "@scpets/typescript-config": "workspace:*",
+    "@scmascotas/typescript-config": "workspace:*",
     "typescript": "^5.9.3"
   }
 }

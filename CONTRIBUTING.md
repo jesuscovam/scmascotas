@@ -14,8 +14,8 @@ Thanks for your interest in contributing! This project is for the San Cristóbal
 1. Fork and clone the repo
 2. Install dependencies: `pnpm install`
 3. Copy `.env.example` to `apps/web/.env` and fill in the values
-4. Run migrations: `pnpm --filter @scpets/db db:migrate`
-5. Seed data: `pnpm --filter @scpets/db db:seed`
+4. Run migrations: `pnpm --filter @scmascotas/db db:migrate`
+5. Seed data: `pnpm --filter @scmascotas/db db:seed`
 6. Start dev server: `pnpm dev`
 
 ## Pull Request Process

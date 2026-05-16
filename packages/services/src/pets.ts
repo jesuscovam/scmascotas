@@ -1,7 +1,7 @@
-import { db, pets, petPhotos, colonias } from '@scpets/db';
+import { db, pets, petPhotos, colonias } from '@scmascotas/db';
 import { eq, desc } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
-import type { CreateMissingPet } from '@scpets/schemas';
+import type { CreateMissingPet } from '@scmascotas/schemas';
 
 function generateSlug(name: string | null | undefined): string {
   const base = (name ?? 'mascota')

@@ -20,14 +20,14 @@ importers:
 
   apps/docs:
     dependencies:
-      '@scpets/ui':
+      '@scmascotas/ui':
         specifier: workspace:*
         version: link:../../packages/ui
     devDependencies:
-      '@scpets/eslint-config':
+      '@scmascotas/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@scpets/typescript-config':
+      '@scmascotas/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@sveltejs/adapter-auto':
@@ -72,23 +72,23 @@ importers:
 
   apps/web:
     dependencies:
-      '@scpets/db':
+      '@scmascotas/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@scpets/schemas':
+      '@scmascotas/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
-      '@scpets/services':
+      '@scmascotas/services':
         specifier: workspace:*
         version: link:../../packages/services
-      '@scpets/ui':
+      '@scmascotas/ui':
         specifier: workspace:*
         version: link:../../packages/ui
     devDependencies:
-      '@scpets/eslint-config':
+      '@scmascotas/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@scpets/typescript-config':
+      '@scmascotas/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@sveltejs/adapter-auto':
@@ -146,7 +146,7 @@ importers:
         specifier: ^0.44.0
         version: 0.44.7(@neondatabase/serverless@0.10.4)(@types/pg@8.11.6)
     devDependencies:
-      '@scpets/typescript-config':
+      '@scmascotas/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       dotenv:
@@ -201,7 +201,7 @@ importers:
         specifier: ^3.25.0
         version: 3.25.76
     devDependencies:
-      '@scpets/typescript-config':
+      '@scmascotas/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
@@ -210,10 +210,10 @@ importers:
 
   packages/services:
     dependencies:
-      '@scpets/db':
+      '@scmascotas/db':
         specifier: workspace:*
         version: link:../db
-      '@scpets/schemas':
+      '@scmascotas/schemas':
         specifier: workspace:*
         version: link:../schemas
       '@vercel/blob':
@@ -223,7 +223,7 @@ importers:
         specifier: ^0.44.0
         version: 0.44.7(@neondatabase/serverless@0.10.4)(@types/pg@8.11.6)
     devDependencies:
-      '@scpets/typescript-config':
+      '@scmascotas/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
@@ -242,10 +242,10 @@ importers:
       '@eslint/js':
         specifier: ^9.39.4
         version: 9.39.4
-      '@scpets/eslint-config':
+      '@scmascotas/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@scpets/typescript-config':
+      '@scmascotas/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@sveltejs/adapter-auto':

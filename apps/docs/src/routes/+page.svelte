@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CounterView } from '@scpets/ui';
+	import { CounterView } from '@scmascotas/ui';
 </script>
 
 <h1>Docs</h1>

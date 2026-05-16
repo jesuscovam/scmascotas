@@ -1,4 +1,4 @@
-import { PetsService } from '@scpets/services';
+import { PetsService } from '@scmascotas/services';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 

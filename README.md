@@ -46,8 +46,8 @@ cp .env.example apps/web/.env
 # Fill in DATABASE_URL and BLOB_READ_WRITE_TOKEN
 
 # Run migrations & seed
-pnpm --filter @scpets/db db:migrate
-pnpm --filter @scpets/db db:seed
+pnpm --filter @scmascotas/db db:migrate
+pnpm --filter @scmascotas/db db:seed
 
 # Start dev server
 pnpm dev
