@@ -20,6 +20,7 @@
     "NEON_PROJECT_ID",
     "NEON_AUTH_BASE_URL",
     "BLOB_READ_WRITE_TOKEN",
+    "VERCEL_ENV",
     "OVERRIDE_NIGHTLY_DATABASE_URL"
   ],
   "tasks": {
