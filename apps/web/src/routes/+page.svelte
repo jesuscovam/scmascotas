@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	let { data } = $props();
+	const isProduction = $derived(page.data.isProduction as boolean);
 
 	const speciesLabel: Record<string, string> = {
 		dog: '🐶 Perro',
@@ -28,6 +30,10 @@
 		cat: 'border-teal-400',
 		other: 'border-stone-400'
 	};
+
+	const PREVIEW_LIMIT = 5;
+	const preview = $derived(data.pets.slice(0, PREVIEW_LIMIT));
+	const hasMore = $derived(data.pets.length > PREVIEW_LIMIT);
 </script>
 
 <!-- Hero -->
@@ -43,12 +49,21 @@
 		<p class="text-warm-500 text-lg max-w-md">
 			Publica un reporte en segundos, sin necesidad de crear una cuenta. La comunidad de San Cristóbal puede ayudarte.
 		</p>
-		<a
-			href="/reportar"
-			class="bg-brand-800 hover:bg-brand-900 text-white font-bold text-lg px-8 py-4 rounded-2xl transition-all hover:scale-105 shadow-md hover:shadow-lg"
-		>
-			Reportar mascota perdida →
-		</a>
+		{#if !isProduction}
+			<a
+				href="/reportar"
+				class="bg-brand-800 hover:bg-brand-900 text-white font-bold text-lg px-8 py-4 rounded-2xl transition-all hover:scale-105 shadow-md hover:shadow-lg"
+			>
+				Reportar mascota perdida →
+			</a>
+		{:else}
+			<div class="flex flex-col items-center gap-2">
+				<span class="text-warm-400 font-semibold text-lg border-2 border-dashed border-warm-200 px-8 py-4 rounded-2xl cursor-default">
+					Reportes disponibles pronto
+				</span>
+				<p class="text-xs text-warm-400">Estamos preparando la app — mientras tanto, explora los reportes</p>
+			</div>
+		{/if}
 	</div>
 </section>
 
@@ -70,7 +85,7 @@
 			<span class="text-warm-500 text-sm">{data.pets.length} reportes activos</span>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-			{#each data.pets as pet (pet.id)}
+			{#each preview as pet (pet.id)}
 				<a
 					href="/mascota/{pet.slug}"
 					class="group bg-white rounded-2xl border border-warm-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col border-t-4 {typeColor[pet.type] ?? 'border-stone-300'}"
@@ -110,6 +125,119 @@
 					</div>
 				</a>
 			{/each}
+
+			{#if hasMore}
+				<a
+					href="/mascotas"
+					class="group bg-warm-50 hover:bg-brand-50 rounded-2xl border-2 border-dashed border-warm-200 hover:border-brand-300 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col items-center justify-center gap-3 min-h-[280px]"
+				>
+					<span class="text-4xl">🐾</span>
+					<div class="text-center px-4">
+						<p class="font-display font-semibold text-warm-700 group-hover:text-brand-800 transition-colors">
+							Ver todos los reportes
+						</p>
+						<p class="text-xs text-warm-400 mt-1">
+							{data.pets.length - PREVIEW_LIMIT} más sin mostrar
+						</p>
+					</div>
+					<span class="text-xs font-bold text-brand-700 group-hover:underline">
+						Ver galería completa →
+					</span>
+				</a>
+			{/if}
 		</div>
 	{/if}
+</section>
+
+<!-- Tablero comunitario -->
+<section
+	class="relative overflow-hidden border-y border-amber-800/20 py-12"
+	style="background-color:#b5763a; background-image:radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px), radial-gradient(circle at 10px 10px, rgba(255,255,255,0.04) 1px, transparent 1px); background-size:18px 18px, 18px 18px;"
+>
+	<!-- Vignette overlay -->
+	<div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20"></div>
+
+	<div class="relative max-w-5xl mx-auto px-4">
+		<p class="text-center text-[11px] font-bold text-amber-200/70 uppercase tracking-[0.2em] mb-10">
+			Tablero del proyecto
+		</p>
+
+		<div class="flex flex-col sm:flex-row justify-center gap-12 items-start">
+
+			<!-- Cambios -->
+			<a
+				href="/cambios"
+				class="group relative w-full max-w-[250px] mx-auto pt-8 pb-6 px-6
+					bg-[#fffef0] shadow-[4px_8px_28px_rgba(0,0,0,0.35)]
+					[transform:rotate(-2.5deg)] hover:[transform:rotate(0deg)_translateY(-6px)]
+					transition-all duration-300 ease-out"
+			>
+				<!-- Pin -->
+				<div class="absolute -top-[18px] left-1/2 -translate-x-1/2 z-10 flex flex-col items-center">
+					<div class="w-7 h-7 rounded-full bg-brand-800 border-[3px] border-brand-900 shadow-[0_3px_8px_rgba(0,0,0,0.4)] flex items-center justify-center">
+						<div class="w-2 h-2 rounded-full bg-amber-200 opacity-80"></div>
+					</div>
+					<div class="w-px h-3 bg-brand-900/40"></div>
+				</div>
+
+				<!-- Ruled lines decoration -->
+				<div class="absolute inset-x-0 top-14 bottom-0 overflow-hidden opacity-[0.06] pointer-events-none">
+					{#each Array(8) as _, i (i)}
+						<div class="w-full border-b border-blue-900" style="margin-top: {i === 0 ? 24 : 0}px; height: 24px;"></div>
+					{/each}
+				</div>
+
+				<div class="relative">
+					<div class="text-2xl mb-3">📋</div>
+					<h3 class="font-display font-bold text-warm-900 text-[17px] leading-tight mb-2">
+						Historial de cambios
+					</h3>
+					<p class="text-xs text-warm-500 leading-relaxed">
+						Ve qué hay de nuevo en cada versión
+					</p>
+					<div class="mt-5 text-[11px] font-bold text-brand-800 tracking-wide group-hover:underline">
+						Ver historial →
+					</div>
+				</div>
+			</a>
+
+			<!-- Plan de ruta -->
+			<a
+				href="/plan"
+				class="group relative w-full max-w-[250px] mx-auto pt-8 pb-6 px-6
+					bg-[#f4fef6] shadow-[4px_8px_28px_rgba(0,0,0,0.35)]
+					[transform:rotate(2deg)] hover:[transform:rotate(0deg)_translateY(-6px)]
+					transition-all duration-300 ease-out"
+			>
+				<!-- Pin -->
+				<div class="absolute -top-[18px] left-1/2 -translate-x-1/2 z-10 flex flex-col items-center">
+					<div class="w-7 h-7 rounded-full bg-teal-700 border-[3px] border-teal-800 shadow-[0_3px_8px_rgba(0,0,0,0.4)] flex items-center justify-center">
+						<div class="w-2 h-2 rounded-full bg-teal-200 opacity-80"></div>
+					</div>
+					<div class="w-px h-3 bg-teal-900/40"></div>
+				</div>
+
+				<!-- Ruled lines decoration -->
+				<div class="absolute inset-x-0 top-14 bottom-0 overflow-hidden opacity-[0.06] pointer-events-none">
+					{#each Array(8) as _, i (i)}
+						<div class="w-full border-b border-blue-900" style="margin-top: {i === 0 ? 24 : 0}px; height: 24px;"></div>
+					{/each}
+				</div>
+
+				<div class="relative">
+					<div class="text-2xl mb-3">🗺️</div>
+					<h3 class="font-display font-bold text-warm-900 text-[17px] leading-tight mb-2">
+						Plan de ruta
+					</h3>
+					<p class="text-xs text-warm-500 leading-relaxed">
+						Conoce lo que viene en los próximos cambios
+					</p>
+					<div class="mt-5 text-[11px] font-bold text-teal-700 tracking-wide group-hover:underline">
+						Ver plan →
+					</div>
+				</div>
+			</a>
+
+		</div>
+	</div>
 </section>
