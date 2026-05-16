@@ -1,6 +1,0 @@
-{
-	"extends": ["@scmascotas/typescript-config/svelte.json", "./.svelte-kit/tsconfig.json"],
-	"compilerOptions": {
-		"strictNullChecks": true
-	}
-}
