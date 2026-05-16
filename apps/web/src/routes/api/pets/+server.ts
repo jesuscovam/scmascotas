@@ -1,9 +1,13 @@
 import { json, error } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 import { PetsService } from '@scmascotas/services';
 import { createMissingPetSchema } from '@scmascotas/schemas';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
+  if (env.VERCEL_ENV === 'production') {
+    throw error(503, 'Los reportes estarán disponibles muy pronto.');
+  }
   const body = await request.json();
   const parsed = createMissingPetSchema.safeParse(body);
 
