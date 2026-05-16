@@ -40,4 +40,10 @@
     background-color: var(--color-warm-50);
     color: var(--color-warm-900);
   }
+
+  [data-slot="select-trigger"]:focus,
+  [data-slot="select-trigger"]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 }
