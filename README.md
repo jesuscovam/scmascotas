@@ -1,4 +1,4 @@
-# SC Pets 🐾
+# SC Mascotas 🐾
 
 **Registro comunitario de mascotas perdidas en San Cristóbal de las Casas, Chiapas.**
 
@@ -10,7 +10,7 @@
 
 ## ¿Qué es? / What is it?
 
-SC Pets is an open-source, searchable registry that complements (not replaces) the existing Facebook community group for lost pets in San Cristóbal. Anyone can post a report anonymously. The community can browse, filter, and share listings.
+SC Mascotas is an open-source, searchable registry that complements (not replaces) the existing Facebook community group for lost pets in San Cristóbal. Anyone can post a report anonymously. The community can browse, filter, and share listings.
 
 ## Stack
 
@@ -22,22 +22,22 @@ SC Pets is an open-source, searchable registry that complements (not replaces) t
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `apps/web` | Main SvelteKit app |
-| `packages/db` | Drizzle schema + Neon client |
-| `packages/services` | Business logic layer |
-| `packages/schemas` | Zod validation schemas |
-| `packages/ui` | Shared Svelte components |
-| `packages/typescript-config` | Shared tsconfig |
-| `packages/eslint-config` | Shared ESLint config |
-| `packages/tailwind-config` | Shared Tailwind preset |
+| Package                      | Description                  |
+| ---------------------------- | ---------------------------- |
+| `apps/web`                   | Main SvelteKit app           |
+| `packages/db`                | Drizzle schema + Neon client |
+| `packages/services`          | Business logic layer         |
+| `packages/schemas`           | Zod validation schemas       |
+| `packages/ui`                | Shared Svelte components     |
+| `packages/typescript-config` | Shared tsconfig              |
+| `packages/eslint-config`     | Shared ESLint config         |
+| `packages/tailwind-config`   | Shared Tailwind preset       |
 
 ## Getting Started
 
 ```bash
 # Clone & install
-git clone https://github.com/scpets/scpets
+git clone https://github.com/jesuscovam/scmascotas
 cd scpets
 pnpm install
 
