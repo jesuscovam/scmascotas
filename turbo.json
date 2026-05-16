@@ -19,7 +19,8 @@
     "PGDATABASE",
     "NEON_PROJECT_ID",
     "NEON_AUTH_BASE_URL",
-    "BLOB_READ_WRITE_TOKEN"
+    "BLOB_READ_WRITE_TOKEN",
+    "OVERRIDE_NIGHTLY_DATABASE_URL"
   ],
   "tasks": {
     "build": {

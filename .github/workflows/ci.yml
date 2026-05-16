@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, nightly]
   pull_request:
-    branches: [main]
+    branches: [main, nightly]
 
 jobs:
   build:
@@ -35,3 +35,34 @@ jobs:
         env:
           DATABASE_URL: postgresql://noop:noop@noop/noop
           BLOB_READ_WRITE_TOKEN: vercelblob_rw_noop
+
+  migrate:
+    name: Run migrations
+    runs-on: ubuntu-latest
+    # Only run on actual pushes (merge), not on PR open/sync — migrations apply to real DBs
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Migrate (production)
+        if: github.ref == 'refs/heads/main'
+        run: pnpm --filter @scmascotas/db db:migrate
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+
+      - name: Migrate (nightly)
+        if: github.ref == 'refs/heads/nightly'
+        run: pnpm --filter @scmascotas/db db:migrate
+        env:
+          DATABASE_URL: ${{ secrets.NIGHTLY_DATABASE_URL }}
