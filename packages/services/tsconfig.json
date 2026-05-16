@@ -1,5 +1,5 @@
 {
-  "extends": "@scpets/typescript-config/svelte.json",
+  "extends": "@scmascotas/typescript-config/svelte.json",
   "compilerOptions": {
     "outDir": "dist"
   },

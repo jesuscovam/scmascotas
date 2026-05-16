@@ -1,4 +1,4 @@
-import { db, colonias } from '@scpets/db';
+import { db, colonias } from '@scmascotas/db';
 
 export const ColoniasService = {
   async list() {

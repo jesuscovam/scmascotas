@@ -1,5 +1,5 @@
 {
-  "name": "@scpets/services",
+  "name": "@scmascotas/services",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,13 +8,13 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@scpets/db": "workspace:*",
-    "@scpets/schemas": "workspace:*",
+    "@scmascotas/db": "workspace:*",
+    "@scmascotas/schemas": "workspace:*",
     "@vercel/blob": "^2.3.0",
     "drizzle-orm": "^0.44.0"
   },
   "devDependencies": {
-    "@scpets/typescript-config": "workspace:*",
+    "@scmascotas/typescript-config": "workspace:*",
     "typescript": "^5.9.3"
   }
 }

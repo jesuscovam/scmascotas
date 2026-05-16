@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { PhotosService } from '@scpets/services';
+import { PhotosService } from '@scmascotas/services';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {

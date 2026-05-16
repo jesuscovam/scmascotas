@@ -1,6 +1,6 @@
 import { json, error } from '@sveltejs/kit';
-import { PetsService } from '@scpets/services';
-import { createMissingPetSchema } from '@scpets/schemas';
+import { PetsService } from '@scmascotas/services';
+import { createMissingPetSchema } from '@scmascotas/schemas';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {

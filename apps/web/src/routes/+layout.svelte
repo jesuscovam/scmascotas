@@ -8,12 +8,17 @@
 		<div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
 			<a href="/" class="flex items-center gap-2 group">
 				<span class="text-2xl">🐾</span>
-				<span class="font-display font-bold text-brand-900 text-xl tracking-tight group-hover:text-brand-700 transition-colors">
-					SC Pets
+				<span
+					class="font-display font-bold text-brand-900 text-xl tracking-tight group-hover:text-brand-700 transition-colors"
+				>
+					SC Mascotas
 				</span>
 			</a>
 			<nav class="flex items-center gap-4">
-				<a href="/acerca" class="text-sm text-warm-500 hover:text-warm-700 transition-colors font-medium">
+				<a
+					href="/acerca"
+					class="text-sm text-warm-500 hover:text-warm-700 transition-colors font-medium"
+				>
 					Acerca
 				</a>
 				<a
@@ -31,18 +36,21 @@
 	</main>
 
 	<footer class="border-t border-warm-200 bg-white mt-16">
-		<div class="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-warm-500">
+		<div
+			class="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-warm-500"
+		>
 			<p>
-				🐾 <span class="font-semibold text-warm-700">SC Pets</span> — Registro comunitario de mascotas perdidas
+				🐾 <span class="font-semibold text-warm-700">SC Mascotas</span> — Registro comunitario de mascotas
+				perdidas
 			</p>
 			<p>
 				San Cristóbal de las Casas, Chiapas ·
 				<a
-					href="https://github.com/scpets/scpets"
+					href="https://github.com/jesuscovam/scmascotas"
 					class="underline hover:text-warm-700 transition-colors"
 					target="_blank"
-					rel="noopener noreferrer"
-				>Código abierto</a>
+					rel="noopener noreferrer">Código abierto</a
+				>
 			</p>
 		</div>
 	</footer>
