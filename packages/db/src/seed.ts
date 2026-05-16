@@ -1,4 +1,8 @@
-import { db } from './client.js';
+import { config } from 'dotenv';
+config({ path: '.env.local' });
+
+// Dynamic import ensures dotenv runs before the Neon client initializes
+const { db } = await import('./client.js');
 import { colonias } from './schema/index.js';
 
 const SANCRIS_COLONIAS = [
