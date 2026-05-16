@@ -1,50 +1,62 @@
-# Turborepo Svelte starter
+# SC Pets 🐾
 
-This Turborepo starter is maintained by the Turborepo core team
-on [GitHub](https://github.com/vercel/turborepo/tree/main/examples/with-svelte/packages)
-.
+**Registro comunitario de mascotas perdidas en San Cristóbal de las Casas, Chiapas.**
 
-## Using this example
+> Community-driven missing pet registry for San Cristóbal de las Casas. Report a missing pet in seconds — no account required.
 
-Run the following command:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-```sh
-npx create-turbo@latest -e with-svelte
+---
+
+## ¿Qué es? / What is it?
+
+SC Pets is an open-source, searchable registry that complements (not replaces) the existing Facebook community group for lost pets in San Cristóbal. Anyone can post a report anonymously. The community can browse, filter, and share listings.
+
+## Stack
+
+- **Frontend:** SvelteKit 5 + TypeScript + Tailwind CSS v4
+- **Database:** Neon (serverless Postgres) + Drizzle ORM
+- **Storage:** Vercel Blob (pet photos)
+- **Hosting:** Vercel
+- **Monorepo:** Turborepo + pnpm workspaces
+
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| `apps/web` | Main SvelteKit app |
+| `packages/db` | Drizzle schema + Neon client |
+| `packages/services` | Business logic layer |
+| `packages/schemas` | Zod validation schemas |
+| `packages/ui` | Shared Svelte components |
+| `packages/typescript-config` | Shared tsconfig |
+| `packages/eslint-config` | Shared ESLint config |
+| `packages/tailwind-config` | Shared Tailwind preset |
+
+## Getting Started
+
+```bash
+# Clone & install
+git clone https://github.com/scpets/scpets
+cd scpets
+pnpm install
+
+# Set up environment
+cp .env.example apps/web/.env
+# Fill in DATABASE_URL and BLOB_READ_WRITE_TOKEN
+
+# Run migrations & seed
+pnpm --filter @scpets/db db:migrate
+pnpm --filter @scpets/db db:seed
+
+# Start dev server
+pnpm dev
 ```
 
-## What's inside?
+## Contributing
 
-This Turborepo includes the following packages/apps:
+See [CONTRIBUTING.md](CONTRIBUTING.md). All contributions welcome — bug reports, translations, feature ideas, and code.
 
-### Apps
+## License
 
-- `docs`: a [svelte-kit](https://kit.svelte.dev/) app
-- `web`: another [svelte-kit](https://kit.svelte.dev/) app
-
-### Packages
-
-#### `eslint-config`
-
-`eslint` configurations (includes `eslint-plugin-svelte` and `eslint-config-prettier`)
-
-#### `typescript-config`
-
-A package containing a custom `tsconfig` file.
-
-#### `ui`
-
-A stub Svelte component library shared by both `web` and `docs` applications. The package supports Svelte components and
-runes in `.svelte.ts` files, which are not supported in the svelte-kit generated tsconfig.
-
-Please refer to the [packaging](https://svelte.dev/docs/kit/packaging) page of the svelte documentation for additional
-information about svelte component libraries.
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+[MIT](LICENSE)

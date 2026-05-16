@@ -1,0 +1,9 @@
+import { PetsService } from '@scpets/services';
+import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ params }) => {
+	const pet = await PetsService.getBySlug(params.slug);
+	if (!pet) throw error(404, 'Mascota no encontrada');
+	return { pet };
+}

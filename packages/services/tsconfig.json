@@ -1,0 +1,7 @@
+{
+  "extends": "@scpets/typescript-config/svelte.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}

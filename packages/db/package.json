@@ -1,0 +1,26 @@
+{
+  "name": "@scpets/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx src/seed.ts"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "drizzle-orm": "^0.44.0"
+  },
+  "devDependencies": {
+    "@scpets/typescript-config": "workspace:*",
+    "drizzle-kit": "^0.31.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.9.3"
+  }
+}

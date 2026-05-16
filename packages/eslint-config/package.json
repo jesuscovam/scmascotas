@@ -1,5 +1,5 @@
 {
-  "name": "@repo/eslint-config",
+  "name": "@scpets/eslint-config",
   "version": "0.0.0",
   "type": "module",
   "publishConfig": {

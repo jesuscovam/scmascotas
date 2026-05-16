@@ -1,3 +1,3 @@
-import { config } from '@repo/eslint-config/index.js';
+import { config } from '@scpets/eslint-config/index.js';
 
 export default [...config];

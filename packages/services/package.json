@@ -1,0 +1,20 @@
+{
+  "name": "@scpets/services",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@scpets/db": "workspace:*",
+    "@scpets/schemas": "workspace:*",
+    "@vercel/blob": "^2.3.0",
+    "drizzle-orm": "^0.44.0"
+  },
+  "devDependencies": {
+    "@scpets/typescript-config": "workspace:*",
+    "typescript": "^5.9.3"
+  }
+}
