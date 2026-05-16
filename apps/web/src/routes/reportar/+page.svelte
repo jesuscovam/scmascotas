@@ -1,10 +1,27 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { untrack } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { Select } from '@scmascotas/ui';
 
 	type Colonia = { id: string; name: string };
+
+	type FormSnapshot = {
+		name: string;
+		species: 'dog' | 'cat' | 'other' | '';
+		breed: string;
+		color: string;
+		sex: 'male' | 'female' | 'unknown';
+		size: 'small' | 'medium' | 'large';
+		colonia_id: string;
+		last_seen_at: string;
+		description: string;
+		contact_whatsapp: string;
+		contact_name: string;
+		anonymous: boolean;
+	};
 
 	let colonias = $state<Colonia[]>([]);
 	let coloniaError = $state(false);
@@ -30,31 +47,58 @@
 
 	const STEPS = ['Tipo', 'Detalles', 'Ubicación', 'Contacto'];
 
+	// Sync URL ?step param → currentStep + animDir.
+	// untrack(currentStep) avoids a dependency cycle while still reading the previous value for direction.
+	$effect(() => {
+		const stepParam = page.url.searchParams.get('step');
+		if (stepParam === null) {
+			goto('?step=0', { replaceState: true, noScroll: true });
+			return;
+		}
+		const next = Number(stepParam);
+		const prev = untrack(() => currentStep);
+		if (next !== prev) {
+			animDir = next > prev ? 1 : -1;
+			currentStep = next;
+		}
+	});
+
 	$effect(() => {
 		fetch('/api/colonias')
 			.then((r) => r.json())
 			.then((data: Colonia[]) => {
 				colonias = data;
-				if (data.length > 0) colonia_id = data[0].id;
+				// Don't overwrite a colonia_id that was already set (e.g. restored from snapshot)
+				if (data.length > 0 && !untrack(() => colonia_id)) colonia_id = data[0].id;
 			})
 			.catch(() => {
 				coloniaError = true;
 			});
 	});
 
+	export const snapshot = {
+		capture: (): FormSnapshot => ({
+			name, species, breed, color, sex, size,
+			colonia_id, last_seen_at, description,
+			contact_whatsapp, contact_name, anonymous
+		}),
+		restore: (data: FormSnapshot) => {
+			({ name, species, breed, color, sex, size, colonia_id,
+			   last_seen_at, description, contact_whatsapp, contact_name, anonymous } = data);
+		}
+	};
+
 	function goNext() {
-		animDir = 1;
-		currentStep = Math.min(currentStep + 1, STEPS.length - 1);
+		goto(`?step=${currentStep + 1}`, { replaceState: false, noScroll: true });
 	}
 
 	function goBack() {
-		animDir = -1;
-		currentStep = Math.max(currentStep - 1, 0);
+		history.back();
 	}
 
 	function selectSpecies(s: 'dog' | 'cat' | 'other') {
 		species = s;
-		setTimeout(() => goNext(), 380);
+		setTimeout(() => goto('?step=1', { replaceState: false, noScroll: true }), 380);
 	}
 
 	const canContinue = $derived(
