@@ -23,7 +23,9 @@ export const config = defineConfig(
       // see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
       'no-undef': 'off',
       // Normal <a href> links and goto() don't need an explicit resolve() call
-      'svelte/no-navigation-without-resolve': 'off'
+      'svelte/no-navigation-without-resolve': 'off',
+      // Allow _-prefixed variables as intentional unused placeholders (e.g. {#each} loop items)
+      '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }]
     }
   },
   {

@@ -182,7 +182,7 @@
 
 				<!-- Ruled lines decoration -->
 				<div class="absolute inset-x-0 top-14 bottom-0 overflow-hidden opacity-[0.06] pointer-events-none">
-					{#each Array(8) as _, i (i)}
+					{#each Array(8) as _el, i (i)}
 						<div class="w-full border-b border-blue-900" style="margin-top: {i === 0 ? 24 : 0}px; height: 24px;"></div>
 					{/each}
 				</div>
@@ -219,7 +219,7 @@
 
 				<!-- Ruled lines decoration -->
 				<div class="absolute inset-x-0 top-14 bottom-0 overflow-hidden opacity-[0.06] pointer-events-none">
-					{#each Array(8) as _, i (i)}
+					{#each Array(8) as _el, i (i)}
 						<div class="w-full border-b border-blue-900" style="margin-top: {i === 0 ? 24 : 0}px; height: 24px;"></div>
 					{/each}
 				</div>

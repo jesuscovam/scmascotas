@@ -39,6 +39,7 @@
 					<h2 class="font-display text-xl font-bold text-brand-900 mb-4">{entry.titulo}</h2>
 
 					<div class="text-sm text-warm-600 leading-relaxed mb-3 [&_p]:mb-0 [&_strong]:font-semibold [&_strong]:text-warm-800">
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html entry.summary}
 					</div>
 
@@ -68,6 +69,7 @@
 									[&_code]:bg-warm-100 [&_code]:text-brand-800 [&_code]:text-xs [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded
 									[&_p]:mb-3"
 							>
+								<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 								{@html entry.details}
 							</div>
 						{/if}
