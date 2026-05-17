@@ -8,3 +8,4 @@ export * as Popover from './lib/components/ui/popover/index.js';
 export * as Progress from './lib/components/ui/progress/index.js';
 export * as Select from './lib/components/ui/select/index.js';
 export { default as Spinner } from './lib/components/ui/spinner/spinner.svelte';
+export * as NavigationMenu from './lib/components/ui/navigation-menu/index.js';
