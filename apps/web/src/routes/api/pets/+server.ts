@@ -1,13 +1,10 @@
 import { json, error } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
 import { PetsService } from '@scmascotas/services';
 import { createMissingPetSchema } from '@scmascotas/schemas';
+import { checkLimit } from '$lib/server/rate-limit';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-  if (env.VERCEL_ENV === 'production') {
-    throw error(503, 'Los reportes estarán disponibles muy pronto.');
-  }
   const body = await request.json();
   const parsed = createMissingPetSchema.safeParse(body);
 
@@ -17,9 +14,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
   const forwarded = request.headers.get('x-forwarded-for') ?? '';
   const ip = forwarded.split(',')[0].trim();
-  const ipHash = ip
-    ? Buffer.from(ip).toString('base64')
-    : undefined;
+  const ipHash = ip ? Buffer.from(ip).toString('base64') : undefined;
+
+  if (!await checkLimit('create_pet', ipHash)) {
+    throw error(429, 'Demasiados reportes. Intenta de nuevo mañana.');
+  }
 
   const pet = await PetsService.create(parsed.data, { ipHash, userId: locals.user?.id });
   return json({ slug: pet.slug, editToken: pet.editToken }, { status: 201 });
