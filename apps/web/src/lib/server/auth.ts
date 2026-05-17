@@ -6,14 +6,15 @@ import { admin } from 'better-auth/plugins';
 import { db } from '@scmascotas/db';
 import { Resend } from 'resend';
 import { RESEND_API_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 const googleProvider =
-	process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+	env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
 		? {
 				socialProviders: {
 					google: {
-						clientId: process.env.GOOGLE_CLIENT_ID,
-						clientSecret: process.env.GOOGLE_CLIENT_SECRET
+						clientId: env.GOOGLE_CLIENT_ID,
+						clientSecret: env.GOOGLE_CLIENT_SECRET
 					}
 				}
 			}
@@ -55,5 +56,5 @@ export const auth = betterAuth({
 	plugins: [passkey(), apiKey({ defaultPrefix: 'scp_' }), admin()],
 	// Fallback lets the app build/dev without the env var;
 	// production deployments must set BETTER_AUTH_SECRET.
-	secret: process.env.BETTER_AUTH_SECRET ?? 'dev-only-change-in-production'
+	secret: env.BETTER_AUTH_SECRET ?? 'dev-only-change-in-production'
 });

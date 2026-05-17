@@ -2,7 +2,7 @@
 	import '../app.css';
 	import { dev } from '$app/environment';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
-	import { onNavigate, invalidateAll, goto } from '$app/navigation';
+	import { onNavigate, goto } from '$app/navigation';
 	import { ModeWatcher } from 'mode-watcher';
 	import { NavigationMenu, Button } from '@scmascotas/ui';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
@@ -34,8 +34,7 @@
 
 	async function handleSignOut() {
 		await signOut();
-		await invalidateAll();
-		goto('/');
+		goto('/', { invalidateAll: true });
 	}
 </script>
 
