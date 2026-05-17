@@ -12,3 +12,7 @@ export * as Progress from './lib/components/ui/progress/index.js';
 export * as Select from './lib/components/ui/select/index.js';
 export * as Separator from './lib/components/ui/separator/index.js';
 export { default as Spinner } from './lib/components/ui/spinner/spinner.svelte';
+export * as Input from './lib/components/ui/input/index.js';
+export * as Empty from './lib/components/ui/empty/index.js';
+export * as Item from './lib/components/ui/item/index.js';
+export * as Label from './lib/components/ui/label/index.js';

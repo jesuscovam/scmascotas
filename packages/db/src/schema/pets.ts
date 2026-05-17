@@ -23,7 +23,7 @@ export const pets = pgTable('pets', {
   contactName: text('contact_name'),
   anonymous: text('anonymous').notNull().default('false'),
   editToken: text('edit_token').notNull(),
-  reporterUserId: uuid('reporter_user_id'),
+  reporterUserId: text('reporter_user_id'),
   reporterIpHash: text('reporter_ip_hash'),
   reunitedAt: timestamp('reunited_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

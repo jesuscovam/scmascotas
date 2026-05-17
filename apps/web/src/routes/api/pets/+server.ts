@@ -4,7 +4,7 @@ import { PetsService } from '@scmascotas/services';
 import { createMissingPetSchema } from '@scmascotas/schemas';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, locals }) => {
   if (env.VERCEL_ENV === 'production') {
     throw error(503, 'Los reportes estarán disponibles muy pronto.');
   }
@@ -21,6 +21,6 @@ export const POST: RequestHandler = async ({ request }) => {
     ? Buffer.from(ip).toString('base64')
     : undefined;
 
-  const pet = await PetsService.create(parsed.data, ipHash);
+  const pet = await PetsService.create(parsed.data, { ipHash, userId: locals.user?.id });
   return json({ slug: pet.slug, editToken: pet.editToken }, { status: 201 });
 };
