@@ -49,6 +49,14 @@ jobs:
         env:
           DATABASE_URL: postgresql://noop:noop@noop/noop
           BLOB_READ_WRITE_TOKEN: vercelblob_rw_noop
+          BETTER_AUTH_SECRET: noop-secret-at-least-32-characters!!
+          BETTER_AUTH_URL: https://noop.example.com
+          RESEND_API_KEY: re_noop
+          CONTACT_EMAIL: noop@example.com
+          GOOGLE_CLIENT_ID: noop
+          GOOGLE_CLIENT_SECRET: noop
+          UPSTASH_REDIS_REST_URL: https://noop.upstash.io
+          UPSTASH_REDIS_REST_TOKEN: noop
 
   migrate:
     name: Run migrations
