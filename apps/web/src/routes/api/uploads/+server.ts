@@ -1,4 +1,3 @@
-export const config = { runtime: 'edge' };
 import { json, error } from '@sveltejs/kit';
 import { PhotosService } from '@scmascotas/services';
 import { checkLimit } from '$lib/server/rate-limit';

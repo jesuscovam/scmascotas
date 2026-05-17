@@ -1,4 +1,3 @@
-export const config = { runtime: 'edge' };
 import { json, error } from '@sveltejs/kit';
 import { db, contactMessages } from '@scmascotas/db';
 import { Resend } from 'resend';
