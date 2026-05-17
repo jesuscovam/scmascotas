@@ -2,6 +2,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { Button, Card, Input, Label, Separator, Spinner } from '@scmascotas/ui';
 	import { signIn, authClient } from '$lib/auth-client';
+	import FingerprintPattern from '@lucide/svelte/icons/fingerprint-pattern';
 
 	let { data } = $props();
 
@@ -113,10 +114,7 @@
 					onclick={handlePasskey}
 					disabled={passkeyLoading}
 				>
-					<svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2">
-						<circle cx="12" cy="7" r="4"/>
-						<path d="M18 21v-2a6 6 0 0 0-12 0v2"/>
-					</svg>
+					<FingerprintPattern class="w-4 h-4 shrink-0" />
 					{passkeyLoading ? 'Verificando…' : 'Usar passkey'}
 				</Button.Root>
 

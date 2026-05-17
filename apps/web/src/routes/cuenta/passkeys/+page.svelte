@@ -2,6 +2,7 @@
 	import { Button, Spinner, Input, Label, Empty } from '@scmascotas/ui';
 	import { authClient } from '$lib/auth-client';
 	import { onMount } from 'svelte';
+	import FingerprintPattern from '@lucide/svelte/icons/fingerprint-pattern';
 
 	let passkeys: Array<{ id: string; name?: string | null; createdAt?: Date | null }> = $state([]);
 	let loading = $state(true);
@@ -88,10 +89,7 @@
 			</a>
 			<div class="flex items-center gap-4">
 				<div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-amber-700 dark:text-amber-400 shrink-0">
-					<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-						<path d="M12 2C9.243 2 7 4.243 7 7v2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-2V7c0-2.757-2.243-5-5-5z"/>
-						<circle cx="12" cy="15" r="1.5" fill="currentColor"/>
-					</svg>
+					<FingerprintPattern class="w-6 h-6" />
 				</div>
 				<div>
 					<h1 class="font-display text-2xl font-bold text-warm-900 dark:text-warm-50 leading-tight">
@@ -126,10 +124,7 @@
 				<Empty.Root class="rounded-2xl border-2 border-dashed border-warm-200 dark:border-warm-700 bg-white dark:bg-warm-800/50 py-12">
 					<Empty.Header>
 						<Empty.Media variant="icon" class="relative w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-400 dark:text-amber-500">
-							<svg class="w-8 h-8" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5">
-								<path d="M16 4a7 7 0 0 0-7 7v3H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V16a2 2 0 0 0-2-2h-2v-3a7 7 0 0 0-7-7z" stroke-linecap="round" stroke-linejoin="round"/>
-								<circle cx="16" cy="20" r="1.5" fill="currentColor"/>
-							</svg>
+							<FingerprintPattern class="w-8 h-8" />
 							<span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-warm-100 dark:bg-warm-700 border-2 border-white dark:border-warm-800 flex items-center justify-center">
 								<svg class="w-3 h-3 text-warm-400" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 2v8M2 6h8"/></svg>
 							</span>
@@ -143,12 +138,8 @@
 			{:else}
 				{#each passkeys as pk (pk.id)}
 					<div class="group relative flex items-center gap-4 bg-white dark:bg-warm-800 border border-warm-200 dark:border-warm-700 rounded-xl px-5 py-4 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all passkey-card">
-						<!-- Key icon -->
 						<div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-500 shrink-0">
-							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-								<circle cx="8" cy="15" r="5"/>
-								<path d="M13 15h2m0 0h2m-2 0v-2m0 2v2" stroke-linecap="round"/>
-							</svg>
+							<FingerprintPattern class="w-5 h-5" />
 						</div>
 
 						<!-- Info -->

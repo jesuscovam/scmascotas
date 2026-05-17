@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';
+	import FingerprintPattern from '@lucide/svelte/icons/fingerprint-pattern';
 	import { Button, Card, Input, Label, Spinner, Badge } from '@scmascotas/ui';
 
 	let { data } = $props();
@@ -299,10 +300,7 @@
 				class="group flex flex-col gap-1.5 p-4 rounded-xl bg-white dark:bg-warm-800 border border-warm-200 dark:border-warm-700 hover:border-amber-400 dark:hover:border-amber-600 shadow-sm hover:shadow-md transition-all"
 			>
 				<div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-110 transition-transform">
-					<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<circle cx="12" cy="7" r="4"/>
-						<path d="M18 21v-2a6 6 0 0 0-12 0v2"/>
-					</svg>
+					<FingerprintPattern class="w-4 h-4" />
 				</div>
 				<p class="text-sm font-semibold text-warm-800 dark:text-warm-200 group-hover:text-warm-900 dark:group-hover:text-warm-50">Passkeys</p>
 				<p class="text-xs text-warm-400 dark:text-warm-500">Acceso sin contraseña</p>
