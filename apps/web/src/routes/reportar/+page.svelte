@@ -508,7 +508,7 @@
 										<Select.Trigger class="w-full">
 											{colonias.find(c => c.id === colonia_id)?.name ?? 'Selecciona una colonia'}
 										</Select.Trigger>
-										<Select.Content>
+										<Select.Content class="max-h-60">
 											{#each colonias as c (c.id)}
 												<Select.Item value={c.id} label={c.name}>{c.name}</Select.Item>
 											{/each}
