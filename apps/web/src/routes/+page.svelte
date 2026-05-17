@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Button, Badge } from '@scmascotas/ui';
+	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	let { data } = $props();
 	const isProduction = $derived(page.data.isProduction as boolean);
 
@@ -35,6 +36,39 @@
 	const PREVIEW_LIMIT = 5;
 	const preview = $derived(data.pets.slice(0, PREVIEW_LIMIT));
 	const hasMore = $derived(data.pets.length > PREVIEW_LIMIT);
+
+	let contactName = $state('');
+	let contactEmail = $state('');
+	let contactMessage = $state('');
+	let submitting = $state(false);
+	let submitted = $state(false);
+	let formError = $state('');
+
+	async function handleContact(e: SubmitEvent) {
+		e.preventDefault();
+		submitting = true;
+		formError = '';
+		try {
+			const res = await fetch('/api/contact', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name: contactName, email: contactEmail, message: contactMessage })
+			});
+			if (!res.ok) {
+				if (res.status === 429) {
+					formError = 'Demasiados mensajes. Intenta de nuevo mañana.';
+				} else {
+					formError = (await res.text()) || 'Hubo un error al enviar tu mensaje.';
+				}
+				return;
+			}
+			submitted = true;
+		} catch {
+			formError = 'Hubo un error al enviar tu mensaje.';
+		} finally {
+			submitting = false;
+		}
+	}
 </script>
 
 <!-- Hero -->
@@ -68,6 +102,114 @@
 	</div>
 </section>
 
+<!-- Cómo funciona -->
+<section class="bg-warm-900 border-y border-warm-800 py-16">
+	<div class="max-w-5xl mx-auto px-4">
+
+		<div class="text-center mb-12">
+			<p class="text-brand-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">Así funciona</p>
+			<h2 class="font-display text-3xl sm:text-4xl font-bold text-warm-50">
+				De reporte a <span class="text-brand-400">reencuentro</span>
+			</h2>
+			<p class="text-warm-400 mt-4 max-w-md mx-auto text-sm leading-relaxed">
+				Cuatro pasos para que la comunidad de San Cristóbal te ayude a encontrar a tu mascota.
+			</p>
+		</div>
+
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-3">
+
+			<!-- Step 1 -->
+			<div class="relative bg-warm-800 border border-warm-700 rounded-2xl p-6 border-l-4 border-l-brand-600 flex flex-col gap-4">
+				<div class="flex items-center justify-between">
+					<div class="w-8 h-8 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-brand-300 text-sm font-bold font-display">1</div>
+					<span class="text-2xl">📸</span>
+				</div>
+				<div>
+					<h3 class="font-display font-bold text-warm-50 text-base leading-snug mb-2">
+						Publica el reporte
+					</h3>
+					<p class="text-warm-400 text-xs leading-relaxed">
+						Sube una foto, describe a tu mascota y la última ubicación donde fue vista. Sin cuenta necesaria.
+					</p>
+				</div>
+				<!-- Desktop arrow -->
+				<div class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center">
+					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" class="text-warm-600">
+						<path d="M0 8 H18 M14 3 L20 8 L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
+					</svg>
+				</div>
+			</div>
+
+			<!-- Step 2 -->
+			<div class="relative bg-warm-800 border border-warm-700 rounded-2xl p-6 border-l-4 border-l-brand-600 flex flex-col gap-4">
+				<div class="flex items-center justify-between">
+					<div class="w-8 h-8 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-brand-300 text-sm font-bold font-display">2</div>
+					<span class="text-2xl">🤝</span>
+				</div>
+				<div>
+					<h3 class="font-display font-bold text-warm-50 text-base leading-snug mb-2">
+						La comunidad se entera
+					</h3>
+					<p class="text-warm-400 text-xs leading-relaxed">
+						El reporte es visible para vecinos de San Cristóbal que puedan ayudarte a localizarla.
+					</p>
+				</div>
+				<!-- Desktop arrow -->
+				<div class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center">
+					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" class="text-warm-600">
+						<path d="M0 8 H18 M14 3 L20 8 L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
+					</svg>
+				</div>
+			</div>
+
+			<!-- Step 3 — Coming soon -->
+			<div class="relative bg-warm-900/60 border-2 border-dashed border-warm-700 rounded-2xl p-6 flex flex-col gap-4 opacity-75">
+				<div class="flex items-center justify-between">
+					<div class="w-8 h-8 rounded-full bg-warm-800 border border-warm-700 flex items-center justify-center text-warm-500 text-sm font-bold font-display">3</div>
+					<span class="text-2xl grayscale">🗺️</span>
+				</div>
+				<div>
+					<div class="inline-flex items-center gap-1 bg-warm-800 text-warm-500 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2">
+						Próximamente
+					</div>
+					<h3 class="font-display font-bold text-warm-300 text-base leading-snug mb-2">
+						Reportes en el mapa
+					</h3>
+					<p class="text-warm-500 text-xs leading-relaxed">
+						Un mapa interactivo mostrará todos los reportes activos cerca de ti en tiempo real.
+					</p>
+				</div>
+				<!-- Desktop arrow -->
+				<div class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center">
+					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" class="text-warm-700">
+						<path d="M0 8 H18 M14 3 L20 8 L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
+					</svg>
+				</div>
+			</div>
+
+			<!-- Step 4 — Coming soon -->
+			<div class="bg-warm-900/60 border-2 border-dashed border-warm-700 rounded-2xl p-6 flex flex-col gap-4 opacity-75">
+				<div class="flex items-center justify-between">
+					<div class="w-8 h-8 rounded-full bg-warm-800 border border-warm-700 flex items-center justify-center text-warm-500 text-sm font-bold font-display">4</div>
+					<span class="text-2xl grayscale">🔍</span>
+				</div>
+				<div>
+					<div class="inline-flex items-center gap-1 bg-warm-800 text-warm-500 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2">
+						Próximamente
+					</div>
+					<h3 class="font-display font-bold text-warm-300 text-base leading-snug mb-2">
+						Comparación por imagen
+					</h3>
+					<p class="text-warm-500 text-xs leading-relaxed">
+						Sube una foto de una mascota encontrada y el sistema la comparará con los reportes activos.
+					</p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
+
 <!-- Listings -->
 <section class="max-w-5xl mx-auto px-4 py-12">
 	{#if data.pets.length === 0}
@@ -79,6 +221,9 @@
 			</a>
 		</div>
 	{:else}
+		<div class="mb-6">
+			<AlphaBanner />
+		</div>
 		<div class="flex items-baseline justify-between mb-6">
 			<h2 class="font-display text-2xl font-semibold text-warm-900 dark:text-warm-50">
 				Mascotas perdidas
@@ -240,5 +385,127 @@
 			</a>
 
 		</div>
+	</div>
+</section>
+
+<!-- Contact / Suggestions -->
+<section class="relative py-14 overflow-hidden">
+	<div class="absolute inset-0 bg-gradient-to-b from-amber-50/60 via-warm-50 to-warm-50/0 dark:from-amber-900/10 dark:via-warm-900/40 dark:to-transparent pointer-events-none"></div>
+	<div class="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-amber-100/40 dark:bg-amber-900/10 blur-3xl pointer-events-none"></div>
+	<div class="absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-orange-100/30 dark:bg-orange-900/10 blur-3xl pointer-events-none"></div>
+
+	<div class="relative max-w-2xl mx-auto px-4">
+		{#if submitted}
+			<div class="text-center py-10 flex flex-col items-center gap-5">
+				<div class="w-20 h-20 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shadow-inner">
+					<svg class="w-10 h-10 text-amber-600 dark:text-amber-400" viewBox="0 0 40 40" fill="none">
+						<path d="M8 21l8 8L32 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</div>
+				<div class="flex flex-col gap-1.5">
+					<h3 class="font-display text-2xl font-bold text-warm-900 dark:text-warm-50">¡Gracias por escribirnos!</h3>
+					<p class="text-warm-500 dark:text-warm-400 text-sm max-w-sm mx-auto leading-relaxed">
+						Tu mensaje llegó. Lo leeremos con atención y te responderemos si dejaste tu correo.
+					</p>
+				</div>
+				<span class="text-3xl select-none" aria-hidden="true">🐾</span>
+			</div>
+		{:else}
+			<div class="text-center mb-5">
+				<div class="inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 text-xs font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-full mb-4">
+					<svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M2 4h12v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4z"/><path d="M2 4l6 5 6-5"/>
+					</svg>
+					Contacto
+				</div>
+				<h2 class="font-display text-3xl sm:text-4xl font-bold text-warm-900 dark:text-warm-50 leading-tight mb-3">
+					¿Tienes una sugerencia?
+				</h2>
+				<p class="text-warm-500 dark:text-warm-400 text-base leading-relaxed max-w-md mx-auto">
+					Cuéntanos qué mejorarías, qué te falta o simplemente saluda.
+					Para bugs y funciones nuevas, usa
+					<a href="https://github.com/jesuscovam/scmascotas/issues" target="_blank" rel="noopener noreferrer"
+						class="text-amber-700 dark:text-amber-400 underline underline-offset-2 hover:text-amber-900 dark:hover:text-amber-300 transition-colors">
+						GitHub Issues
+					</a>.
+				</p>
+			</div>
+
+			<div class="bg-white dark:bg-warm-800 rounded-3xl shadow-[0_4px_32px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_32px_rgba(0,0,0,0.3)] border border-warm-100 dark:border-warm-700 p-6 sm:p-8">
+				<form onsubmit={handleContact} class="flex flex-col gap-5">
+					<div class="grid sm:grid-cols-2 gap-5">
+						<div class="flex flex-col gap-1.5">
+							<label for="contact-name" class="text-xs font-bold text-warm-600 dark:text-warm-400 uppercase tracking-wider">
+								Nombre <span class="text-amber-500">*</span>
+							</label>
+							<input
+								id="contact-name"
+								type="text"
+								bind:value={contactName}
+								placeholder="Tu nombre"
+								required
+								class="w-full rounded-xl border border-warm-200 dark:border-warm-600 bg-warm-50 dark:bg-warm-700/50 text-warm-900 dark:text-warm-50 placeholder-warm-400 dark:placeholder-warm-500 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500 focus:border-transparent transition-all"
+							/>
+						</div>
+						<div class="flex flex-col gap-1.5">
+							<label for="contact-email" class="text-xs font-bold text-warm-600 dark:text-warm-400 uppercase tracking-wider">
+								Correo <span class="text-warm-400 font-normal normal-case tracking-normal">(opcional)</span>
+							</label>
+							<input
+								id="contact-email"
+								type="email"
+								bind:value={contactEmail}
+								placeholder="para responderte"
+								class="w-full rounded-xl border border-warm-200 dark:border-warm-600 bg-warm-50 dark:bg-warm-700/50 text-warm-900 dark:text-warm-50 placeholder-warm-400 dark:placeholder-warm-500 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500 focus:border-transparent transition-all"
+							/>
+						</div>
+					</div>
+
+					<div class="flex flex-col gap-1.5">
+						<label for="contact-message" class="text-xs font-bold text-warm-600 dark:text-warm-400 uppercase tracking-wider">
+							Mensaje <span class="text-amber-500">*</span>
+						</label>
+						<textarea
+							id="contact-message"
+							bind:value={contactMessage}
+							placeholder="Tu sugerencia, idea o comentario…"
+							required
+							rows="4"
+							class="w-full rounded-xl border border-warm-200 dark:border-warm-600 bg-warm-50 dark:bg-warm-700/50 text-warm-900 dark:text-warm-50 placeholder-warm-400 dark:placeholder-warm-500 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500 focus:border-transparent transition-all resize-none leading-relaxed"
+						></textarea>
+					</div>
+
+					{#if formError}
+						<p class="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3">
+							{formError}
+						</p>
+					{/if}
+
+					<div class="flex items-center justify-between gap-4 pt-1">
+						<p class="text-xs text-warm-400 dark:text-warm-500 leading-snug">
+							Campos con <span class="text-amber-500">*</span> son requeridos
+						</p>
+						<button
+							type="submit"
+							disabled={submitting}
+							class="inline-flex items-center gap-2 bg-amber-700 hover:bg-amber-800 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm px-7 py-3 rounded-2xl shadow-md hover:shadow-lg transition-all active:scale-95"
+						>
+							{#if submitting}
+								<svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+									<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"/>
+									<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+								</svg>
+								Enviando…
+							{:else}
+								Enviar mensaje
+								<svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M2 8h12M9 3l5 5-5 5"/>
+								</svg>
+							{/if}
+						</button>
+					</div>
+				</form>
+			</div>
+		{/if}
 	</div>
 </section>
