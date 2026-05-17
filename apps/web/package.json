@@ -21,6 +21,7 @@
 		"@scmascotas/schemas": "workspace:*",
 		"@scmascotas/services": "workspace:*",
 		"@scmascotas/ui": "workspace:*",
+		"@sentry/sveltekit": "^10",
 		"marked": "^15.0.0",
 		"mode-watcher": "^1.1.0"
 	},
