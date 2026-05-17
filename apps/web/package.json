@@ -1,6 +1,6 @@
 {
 	"name": "web",
-	"version": "0.2.1",
+	"version": "0.4.0",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -21,7 +21,9 @@
 		"@scmascotas/schemas": "workspace:*",
 		"@scmascotas/services": "workspace:*",
 		"@scmascotas/ui": "workspace:*",
-		"marked": "^15.0.0"
+		"@sentry/sveltekit": "^10",
+		"marked": "^15.0.0",
+		"mode-watcher": "^1.1.0"
 	},
 	"devDependencies": {
 		"@scmascotas/eslint-config": "workspace:*",

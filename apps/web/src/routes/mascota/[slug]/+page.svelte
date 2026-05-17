@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Badge, Button, Card } from '@scmascotas/ui';
 	let { data } = $props();
 	const pet = $derived(data.pet);
 
@@ -33,7 +34,7 @@
 </script>
 
 <div class="max-w-4xl mx-auto px-4 py-10">
-	<a href="/" class="text-sm text-warm-500 hover:text-warm-700 transition-colors"
+	<a href="/" class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-200 transition-colors"
 		>← Volver al listado</a
 	>
 
@@ -41,7 +42,7 @@
 		<!-- Photos -->
 		<div class="flex flex-col gap-3">
 			<div
-				class="bg-warm-100 rounded-2xl overflow-hidden aspect-square flex items-center justify-center text-7xl"
+				class="bg-warm-100 dark:bg-warm-800 rounded-2xl overflow-hidden aspect-square flex items-center justify-center text-7xl"
 			>
 				{#if primaryPhoto}
 					<img
@@ -58,9 +59,8 @@
 					{#each pet.photos as photo, i (photo.id)}
 						<button
 							onclick={() => (activePhoto = i)}
-							class="shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors {activePhoto ===
-							i
-								? 'border-brand-600'
+							class="shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors {activePhoto === i
+								? 'border-brand-600 dark:border-brand-400'
 								: 'border-transparent'}"
 						>
 							<img src={photo.url} alt="" class="w-full h-full object-cover" />
@@ -74,22 +74,16 @@
 		<div class="flex flex-col gap-6">
 			<div>
 				<div class="flex items-center gap-2 mb-2">
-					<span
-						class="bg-brand-50 text-brand-800 border border-brand-200 text-xs font-semibold px-3 py-1 rounded-full"
-					>
+					<Badge.Root variant="amber">
 						{speciesLabel[pet.type] ?? pet.type}
-					</span>
-					<span
-						class="bg-green-50 text-green-700 border border-green-200 text-xs font-semibold px-3 py-1 rounded-full"
-					>
-						Buscando
-					</span>
+					</Badge.Root>
+					<Badge.Root variant="green">Buscando</Badge.Root>
 				</div>
-				<h1 class="font-display text-3xl font-bold text-warm-900">
+				<h1 class="font-display text-3xl font-bold text-warm-900 dark:text-warm-50">
 					{pet.name ?? 'Sin nombre'}
 				</h1>
 				{#if pet.colonia}
-					<p class="text-warm-500 mt-1 flex items-center gap-1 text-sm">
+					<p class="text-warm-500 dark:text-warm-400 mt-1 flex items-center gap-1 text-sm">
 						<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
 							<path
 								fill-rule="evenodd"
@@ -105,49 +99,51 @@
 			<!-- Details grid -->
 			<dl class="grid grid-cols-2 gap-3">
 				{#if pet.color}
-					<div class="bg-warm-50 rounded-xl p-3">
-						<dt class="text-xs text-warm-500 font-medium">Color</dt>
-						<dd class="text-sm font-semibold text-warm-900 mt-0.5">{pet.color}</dd>
+					<div class="bg-warm-50 dark:bg-warm-800 rounded-xl p-3">
+						<dt class="text-xs text-warm-500 dark:text-warm-400 font-medium">Color</dt>
+						<dd class="text-sm font-semibold text-warm-900 dark:text-warm-50 mt-0.5">{pet.color}</dd>
 					</div>
 				{/if}
 				{#if pet.size}
-					<div class="bg-warm-50 rounded-xl p-3">
-						<dt class="text-xs text-warm-500 font-medium">Tamaño</dt>
-						<dd class="text-sm font-semibold text-warm-900 mt-0.5">{sizeLabel[pet.size]}</dd>
+					<div class="bg-warm-50 dark:bg-warm-800 rounded-xl p-3">
+						<dt class="text-xs text-warm-500 dark:text-warm-400 font-medium">Tamaño</dt>
+						<dd class="text-sm font-semibold text-warm-900 dark:text-warm-50 mt-0.5">{sizeLabel[pet.size]}</dd>
 					</div>
 				{/if}
 				{#if pet.sex}
-					<div class="bg-warm-50 rounded-xl p-3">
-						<dt class="text-xs text-warm-500 font-medium">Sexo</dt>
-						<dd class="text-sm font-semibold text-warm-900 mt-0.5">{sexLabel[pet.sex]}</dd>
+					<div class="bg-warm-50 dark:bg-warm-800 rounded-xl p-3">
+						<dt class="text-xs text-warm-500 dark:text-warm-400 font-medium">Sexo</dt>
+						<dd class="text-sm font-semibold text-warm-900 dark:text-warm-50 mt-0.5">{sexLabel[pet.sex]}</dd>
 					</div>
 				{/if}
 				{#if pet.breed}
-					<div class="bg-warm-50 rounded-xl p-3">
-						<dt class="text-xs text-warm-500 font-medium">Raza</dt>
-						<dd class="text-sm font-semibold text-warm-900 mt-0.5">{pet.breed}</dd>
+					<div class="bg-warm-50 dark:bg-warm-800 rounded-xl p-3">
+						<dt class="text-xs text-warm-500 dark:text-warm-400 font-medium">Raza</dt>
+						<dd class="text-sm font-semibold text-warm-900 dark:text-warm-50 mt-0.5">{pet.breed}</dd>
 					</div>
 				{/if}
-				<div class="col-span-2 bg-warm-50 rounded-xl p-3">
-					<dt class="text-xs text-warm-500 font-medium">Último avistamiento</dt>
-					<dd class="text-sm font-semibold text-warm-900 mt-0.5">{formatDate(pet.lastSeenAt)}</dd>
+				<div class="col-span-2 bg-warm-50 dark:bg-warm-800 rounded-xl p-3">
+					<dt class="text-xs text-warm-500 dark:text-warm-400 font-medium">Último avistamiento</dt>
+					<dd class="text-sm font-semibold text-warm-900 dark:text-warm-50 mt-0.5">{formatDate(pet.lastSeenAt)}</dd>
 				</div>
 			</dl>
 
 			{#if pet.description}
-				<div class="bg-white border border-warm-200 rounded-xl p-4">
-					<p class="text-xs text-warm-500 font-medium mb-1">Descripción</p>
-					<p class="text-sm text-warm-700 leading-relaxed">{pet.description}</p>
-				</div>
+				<Card.Root class="border-warm-200 dark:border-warm-700">
+					<Card.Content class="pt-4">
+						<p class="text-xs text-warm-500 dark:text-warm-400 font-medium mb-1">Descripción</p>
+						<p class="text-sm text-warm-700 dark:text-warm-300 leading-relaxed">{pet.description}</p>
+					</Card.Content>
+				</Card.Root>
 			{/if}
 
 			<!-- Contact -->
 			{#if !pet.anonymous && whatsappUrl}
-				<a
+				<Button.Root
 					href={whatsappUrl}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-white font-semibold py-3.5 px-6 rounded-2xl transition-colors"
+					class="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-white font-semibold py-3.5 px-6 rounded-2xl h-auto w-full"
 				>
 					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
 						<path
@@ -155,17 +151,19 @@
 						/>
 					</svg>
 					Contactar por WhatsApp
-				</a>
+				</Button.Root>
 			{/if}
 		</div>
 	</div>
 
 	<!-- Sightings placeholder -->
-	<div class="mt-12 bg-white border border-warm-200 rounded-2xl p-6">
-		<h2 class="font-display font-semibold text-warm-900 text-xl mb-2">¿Lo viste? 👀</h2>
-		<p class="text-warm-500 text-sm">
-			La función de reportar avistamientos estará disponible próximamente. Por ahora, contacta
-			directamente al dueño.
-		</p>
-	</div>
+	<Card.Root class="mt-12 border-warm-200 dark:border-warm-700">
+		<Card.Content class="pt-6 pb-6">
+			<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-xl mb-2">¿Lo viste? 👀</h2>
+			<p class="text-warm-500 dark:text-warm-400 text-sm">
+				La función de reportar avistamientos estará disponible próximamente. Por ahora, contacta
+				directamente al dueño.
+			</p>
+		</Card.Content>
+	</Card.Root>
 </div>

@@ -1,3 +1,5 @@
+@custom-variant dark (&:where(.dark, .dark *));
+
 @import "tailwindcss";
 @source "../../../packages/ui/src";
 
@@ -8,6 +10,7 @@
   --color-brand-50: #fffbeb;
   --color-brand-100: #fef3c7;
   --color-brand-200: #fde68a;
+  --color-brand-300: #fcd34d;
   --color-brand-400: #fbbf24;
   --color-brand-600: #d97706;
   --color-brand-700: #b45309;
@@ -17,28 +20,59 @@
   --color-warm-50: #fafaf9;
   --color-warm-100: #f5f5f4;
   --color-warm-200: #e7e5e4;
+  --color-warm-300: #d6d3d1;
+  --color-warm-400: #a8a29e;
   --color-warm-500: #78716c;
+  --color-warm-600: #57534e;
   --color-warm-700: #44403c;
+  --color-warm-800: #292524;
   --color-warm-900: #1c1917;
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
   /* shadcn component tokens — mapped to the project's palette */
-  --color-background: #ffffff;
+  --color-background: #fafaf9;
   --color-foreground: #1c1917;
+  --color-card: #ffffff;
+  --color-card-foreground: #1c1917;
   --color-popover: #ffffff;
   --color-popover-foreground: #1c1917;
   --color-primary: #92400e;
   --color-primary-foreground: #ffffff;
+  --color-secondary: #f5f5f4;
+  --color-secondary-foreground: #1c1917;
   --color-muted: #f5f5f4;
   --color-muted-foreground: #78716c;
   --color-accent: #f5f5f4;
   --color-accent-foreground: #1c1917;
   --color-destructive: #ef4444;
+  --color-border: #e7e5e4;
+  --color-input: #e7e5e4;
   --color-ring: #fde68a;
   --radius: 0.75rem;
   --radius-md: 0.5rem;
+}
+
+.dark {
+  --color-background:           #1c1917;
+  --color-foreground:           #fafaf9;
+  --color-card:                 #292524;
+  --color-card-foreground:      #fafaf9;
+  --color-popover:              #292524;
+  --color-popover-foreground:   #fafaf9;
+  --color-primary:              #fbbf24;
+  --color-primary-foreground:   #1c1917;
+  --color-secondary:            #292524;
+  --color-secondary-foreground: #fafaf9;
+  --color-muted:                #292524;
+  --color-muted-foreground:     #a8a29e;
+  --color-accent:               #292524;
+  --color-accent-foreground:    #fafaf9;
+  --color-destructive:          #f87171;
+  --color-border:               #44403c;
+  --color-input:                #44403c;
+  --color-ring:                 #fbbf24;
 }
 
 @keyframes accordion-down {
@@ -54,8 +88,8 @@
 @layer base {
   html {
     font-family: var(--font-body);
-    background-color: var(--color-warm-50);
-    color: var(--color-warm-900);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
   }
 
   [data-slot="select-trigger"]:focus,
