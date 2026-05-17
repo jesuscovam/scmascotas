@@ -4,7 +4,7 @@
 	import { untrack } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	import { Select, Calendar, Popover, Button } from '@scmascotas/ui';
+	import { Select, Calendar, Popover, Button, Spinner } from '@scmascotas/ui';
 	import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 	import type { CalendarDate as CalendarDateType } from '@internationalized/date';
 
@@ -667,7 +667,11 @@
 									: 'bg-warm-200 text-warm-400 cursor-not-allowed'
 							}"
 						>
-							{submitting ? 'Publicando…' : 'Publicar reporte →'}
+							{#if submitting}
+								<Spinner class="size-5 text-white" />
+							{:else}
+								Publicar reporte →
+							{/if}
 						</button>
 					{/if}
 				</div>

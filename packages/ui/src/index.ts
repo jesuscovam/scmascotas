@@ -7,3 +7,4 @@ export * as Calendar from './lib/components/ui/calendar/index.js';
 export * as Popover from './lib/components/ui/popover/index.js';
 export * as Progress from './lib/components/ui/progress/index.js';
 export * as Select from './lib/components/ui/select/index.js';
+export { default as Spinner } from './lib/components/ui/spinner/spinner.svelte';
