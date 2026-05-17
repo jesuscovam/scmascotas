@@ -2,14 +2,22 @@
 	import '../app.css';
 	import { dev } from '$app/environment';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
-	import { onNavigate } from '$app/navigation';
+	import { onNavigate, invalidateAll, goto } from '$app/navigation';
 	import { ModeWatcher } from 'mode-watcher';
 	import { NavigationMenu, Button } from '@scmascotas/ui';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import { signOut } from '$lib/auth-client';
+	import InfoIcon from '@lucide/svelte/icons/info';
+	import MilestoneIcon from '@lucide/svelte/icons/milestone';
+	import ScrollTextIcon from '@lucide/svelte/icons/scroll-text';
+	import UserIcon from '@lucide/svelte/icons/user';
+	import LogOutIcon from '@lucide/svelte/icons/log-out';
 
 	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
 	let { children, data } = $props();
+
+	const user = $derived(data.user);
 
 	let mobileMenuOpen = $state(false);
 
@@ -23,6 +31,12 @@
 			});
 		});
 	});
+
+	async function handleSignOut() {
+		await signOut();
+		await invalidateAll();
+		goto('/');
+	}
 </script>
 
 <ModeWatcher />
@@ -47,35 +61,103 @@
 			</a>
 
 			<!-- Desktop nav -->
-			<nav class="hidden md:flex items-center gap-4">
+			<nav class="hidden md:flex items-center gap-2">
 				<NavigationMenu.Root viewport={false}>
 					<NavigationMenu.List class="flex items-center gap-1">
+
+						<!-- Mis mascotas: direct link, user only -->
+						{#if user}
+							<NavigationMenu.Item>
+								<NavigationMenu.Link
+									href="/mis-mascotas"
+									class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
+								>
+									Mis mascotas
+								</NavigationMenu.Link>
+							</NavigationMenu.Item>
+						{/if}
+
+						<!-- Plataforma group: Acerca, Plan, Cambios -->
 						<NavigationMenu.Item>
-							<NavigationMenu.Link
-								href="/acerca"
-								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
+							<NavigationMenu.Trigger
+								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 hover:bg-warm-100 dark:hover:bg-warm-800 data-open:bg-warm-100 dark:data-open:bg-warm-800 data-open:text-warm-700 dark:data-open:text-warm-100 transition-colors font-medium"
 							>
-								Acerca
-							</NavigationMenu.Link>
+								Plataforma
+							</NavigationMenu.Trigger>
+							<NavigationMenu.Content class="min-w-[260px] p-1.5 bg-white dark:bg-warm-900 border border-warm-200 dark:border-warm-700">
+								<NavigationMenu.Link href="/acerca">
+									<div class="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
+										<InfoIcon class="size-4 mt-0.5 shrink-0 text-warm-500 dark:text-warm-400" />
+										<div>
+											<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Acerca</p>
+											<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Conoce el proyecto y cómo funciona</p>
+										</div>
+									</div>
+								</NavigationMenu.Link>
+								<NavigationMenu.Link href="/plan">
+									<div class="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
+										<MilestoneIcon class="size-4 mt-0.5 shrink-0 text-warm-500 dark:text-warm-400" />
+										<div>
+											<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Camino hacia v1</p>
+											<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Ver las opciones disponibles</p>
+										</div>
+									</div>
+								</NavigationMenu.Link>
+								<NavigationMenu.Link href="/cambios">
+									<div class="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
+										<ScrollTextIcon class="size-4 mt-0.5 shrink-0 text-warm-500 dark:text-warm-400" />
+										<div>
+											<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Cambios</p>
+											<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Novedades y actualizaciones recientes</p>
+										</div>
+									</div>
+								</NavigationMenu.Link>
+							</NavigationMenu.Content>
 						</NavigationMenu.Item>
-						<NavigationMenu.Item>
-							<NavigationMenu.Link
-								href="/cambios"
-								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
-							>
-								Cambios
-							</NavigationMenu.Link>
-						</NavigationMenu.Item>
-						<NavigationMenu.Item>
-							<NavigationMenu.Link
-								href="/plan"
-								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
-							>
-								Plan
-							</NavigationMenu.Link>
-						</NavigationMenu.Item>
+
 					</NavigationMenu.List>
 				</NavigationMenu.Root>
+
+				<!-- Account: Mi cuenta dropdown (logged in) or Iniciar sesión -->
+				{#if user}
+					<NavigationMenu.Root viewport={false}>
+						<NavigationMenu.List>
+							<NavigationMenu.Item>
+								<NavigationMenu.Trigger
+									class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 hover:bg-warm-100 dark:hover:bg-warm-800 data-open:bg-warm-100 dark:data-open:bg-warm-800 data-open:text-warm-700 dark:data-open:text-warm-100 transition-colors font-medium"
+								>
+									Mi cuenta
+								</NavigationMenu.Trigger>
+								<NavigationMenu.Content class="min-w-[200px] right-0 left-auto p-1.5 bg-white dark:bg-warm-900 border border-warm-200 dark:border-warm-700">
+									<NavigationMenu.Link href="/perfil">
+										<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
+											<UserIcon class="size-4 shrink-0 text-warm-500 dark:text-warm-400" />
+											<div>
+												<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Mi perfil</p>
+												<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Editar tu información</p>
+											</div>
+										</div>
+									</NavigationMenu.Link>
+									<div class="my-1 h-px bg-warm-100 dark:bg-warm-800 mx-2"></div>
+									<button
+										onclick={handleSignOut}
+										class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-left"
+									>
+										<LogOutIcon class="size-4 shrink-0 text-warm-500 dark:text-warm-400" />
+										<p class="text-sm font-medium text-warm-600 dark:text-warm-300 hover:text-red-600 dark:hover:text-red-400 transition-colors leading-none">Salir</p>
+									</button>
+								</NavigationMenu.Content>
+							</NavigationMenu.Item>
+						</NavigationMenu.List>
+					</NavigationMenu.Root>
+				{:else}
+					<a
+						href="/login"
+						class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
+					>
+						Iniciar sesión
+					</a>
+				{/if}
 
 				{#if !data.isProduction}
 					<Button.Root
@@ -140,7 +222,21 @@
 					>
 						Plan
 					</a>
-					<div class="pt-2 pb-1">
+					{#if user}
+						<a
+							href="/mis-mascotas"
+							class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+						>
+							Mis mascotas
+						</a>
+						<a
+							href="/perfil"
+							class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+						>
+							Mi perfil
+						</a>
+					{/if}
+					<div class="pt-2 pb-1 flex flex-col gap-2">
 						{#if !data.isProduction}
 							<Button.Root
 								href="/reportar"
@@ -154,6 +250,21 @@
 							>
 								Próximamente
 							</span>
+						{/if}
+						{#if user}
+							<button
+								onclick={handleSignOut}
+								class="w-full text-center text-sm font-medium text-warm-500 dark:text-warm-400 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+							>
+								Salir
+							</button>
+						{:else}
+							<a
+								href="/login"
+								class="block text-center text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+							>
+								Iniciar sesión
+							</a>
 						{/if}
 					</div>
 				</nav>
