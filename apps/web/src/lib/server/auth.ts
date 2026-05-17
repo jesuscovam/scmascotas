@@ -25,6 +25,10 @@ export const auth = betterAuth({
 		enabled: true,
 		requireEmailVerification: true,
 	},
+	accountLinking: {
+		enabled: true,
+		trustedProviders: ['google']
+	},
 	emailVerification: {
 		autoSignInAfterVerification: true,
 		sendVerificationEmail: async ({ user, url }: { user: { name: string; email: string }; url: string }) => {
