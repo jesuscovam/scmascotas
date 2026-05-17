@@ -183,18 +183,18 @@
 	}
 
 	const inputClass =
-		'w-full border border-warm-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-300 focus:border-brand-400 transition-all placeholder:text-warm-400';
-	const labelClass = 'block text-sm font-semibold text-warm-700 mb-1.5';
+		'w-full border border-warm-200 dark:border-warm-700 rounded-xl px-4 py-3 text-sm bg-white dark:bg-warm-800 text-warm-900 dark:text-warm-50 focus:outline-none focus:ring-2 focus:ring-brand-300 dark:focus:ring-brand-600 focus:border-brand-400 dark:focus:border-brand-600 transition-all placeholder:text-warm-400 dark:placeholder:text-warm-500';
+	const labelClass = 'block text-sm font-semibold text-warm-700 dark:text-warm-200 mb-1.5';
 </script>
 
 <div
-	class="min-h-screen"
-	style="background-color: #faf9f7; background-image: radial-gradient(circle, rgba(180,140,60,0.07) 1px, transparent 1px); background-size: 22px 22px;"
+	class="min-h-screen bg-[#faf9f7] dark:bg-warm-900"
+	style="background-image: radial-gradient(circle, rgba(180,140,60,0.07) 1px, transparent 1px); background-size: 22px 22px;"
 >
 	<div class="max-w-2xl mx-auto px-4 py-10 pb-24">
 
 		<!-- Back link -->
-		<a href="/" class="inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-800 transition-colors font-medium">
+		<a href="/" class="inline-flex items-center gap-1.5 text-sm text-warm-500 dark:text-warm-400 hover:text-warm-800 dark:hover:text-warm-200 transition-colors font-medium">
 			<svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
 				<path fill-rule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clip-rule="evenodd" />
 			</svg>
@@ -203,10 +203,10 @@
 
 		<!-- Page title -->
 		<div class="mt-7 mb-8">
-			<h1 class="font-display text-3xl sm:text-4xl font-bold text-warm-900 leading-tight">
+			<h1 class="font-display text-3xl sm:text-4xl font-bold text-warm-900 dark:text-warm-50 leading-tight">
 				Reportar mascota<br>perdida
 			</h1>
-			<p class="text-warm-500 mt-2 text-sm">
+			<p class="text-warm-500 dark:text-warm-400 mt-2 text-sm">
 				Completa los pasos y publicaremos tu reporte en segundos.
 			</p>
 		</div>
@@ -218,10 +218,10 @@
 					<div
 						class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-500 {
 							i < currentStep
-								? 'bg-brand-800 text-white shadow-md'
+								? 'bg-brand-800 dark:bg-brand-600 text-white shadow-md'
 								: i === currentStep
-								? 'bg-brand-800 text-white shadow-lg ring-4 ring-brand-100'
-								: 'bg-white text-warm-400 border-2 border-warm-200'
+								? 'bg-brand-800 dark:bg-brand-600 text-white shadow-lg ring-4 ring-brand-100 dark:ring-brand-900'
+								: 'bg-white dark:bg-warm-800 text-warm-400 dark:text-warm-500 border-2 border-warm-200 dark:border-warm-700'
 						}"
 					>
 						{#if i < currentStep}
@@ -232,12 +232,12 @@
 							{i + 1}
 						{/if}
 					</div>
-					<span class="text-xs font-semibold tracking-wide transition-colors duration-300 {i <= currentStep ? 'text-brand-800' : 'text-warm-400'}">
+					<span class="text-xs font-semibold tracking-wide transition-colors duration-300 {i <= currentStep ? 'text-brand-800 dark:text-brand-400' : 'text-warm-400 dark:text-warm-600'}">
 						{step}
 					</span>
 				</div>
 				{#if i < STEPS.length - 1}
-					<div class="flex-1 h-[2px] mx-2 mb-5 rounded-full transition-all duration-500 {i < currentStep ? 'bg-brand-800' : 'bg-warm-200'}"></div>
+					<div class="flex-1 h-[2px] mx-2 mb-5 rounded-full transition-all duration-500 {i < currentStep ? 'bg-brand-800 dark:bg-brand-600' : 'bg-warm-200 dark:bg-warm-700'}"></div>
 				{/if}
 			{/each}
 		</div>
@@ -254,8 +254,8 @@
 					<!-- ── STEP 0: Pet type ── -->
 					{#if currentStep === 0}
 						<div class="px-2 pb-6">
-							<p class="text-center font-display font-semibold text-warm-800 text-xl mb-1">¿Qué tipo de mascota es?</p>
-							<p class="text-center text-warm-400 text-sm mb-8">Elige una tarjeta para comenzar</p>
+							<p class="text-center font-display font-semibold text-warm-800 dark:text-warm-100 text-xl mb-1">¿Qué tipo de mascota es?</p>
+							<p class="text-center text-warm-400 dark:text-warm-500 text-sm mb-8">Elige una tarjeta para comenzar</p>
 
 							<div class="grid grid-cols-3 gap-3 sm:gap-4">
 
@@ -264,8 +264,8 @@
 									onclick={() => selectSpecies('dog')}
 									class="relative rounded-3xl overflow-hidden border-2 cursor-pointer transition-all duration-300 text-left {
 										species === 'dog'
-											? 'border-amber-300 shadow-xl shadow-amber-100/80 scale-[1.04] bg-amber-50/60'
-											: 'border-warm-200 shadow-sm hover:shadow-lg hover:scale-[1.03] hover:border-amber-200 bg-white'
+											? 'border-amber-300 dark:border-amber-600 shadow-xl shadow-amber-100/80 scale-[1.04] bg-amber-50/60 dark:bg-amber-900/20'
+											: 'border-warm-200 dark:border-warm-600 shadow-sm hover:shadow-lg hover:scale-[1.03] hover:border-amber-200 bg-white dark:bg-warm-800'
 									}"
 								>
 									{#if species === 'dog'}
@@ -309,8 +309,8 @@
 										</svg>
 									</div>
 									<div class="p-3 text-center">
-										<p class="font-display font-bold text-warm-900 text-sm sm:text-base">Perro</p>
-										<p class="text-xs text-warm-400 mt-0.5 hidden sm:block">Can doméstico</p>
+										<p class="font-display font-bold text-warm-900 dark:text-warm-50 text-sm sm:text-base">Perro</p>
+										<p class="text-xs text-warm-400 dark:text-warm-500 mt-0.5 hidden sm:block">Can doméstico</p>
 									</div>
 								</button>
 
@@ -319,8 +319,8 @@
 									onclick={() => selectSpecies('cat')}
 									class="relative rounded-3xl overflow-hidden border-2 cursor-pointer transition-all duration-300 text-left {
 										species === 'cat'
-											? 'border-slate-300 shadow-xl shadow-slate-100/80 scale-[1.04] bg-slate-50/60'
-											: 'border-warm-200 shadow-sm hover:shadow-lg hover:scale-[1.03] hover:border-slate-200 bg-white'
+											? 'border-slate-300 dark:border-slate-600 shadow-xl shadow-slate-100/80 scale-[1.04] bg-slate-50/60 dark:bg-slate-900/20'
+											: 'border-warm-200 dark:border-warm-600 shadow-sm hover:shadow-lg hover:scale-[1.03] hover:border-slate-200 bg-white dark:bg-warm-800'
 									}"
 								>
 									{#if species === 'cat'}
@@ -375,8 +375,8 @@
 										</svg>
 									</div>
 									<div class="p-3 text-center">
-										<p class="font-display font-bold text-warm-900 text-sm sm:text-base">Gato</p>
-										<p class="text-xs text-warm-400 mt-0.5 hidden sm:block">Felino doméstico</p>
+										<p class="font-display font-bold text-warm-900 dark:text-warm-50 text-sm sm:text-base">Gato</p>
+										<p class="text-xs text-warm-400 dark:text-warm-500 mt-0.5 hidden sm:block">Felino doméstico</p>
 									</div>
 								</button>
 
@@ -385,8 +385,8 @@
 									onclick={() => selectSpecies('other')}
 									class="relative rounded-3xl overflow-hidden border-2 cursor-pointer transition-all duration-300 text-left {
 										species === 'other'
-											? 'border-stone-300 shadow-xl shadow-stone-100/80 scale-[1.04] bg-stone-50/60'
-											: 'border-warm-200 shadow-sm hover:shadow-lg hover:scale-[1.03] hover:border-stone-200 bg-white'
+											? 'border-stone-300 dark:border-stone-600 shadow-xl shadow-stone-100/80 scale-[1.04] bg-stone-50/60 dark:bg-stone-900/20'
+											: 'border-warm-200 dark:border-warm-600 shadow-sm hover:shadow-lg hover:scale-[1.03] hover:border-stone-200 bg-white dark:bg-warm-800'
 									}"
 								>
 									{#if species === 'other'}
@@ -419,8 +419,8 @@
 										</svg>
 									</div>
 									<div class="p-3 text-center">
-										<p class="font-display font-bold text-warm-900 text-sm sm:text-base">Otro</p>
-										<p class="text-xs text-warm-400 mt-0.5 hidden sm:block">Ave, conejo…</p>
+										<p class="font-display font-bold text-warm-900 dark:text-warm-50 text-sm sm:text-base">Otro</p>
+										<p class="text-xs text-warm-400 dark:text-warm-500 mt-0.5 hidden sm:block">Ave, conejo…</p>
 									</div>
 								</button>
 
@@ -429,14 +429,14 @@
 
 					<!-- ── STEP 1: Physical details ── -->
 					{:else if currentStep === 1}
-						<div class="bg-white rounded-3xl border border-warm-200 shadow-sm p-6 flex flex-col gap-5">
-							<div class="flex items-center gap-3 pb-3 border-b border-warm-100">
+						<div class="bg-white dark:bg-warm-800 rounded-3xl border border-warm-200 dark:border-warm-700 shadow-sm p-6 flex flex-col gap-5">
+							<div class="flex items-center gap-3 pb-3 border-b border-warm-100 dark:border-warm-700">
 								<div class="w-9 h-9 rounded-xl flex items-center justify-center text-xl" style="background: linear-gradient(135deg,#FEF3C7,#FDE68A);">
 									{species === 'dog' ? '🐶' : species === 'cat' ? '🐱' : '🐾'}
 								</div>
 								<div>
-									<h2 class="font-display font-semibold text-warm-900 text-lg">¿Cómo es tu mascota?</h2>
-									<p class="text-xs text-warm-400">Características que ayudan a identificarla</p>
+									<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-lg">¿Cómo es tu mascota?</h2>
+									<p class="text-xs text-warm-400 dark:text-warm-500">Características que ayudan a identificarla</p>
 								</div>
 							</div>
 
@@ -484,14 +484,14 @@
 
 					<!-- ── STEP 2: Location & time ── -->
 					{:else if currentStep === 2}
-						<div class="bg-white rounded-3xl border border-warm-200 shadow-sm p-6 flex flex-col gap-5">
-							<div class="flex items-center gap-3 pb-3 border-b border-warm-100">
+						<div class="bg-white dark:bg-warm-800 rounded-3xl border border-warm-200 dark:border-warm-700 shadow-sm p-6 flex flex-col gap-5">
+							<div class="flex items-center gap-3 pb-3 border-b border-warm-100 dark:border-warm-700">
 								<div class="w-9 h-9 rounded-xl flex items-center justify-center text-xl" style="background: linear-gradient(135deg,#FEF3C7,#FDE68A);">
 									📍
 								</div>
 								<div>
-									<h2 class="font-display font-semibold text-warm-900 text-lg">¿Dónde y cuándo?</h2>
-									<p class="text-xs text-warm-400">Esto ayuda a la comunidad a localizarla</p>
+									<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-lg">¿Dónde y cuándo?</h2>
+									<p class="text-xs text-warm-400 dark:text-warm-500">Esto ayuda a la comunidad a localizarla</p>
 								</div>
 							</div>
 
@@ -500,7 +500,7 @@
 								{#if coloniaError}
 									<p class="text-sm text-red-500">No se pudieron cargar las colonias. Recarga la página.</p>
 								{:else if colonias.length === 0}
-									<div class="w-full border border-warm-200 rounded-xl px-4 py-3 bg-warm-50 text-sm text-warm-400">
+									<div class="w-full border border-warm-200 dark:border-warm-700 rounded-xl px-4 py-3 bg-warm-50 dark:bg-warm-900 text-sm text-warm-400 dark:text-warm-500">
 										Cargando colonias…
 									</div>
 								{:else}
@@ -522,7 +522,7 @@
 								<Popover.Root bind:open={calendarOpen}>
 									<Popover.Trigger>
 										{#snippet child({ props })}
-											<Button.Button
+											<Button.Root
 												{...props}
 												variant="outline"
 												class="{inputClass} flex items-center justify-between font-normal"
@@ -531,7 +531,7 @@
 												<svg class="w-4 h-4 shrink-0 text-warm-400" viewBox="0 0 20 20" fill="currentColor">
 													<path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
 												</svg>
-											</Button.Button>
+											</Button.Root>
 										{/snippet}
 									</Popover.Trigger>
 									<Popover.Content class="w-auto overflow-hidden p-0" align="start">
@@ -563,40 +563,40 @@
 					{:else if currentStep === 3}
 						<div class="flex flex-col gap-5">
 							<!-- Photos -->
-							<div class="bg-white rounded-3xl border border-warm-200 shadow-sm p-6 flex flex-col gap-4">
-								<div class="flex items-center gap-3 pb-3 border-b border-warm-100">
+							<div class="bg-white dark:bg-warm-800 rounded-3xl border border-warm-200 dark:border-warm-700 shadow-sm p-6 flex flex-col gap-4">
+								<div class="flex items-center gap-3 pb-3 border-b border-warm-100 dark:border-warm-700">
 									<div class="w-9 h-9 rounded-xl flex items-center justify-center text-xl" style="background: linear-gradient(135deg,#FEF3C7,#FDE68A);">
 										📷
 									</div>
 									<div>
-										<h2 class="font-display font-semibold text-warm-900 text-lg">
+										<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-lg">
 											Fotos <span class="text-warm-400 font-normal text-base">(opcional)</span>
 										</h2>
-										<p class="text-xs text-warm-400">Aumenta las chances de encontrarla</p>
+										<p class="text-xs text-warm-400 dark:text-warm-500">Aumenta las chances de encontrarla</p>
 									</div>
 								</div>
-								<label class="border-2 border-dashed border-warm-200 rounded-2xl p-8 flex flex-col items-center gap-2 cursor-pointer hover:border-brand-300 hover:bg-brand-50/50 transition-all text-center">
+								<label class="border-2 border-dashed border-warm-200 dark:border-warm-600 rounded-2xl p-8 flex flex-col items-center gap-2 cursor-pointer hover:border-brand-300 dark:hover:border-brand-600 hover:bg-brand-50/50 dark:hover:bg-brand-900/20 transition-all text-center">
 									<span class="text-4xl">📷</span>
-									<span class="text-sm font-semibold text-warm-700">Haz clic para subir fotos</span>
-									<span class="text-xs text-warm-400">JPG, PNG · Máx. 5 MB cada una</span>
+									<span class="text-sm font-semibold text-warm-700 dark:text-warm-200">Haz clic para subir fotos</span>
+									<span class="text-xs text-warm-400 dark:text-warm-500">JPG, PNG · Máx. 5 MB cada una</span>
 									<input type="file" accept="image/*" multiple bind:files={photoFiles} class="hidden" />
 								</label>
 								{#if photoFiles && photoFiles.length > 0}
-									<p class="text-sm text-warm-500 text-center">{photoFiles.length} foto(s) seleccionada(s)</p>
+									<p class="text-sm text-warm-500 dark:text-warm-400 text-center">{photoFiles.length} foto(s) seleccionada(s)</p>
 								{/if}
 							</div>
 
 							<!-- Contact -->
-							<div class="bg-white rounded-3xl border border-warm-200 shadow-sm p-6 flex flex-col gap-5">
-								<div class="flex items-center gap-3 pb-3 border-b border-warm-100">
+							<div class="bg-white dark:bg-warm-800 rounded-3xl border border-warm-200 dark:border-warm-700 shadow-sm p-6 flex flex-col gap-5">
+								<div class="flex items-center gap-3 pb-3 border-b border-warm-100 dark:border-warm-700">
 									<div class="w-9 h-9 rounded-xl flex items-center justify-center text-xl" style="background: linear-gradient(135deg,#FEF3C7,#FDE68A);">
 										💬
 									</div>
 									<div>
-										<h2 class="font-display font-semibold text-warm-900 text-lg">
+										<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-lg">
 											Contacto <span class="text-warm-400 font-normal text-base">(opcional)</span>
 										</h2>
-										<p class="text-xs text-warm-400">Para que la comunidad pueda avisarte</p>
+										<p class="text-xs text-warm-400 dark:text-warm-500">Para que la comunidad pueda avisarte</p>
 									</div>
 								</div>
 
@@ -614,14 +614,14 @@
 								<label class="flex items-start gap-3 cursor-pointer group">
 									<input type="checkbox" bind:checked={anonymous} class="mt-0.5 w-4 h-4 accent-brand-800" />
 									<div>
-										<span class="text-sm font-semibold text-warm-700 group-hover:text-warm-900 transition-colors">Publicar de forma anónima</span>
-										<p class="text-xs text-warm-400 mt-0.5">No se mostrará la información de contacto en el reporte público.</p>
+										<span class="text-sm font-semibold text-warm-700 dark:text-warm-200 group-hover:text-warm-900 dark:group-hover:text-warm-50 transition-colors">Publicar de forma anónima</span>
+										<p class="text-xs text-warm-400 dark:text-warm-500 mt-0.5">No se mostrará la información de contacto en el reporte público.</p>
 									</div>
 								</label>
 							</div>
 
 							{#if formError}
-								<div class="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-700">
+								<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl px-4 py-3 text-sm text-red-700 dark:text-red-300">
 									{formError}
 								</div>
 							{/if}
@@ -635,12 +635,12 @@
 		<!-- Navigation -->
 		<div class="mt-6">
 			{#if currentStep === 0}
-				<p class="text-center text-warm-400 text-xs mt-4">Toca una tarjeta para continuar</p>
+				<p class="text-center text-warm-400 dark:text-warm-500 text-xs mt-4">Toca una tarjeta para continuar</p>
 			{:else}
 				<div class="flex gap-3">
 					<button
 						onclick={goBack}
-						class="flex-shrink-0 px-5 py-3.5 rounded-2xl border-2 border-warm-200 text-warm-600 font-semibold text-sm hover:border-warm-300 hover:bg-warm-100 transition-all"
+						class="flex-shrink-0 px-5 py-3.5 rounded-2xl border-2 border-warm-200 dark:border-warm-700 text-warm-600 dark:text-warm-300 font-semibold text-sm hover:border-warm-300 dark:hover:border-warm-600 hover:bg-warm-100 dark:hover:bg-warm-800 transition-all"
 					>
 						← Atrás
 					</button>
@@ -652,7 +652,7 @@
 							class="flex-1 py-3.5 rounded-2xl font-bold text-base transition-all {
 								canContinue
 									? 'bg-brand-800 hover:bg-brand-900 text-white shadow-md hover:shadow-lg'
-									: 'bg-warm-100 text-warm-400 cursor-not-allowed'
+									: 'bg-warm-100 dark:bg-warm-800 text-warm-400 dark:text-warm-600 cursor-not-allowed'
 							}"
 						>
 							Continuar →
@@ -664,7 +664,7 @@
 							class="flex-1 py-3.5 rounded-2xl font-bold text-base transition-all flex items-center justify-center {
 								!submitting
 									? 'bg-brand-800 hover:bg-brand-900 text-white shadow-md hover:shadow-lg'
-									: 'bg-warm-200 text-warm-400 cursor-not-allowed'
+									: 'bg-warm-200 dark:bg-warm-800 text-warm-400 dark:text-warm-600 cursor-not-allowed'
 							}"
 						>
 							{#if submitting}

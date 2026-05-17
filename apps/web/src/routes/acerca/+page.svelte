@@ -1,14 +1,18 @@
+<script lang="ts">
+	import { Button, Card } from '@scmascotas/ui';
+</script>
+
 <div class="max-w-2xl mx-auto px-4 py-16">
-	<a href="/" class="text-sm text-warm-500 hover:text-warm-700 transition-colors">← Volver</a>
+	<a href="/" class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-200 transition-colors">← Volver</a>
 
-	<h1 class="font-display text-4xl font-bold text-warm-900 mt-6 mb-8">Acerca de SC Mascotas</h1>
+	<h1 class="font-display text-4xl font-bold text-warm-900 dark:text-warm-50 mt-6 mb-8">Acerca de SC Mascotas</h1>
 
-	<div class="flex flex-col gap-8 text-warm-700 leading-relaxed">
+	<div class="flex flex-col gap-8 text-warm-700 dark:text-warm-300 leading-relaxed">
 		<section class="flex flex-col gap-3">
-			<h2 class="font-display text-xl font-semibold text-warm-900">¿Qué es SC Mascotas?</h2>
+			<h2 class="font-display text-xl font-semibold text-warm-900 dark:text-warm-50">¿Qué es SC Mascotas?</h2>
 			<p>
 				SC Mascotas es un registro comunitario y de código abierto para mascotas perdidas y
-				encontradas en <strong class="text-warm-900">San Cristóbal de las Casas, Chiapas</strong>.
+				encontradas en <strong class="text-warm-900 dark:text-warm-50">San Cristóbal de las Casas, Chiapas</strong>.
 				Nació como complemento al grupo de Facebook local — más fácil de buscar, filtrar y consultar
 				que un muro de publicaciones.
 			</p>
@@ -19,36 +23,36 @@
 		</section>
 
 		<section class="flex flex-col gap-3">
-			<h2 class="font-display text-xl font-semibold text-warm-900">¿Cómo funciona?</h2>
+			<h2 class="font-display text-xl font-semibold text-warm-900 dark:text-warm-50">¿Cómo funciona?</h2>
 			<ol
-				class="flex flex-col gap-2 list-decimal list-inside marker:text-brand-600 marker:font-semibold"
+				class="flex flex-col gap-2 list-decimal list-inside marker:text-brand-600 dark:marker:text-brand-400 marker:font-semibold"
 			>
 				<li>
-					<strong class="text-warm-900">Reporta</strong> — Llena el formulario con los datos de tu mascota
+					<strong class="text-warm-900 dark:text-warm-50">Reporta</strong> — Llena el formulario con los datos de tu mascota
 					perdida. Se publica de inmediato, sin registro.
 				</li>
 				<li>
-					<strong class="text-warm-900">Comparte</strong> — Comparte el enlace directo en WhatsApp, Facebook
+					<strong class="text-warm-900 dark:text-warm-50">Comparte</strong> — Comparte el enlace directo en WhatsApp, Facebook
 					o donde quieras.
 				</li>
 				<li>
-					<strong class="text-warm-900">Actualiza</strong> — Si encuentras a tu mascota, usa tu código
+					<strong class="text-warm-900 dark:text-warm-50">Actualiza</strong> — Si encuentras a tu mascota, usa tu código
 					de edición para marcar el reporte como reunido.
 				</li>
 			</ol>
 		</section>
 
 		<section class="flex flex-col gap-3">
-			<h2 class="font-display text-xl font-semibold text-warm-900">Código abierto</h2>
+			<h2 class="font-display text-xl font-semibold text-warm-900 dark:text-warm-50">Código abierto</h2>
 			<p>
 				SC Mascotas es 100% código abierto bajo la licencia MIT. Si eres desarrollador y quieres
 				contribuir, reportar un bug o proponer mejoras, el código está en GitHub.
 			</p>
-			<a
+			<Button.Root
 				href="https://github.com/jesuscovam/scmascotas"
 				target="_blank"
 				rel="noopener noreferrer"
-				class="inline-flex items-center gap-2 bg-warm-900 hover:bg-warm-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors self-start"
+				class="gap-2 self-start h-auto px-5 py-2.5 rounded-xl"
 			>
 				<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
 					<path
@@ -56,15 +60,17 @@
 					/>
 				</svg>
 				Ver en GitHub
-			</a>
+			</Button.Root>
 		</section>
 
-		<section class="bg-brand-50 border border-brand-200 rounded-2xl p-6 flex flex-col gap-2">
-			<p class="font-semibold text-warm-900">¿Encontraste un error o tienes una sugerencia?</p>
-			<p class="text-sm">
-				Abre un issue en GitHub o contáctanos directamente. Este proyecto es para la comunidad y
-				mejora gracias a ella.
-			</p>
-		</section>
+		<Card.Root class="border-brand-200 dark:border-brand-700 bg-brand-50 dark:bg-brand-900/20">
+			<Card.Content class="pt-6 pb-6 flex flex-col gap-2">
+				<p class="font-semibold text-warm-900 dark:text-warm-50">¿Encontraste un error o tienes una sugerencia?</p>
+				<p class="text-sm text-warm-700 dark:text-warm-300">
+					Abre un issue en GitHub o contáctanos directamente. Este proyecto es para la comunidad y
+					mejora gracias a ella.
+				</p>
+			</Card.Content>
+		</Card.Root>
 	</div>
 </div>
