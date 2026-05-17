@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createMissingPetSchema = z.object({
-  name: z.string().min(1).max(100),
+  name: z.string().min(1).max(100).optional(),
   species: z.enum(['dog', 'cat', 'other']),
   breed: z.string().max(100).optional(),
   color: z.string().min(1).max(100),

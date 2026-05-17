@@ -20,6 +20,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@internationalized/date':
+        specifier: ^3.12.0
+        version: 3.12.1
       '@scmascotas/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -190,9 +193,6 @@ importers:
 
   packages/ui:
     dependencies:
-      '@lucide/svelte':
-        specifier: ^1.16.0
-        version: 1.16.0(svelte@5.54.1)
       bits-ui:
         specifier: ^2.16.3
         version: 2.18.1(@internationalized/date@3.12.1)(@sveltejs/kit@2.55.0(@sveltejs/vite-plugin-svelte@7.0.0(svelte@5.54.1)(vite@8.0.1(@types/node@24.12.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.22.0)))(svelte@5.54.1)(typescript@5.9.3)(vite@8.0.1(@types/node@24.12.0)(esbuild@0.27.7)(jiti@2.7.0)(tsx@4.22.0)))(svelte@5.54.1)
@@ -212,6 +212,9 @@ importers:
       '@internationalized/date':
         specifier: ^3.12.0
         version: 3.12.1
+      '@lucide/svelte':
+        specifier: ^1.16.0
+        version: 1.16.0(svelte@5.54.1)
       '@scmascotas/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -266,6 +269,9 @@ importers:
       svelte-check:
         specifier: ^4.4.5
         version: 4.4.5(picomatch@4.0.3)(svelte@5.54.1)(typescript@5.9.3)
+      tailwind-variants:
+        specifier: ^3.2.2
+        version: 3.2.2(tailwind-merge@3.6.0)(tailwindcss@4.3.0)
       tailwindcss:
         specifier: ^4.1.0
         version: 4.3.0
@@ -2724,6 +2730,16 @@ packages:
   tailwind-merge@3.6.0:
     resolution: {integrity: sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==}
 
+  tailwind-variants@3.2.2:
+    resolution: {integrity: sha512-Mi4kHeMTLvKlM98XPnK+7HoBPmf4gygdFmqQPaDivc3DpYS6aIY6KiG/PgThrGvii5YZJqRsPz0aPyhoFzmZgg==}
+    engines: {node: '>=16.x', pnpm: '>=7.x'}
+    peerDependencies:
+      tailwind-merge: '>=3.0.0'
+      tailwindcss: '*'
+    peerDependenciesMeta:
+      tailwind-merge:
+        optional: true
+
   tailwindcss@4.3.0:
     resolution: {integrity: sha512-y6nxMGB1nMW9R6k96e5gdIFzcfL/gTJRNaqGes1YvkLnPVXzWgbqFF2yLC0T8G774n24cx3Pe8XrKoniCOAH+Q==}
 
@@ -5049,6 +5065,12 @@ snapshots:
   tabbable@6.4.0: {}
 
   tailwind-merge@3.6.0: {}
+
+  tailwind-variants@3.2.2(tailwind-merge@3.6.0)(tailwindcss@4.3.0):
+    dependencies:
+      tailwindcss: 4.3.0
+    optionalDependencies:
+      tailwind-merge: 3.6.0
 
   tailwindcss@4.3.0: {}
 
