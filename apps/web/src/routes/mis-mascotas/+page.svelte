@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button, Spinner, Input, Item, Empty } from '@scmascotas/ui';
+	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	import { invalidateAll } from '$app/navigation';
 
 	let { data } = $props();
@@ -114,6 +115,8 @@
 	</div>
 
 	<div class="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-8">
+
+		<AlphaBanner />
 
 		<!-- Claim success banner -->
 		{#if claimSuccess}

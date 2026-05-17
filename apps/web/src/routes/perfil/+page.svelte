@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';
-	import { Button, Card, Input, Label, Separator, Spinner, Badge } from '@scmascotas/ui';
+	import { Button, Card, Input, Label, Spinner, Badge } from '@scmascotas/ui';
 
 	let { data } = $props();
 

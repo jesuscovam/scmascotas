@@ -5,6 +5,7 @@
 	import { fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { Select, Calendar, Popover, Button, Spinner } from '@scmascotas/ui';
+	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 	import type { CalendarDate as CalendarDateType } from '@internationalized/date';
 
@@ -209,6 +210,11 @@
 			<p class="text-warm-500 dark:text-warm-400 mt-2 text-sm">
 				Completa los pasos y publicaremos tu reporte en segundos.
 			</p>
+		</div>
+
+		<!-- Alpha disclaimer -->
+		<div class="mb-8">
+			<AlphaBanner />
 		</div>
 
 		<!-- Step progress indicator -->

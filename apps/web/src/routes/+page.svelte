@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Button, Badge } from '@scmascotas/ui';
+	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	let { data } = $props();
 	const isProduction = $derived(page.data.isProduction as boolean);
 
@@ -79,6 +80,9 @@
 			</a>
 		</div>
 	{:else}
+		<div class="mb-6">
+			<AlphaBanner />
+		</div>
 		<div class="flex items-baseline justify-between mb-6">
 			<h2 class="font-display text-2xl font-semibold text-warm-900 dark:text-warm-50">
 				Mascotas perdidas
