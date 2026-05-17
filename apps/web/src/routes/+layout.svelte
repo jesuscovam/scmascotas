@@ -158,21 +158,12 @@
 					</a>
 				{/if}
 
-				{#if !data.isProduction}
-					<Button.Root
-						href="/reportar"
-						class="rounded-full text-sm font-semibold px-4 py-2"
-					>
-						+ Reportar mascota
-					</Button.Root>
-				{:else}
-					<span
-						class="text-xs font-semibold text-warm-400 border border-dashed border-warm-300 dark:border-warm-600 px-3 py-1.5 rounded-full cursor-default"
-						title="Reportes disponibles pronto"
-					>
-						Próximamente
-					</span>
-				{/if}
+				<Button.Root
+					href="/reportar"
+					class="rounded-full text-sm font-semibold px-4 py-2"
+				>
+					+ Reportar mascota
+				</Button.Root>
 			</nav>
 
 			<ThemeToggle />
@@ -236,20 +227,12 @@
 						</a>
 					{/if}
 					<div class="pt-2 pb-1 flex flex-col gap-2">
-						{#if !data.isProduction}
-							<Button.Root
-								href="/reportar"
-								class="w-full rounded-full text-sm font-semibold px-4 py-2.5"
-							>
-								+ Reportar mascota
-							</Button.Root>
-						{:else}
-							<span
-								class="block w-full text-center text-xs font-semibold text-warm-400 border border-dashed border-warm-300 dark:border-warm-600 px-3 py-2.5 rounded-full cursor-default"
-							>
-								Próximamente
-							</span>
-						{/if}
+						<Button.Root
+							href="/reportar"
+							class="w-full rounded-full text-sm font-semibold px-4 py-2.5"
+						>
+							+ Reportar mascota
+						</Button.Root>
 						{#if user}
 							<button
 								onclick={handleSignOut}
