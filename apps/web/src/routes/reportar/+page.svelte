@@ -661,14 +661,16 @@
 						<button
 							onclick={handleSubmit}
 							disabled={submitting}
-							class="flex-1 py-3.5 rounded-2xl font-bold text-base transition-all {
+							class="flex-1 py-3.5 rounded-2xl font-bold text-base transition-all flex items-center justify-center {
 								!submitting
 									? 'bg-brand-800 hover:bg-brand-900 text-white shadow-md hover:shadow-lg'
 									: 'bg-warm-200 text-warm-400 cursor-not-allowed'
 							}"
 						>
 							{#if submitting}
-								<Spinner class="size-5 text-white" />
+								<span class="flex items-center justify-center">
+									<Spinner class="size-5 text-white" />
+								</span>
 							{:else}
 								Publicar reporte →
 							{/if}
