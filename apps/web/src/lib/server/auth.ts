@@ -5,7 +5,7 @@ import { apiKey } from '@better-auth/api-key';
 import { admin } from 'better-auth/plugins';
 import { db } from '@scmascotas/db';
 import { Resend } from 'resend';
-import { RESEND_API_KEY } from '$env/static/private';
+import { RESEND_API_KEY, BETTER_AUTH_URL, BETTER_AUTH_SECRET } from '$env/static/private';
 import { env } from '$env/dynamic/private';
 
 const googleProvider =
@@ -54,7 +54,6 @@ export const auth = betterAuth({
 	},
 	...googleProvider,
 	plugins: [passkey(), apiKey({ defaultPrefix: 'scp_' }), admin()],
-	// Fallback lets the app build/dev without the env var;
-	// production deployments must set BETTER_AUTH_SECRET.
-	secret: env.BETTER_AUTH_SECRET ?? 'dev-only-change-in-production'
+	baseURL: BETTER_AUTH_URL,
+	secret: BETTER_AUTH_SECRET
 });
