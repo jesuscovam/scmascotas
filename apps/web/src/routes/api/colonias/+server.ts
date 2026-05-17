@@ -1,3 +1,4 @@
+export const config = { runtime: 'edge' };
 import { json } from '@sveltejs/kit';
 import { ColoniasService } from '@scmascotas/services';
 

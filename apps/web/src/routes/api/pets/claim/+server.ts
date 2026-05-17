@@ -1,3 +1,4 @@
+export const config = { runtime: 'edge' };
 import { json, error } from '@sveltejs/kit';
 import { PetsService } from '@scmascotas/services';
 import type { RequestHandler } from '@sveltejs/kit';

@@ -1,3 +1,5 @@
+export const config = { runtime: 'edge' };
+
 import { PetsService } from '@scmascotas/services';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
