@@ -2,11 +2,12 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { env } from '$env/dynamic/private';
 
-type Action = 'create_pet' | 'upload_photo';
+type Action = 'create_pet' | 'upload_photo' | 'contact';
 
 const LIMITS: Record<Action, number> = {
 	create_pet: 5,
-	upload_photo: 15
+	upload_photo: 15,
+	contact: 3
 };
 
 let limiters: Record<Action, Ratelimit> | null = null;
@@ -24,6 +25,11 @@ function getLimiters() {
 				redis,
 				limiter: Ratelimit.slidingWindow(LIMITS.upload_photo, '24 h'),
 				prefix: 'rl:upload_photo'
+			}),
+			contact: new Ratelimit({
+				redis,
+				limiter: Ratelimit.slidingWindow(LIMITS.contact, '24 h'),
+				prefix: 'rl:contact'
 			})
 		};
 	}
