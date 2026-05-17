@@ -1,3 +1,5 @@
+export const prerender = true;
+
 import { marked } from 'marked';
 
 type Entry = {
