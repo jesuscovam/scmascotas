@@ -69,6 +69,114 @@
 	</div>
 </section>
 
+<!-- Cómo funciona -->
+<section class="bg-warm-900 border-y border-warm-800 py-16">
+	<div class="max-w-5xl mx-auto px-4">
+
+		<div class="text-center mb-12">
+			<p class="text-brand-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">Así funciona</p>
+			<h2 class="font-display text-3xl sm:text-4xl font-bold text-warm-50">
+				De reporte a <span class="text-brand-400">reencuentro</span>
+			</h2>
+			<p class="text-warm-400 mt-4 max-w-md mx-auto text-sm leading-relaxed">
+				Cuatro pasos para que la comunidad de San Cristóbal te ayude a encontrar a tu mascota.
+			</p>
+		</div>
+
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-3">
+
+			<!-- Step 1 -->
+			<div class="relative bg-warm-800 border border-warm-700 rounded-2xl p-6 border-l-4 border-l-brand-600 flex flex-col gap-4">
+				<div class="flex items-center justify-between">
+					<div class="w-8 h-8 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-brand-300 text-sm font-bold font-display">1</div>
+					<span class="text-2xl">📸</span>
+				</div>
+				<div>
+					<h3 class="font-display font-bold text-warm-50 text-base leading-snug mb-2">
+						Publica el reporte
+					</h3>
+					<p class="text-warm-400 text-xs leading-relaxed">
+						Sube una foto, describe a tu mascota y la última ubicación donde fue vista. Sin cuenta necesaria.
+					</p>
+				</div>
+				<!-- Desktop arrow -->
+				<div class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center">
+					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" class="text-warm-600">
+						<path d="M0 8 H18 M14 3 L20 8 L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
+					</svg>
+				</div>
+			</div>
+
+			<!-- Step 2 -->
+			<div class="relative bg-warm-800 border border-warm-700 rounded-2xl p-6 border-l-4 border-l-brand-600 flex flex-col gap-4">
+				<div class="flex items-center justify-between">
+					<div class="w-8 h-8 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-brand-300 text-sm font-bold font-display">2</div>
+					<span class="text-2xl">🤝</span>
+				</div>
+				<div>
+					<h3 class="font-display font-bold text-warm-50 text-base leading-snug mb-2">
+						La comunidad se entera
+					</h3>
+					<p class="text-warm-400 text-xs leading-relaxed">
+						El reporte es visible para vecinos de San Cristóbal que puedan ayudarte a localizarla.
+					</p>
+				</div>
+				<!-- Desktop arrow -->
+				<div class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center">
+					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" class="text-warm-600">
+						<path d="M0 8 H18 M14 3 L20 8 L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
+					</svg>
+				</div>
+			</div>
+
+			<!-- Step 3 — Coming soon -->
+			<div class="relative bg-warm-900/60 border-2 border-dashed border-warm-700 rounded-2xl p-6 flex flex-col gap-4 opacity-75">
+				<div class="flex items-center justify-between">
+					<div class="w-8 h-8 rounded-full bg-warm-800 border border-warm-700 flex items-center justify-center text-warm-500 text-sm font-bold font-display">3</div>
+					<span class="text-2xl grayscale">🗺️</span>
+				</div>
+				<div>
+					<div class="inline-flex items-center gap-1 bg-warm-800 text-warm-500 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2">
+						Próximamente
+					</div>
+					<h3 class="font-display font-bold text-warm-300 text-base leading-snug mb-2">
+						Reportes en el mapa
+					</h3>
+					<p class="text-warm-500 text-xs leading-relaxed">
+						Un mapa interactivo mostrará todos los reportes activos cerca de ti en tiempo real.
+					</p>
+				</div>
+				<!-- Desktop arrow -->
+				<div class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center">
+					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" class="text-warm-700">
+						<path d="M0 8 H18 M14 3 L20 8 L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
+					</svg>
+				</div>
+			</div>
+
+			<!-- Step 4 — Coming soon -->
+			<div class="bg-warm-900/60 border-2 border-dashed border-warm-700 rounded-2xl p-6 flex flex-col gap-4 opacity-75">
+				<div class="flex items-center justify-between">
+					<div class="w-8 h-8 rounded-full bg-warm-800 border border-warm-700 flex items-center justify-center text-warm-500 text-sm font-bold font-display">4</div>
+					<span class="text-2xl grayscale">🔍</span>
+				</div>
+				<div>
+					<div class="inline-flex items-center gap-1 bg-warm-800 text-warm-500 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2">
+						Próximamente
+					</div>
+					<h3 class="font-display font-bold text-warm-300 text-base leading-snug mb-2">
+						Comparación por imagen
+					</h3>
+					<p class="text-warm-500 text-xs leading-relaxed">
+						Sube una foto de una mascota encontrada y el sistema la comparará con los reportes activos.
+					</p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
+
 <!-- Listings -->
 <section class="max-w-5xl mx-auto px-4 py-12">
 	{#if data.pets.length === 0}
