@@ -8,5 +8,5 @@
     "types": ["svelte"]
   },
   "include": ["dist", "./src/**/*.svelte", "./src/**/*.ts"],
-  "exclude": ["node_modules", ".svelte-kit"]
+  "exclude": ["node_modules", ".svelte-kit", "dist/**/*.js", "dist/**/*.js.map"]
 }
