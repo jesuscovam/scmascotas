@@ -213,7 +213,7 @@
 
 		<!-- Step progress indicator -->
 		<div class="flex items-center mb-10 px-1">
-			{#each STEPS as step, i}
+			{#each STEPS as step, i (i)}
 				<div class="flex flex-col items-center gap-1.5 flex-shrink-0">
 					<div
 						class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-500 {
