@@ -21,7 +21,8 @@
 		"@scmascotas/schemas": "workspace:*",
 		"@scmascotas/services": "workspace:*",
 		"@scmascotas/ui": "workspace:*",
-		"marked": "^15.0.0"
+		"marked": "^15.0.0",
+		"mode-watcher": "^1.1.0"
 	},
 	"devDependencies": {
 		"@scmascotas/eslint-config": "workspace:*",

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { Button, Badge } from '@scmascotas/ui';
 	let { data } = $props();
 	const isProduction = $derived(page.data.isProduction as boolean);
 
@@ -37,28 +38,28 @@
 </script>
 
 <!-- Hero -->
-<section class="bg-white border-b border-warm-200">
+<section class="bg-white dark:bg-warm-900 border-b border-warm-200 dark:border-warm-700">
 	<div class="max-w-5xl mx-auto px-4 py-16 flex flex-col items-center text-center gap-6">
-		<div class="inline-flex items-center gap-2 bg-brand-50 text-brand-800 text-sm font-semibold px-3 py-1 rounded-full border border-brand-200">
+		<div class="inline-flex items-center gap-2 bg-brand-50 dark:bg-brand-900/30 text-brand-800 dark:text-brand-300 text-sm font-semibold px-3 py-1 rounded-full border border-brand-200 dark:border-brand-700">
 			<span>San Cristóbal de las Casas, Chiapas</span>
 		</div>
-		<h1 class="font-display text-4xl sm:text-5xl font-bold text-warm-900 leading-tight max-w-2xl">
+		<h1 class="font-display text-4xl sm:text-5xl font-bold text-warm-900 dark:text-warm-50 leading-tight max-w-2xl">
 			¿Perdiste a tu<br />
-			<span class="text-brand-800">mascota?</span>
+			<span class="text-brand-800 dark:text-brand-300">mascota?</span>
 		</h1>
-		<p class="text-warm-500 text-lg max-w-md">
+		<p class="text-warm-500 dark:text-warm-400 text-lg max-w-md">
 			Publica un reporte en segundos, sin necesidad de crear una cuenta. La comunidad de San Cristóbal puede ayudarte.
 		</p>
 		{#if !isProduction}
-			<a
+			<Button.Root
 				href="/reportar"
-				class="bg-brand-800 hover:bg-brand-900 text-white font-bold text-lg px-8 py-4 rounded-2xl transition-all hover:scale-105 shadow-md hover:shadow-lg"
+				class="text-lg px-8 py-4 rounded-2xl hover:scale-105 shadow-md hover:shadow-lg h-auto"
 			>
 				Reportar mascota perdida →
-			</a>
+			</Button.Root>
 		{:else}
 			<div class="flex flex-col items-center gap-2">
-				<span class="text-warm-400 font-semibold text-lg border-2 border-dashed border-warm-200 px-8 py-4 rounded-2xl cursor-default">
+				<span class="text-warm-400 dark:text-warm-500 font-semibold text-lg border-2 border-dashed border-warm-200 dark:border-warm-700 px-8 py-4 rounded-2xl cursor-default">
 					Reportes disponibles pronto
 				</span>
 				<p class="text-xs text-warm-400">Estamos preparando la app — mientras tanto, explora los reportes</p>
@@ -72,48 +73,48 @@
 	{#if data.pets.length === 0}
 		<div class="text-center py-20 flex flex-col items-center gap-4">
 			<span class="text-6xl">🐾</span>
-			<p class="text-warm-500 text-lg font-medium">No hay reportes activos por ahora.</p>
-			<a href="/reportar" class="text-brand-800 hover:underline font-semibold">
+			<p class="text-warm-500 dark:text-warm-400 text-lg font-medium">No hay reportes activos por ahora.</p>
+			<a href="/reportar" class="text-brand-800 dark:text-brand-300 hover:underline font-semibold">
 				¿Tienes una mascota perdida? Publícalo →
 			</a>
 		</div>
 	{:else}
 		<div class="flex items-baseline justify-between mb-6">
-			<h2 class="font-display text-2xl font-semibold text-warm-900">
+			<h2 class="font-display text-2xl font-semibold text-warm-900 dark:text-warm-50">
 				Mascotas perdidas
 			</h2>
-			<span class="text-warm-500 text-sm">{data.pets.length} reportes activos</span>
+			<span class="text-warm-500 dark:text-warm-400 text-sm">{data.pets.length} reportes activos</span>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 			{#each preview as pet (pet.id)}
 				<a
 					href="/mascota/{pet.slug}"
-					class="group bg-white rounded-2xl border border-warm-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col border-t-4 {typeColor[pet.type] ?? 'border-stone-300'}"
+					class="group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col border-t-4 {typeColor[pet.type] ?? 'border-stone-300'}"
 				>
-					<div class="bg-warm-100 h-44 flex items-center justify-center text-5xl">
+					<div class="bg-warm-100 dark:bg-warm-700 h-44 flex items-center justify-center text-5xl">
 						{pet.type === 'dog' ? '🐶' : pet.type === 'cat' ? '🐱' : '🐾'}
 					</div>
 
 					<div class="p-4 flex flex-col gap-3 flex-1">
 						<div class="flex items-start justify-between gap-2">
-							<h3 class="font-display font-semibold text-warm-900 text-lg leading-tight group-hover:text-brand-800 transition-colors">
+							<h3 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-lg leading-tight group-hover:text-brand-800 dark:group-hover:text-brand-300 transition-colors">
 								{pet.name ?? 'Sin nombre'}
 							</h3>
-							<span class="shrink-0 text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full">
+							<Badge.Root variant="amber">
 								{speciesLabel[pet.type] ?? pet.type}
-							</span>
+							</Badge.Root>
 						</div>
 
-						<div class="flex flex-wrap gap-2 text-xs text-warm-500">
+						<div class="flex flex-wrap gap-2 text-xs text-warm-500 dark:text-warm-400">
 							{#if pet.color}
-								<span class="bg-warm-100 px-2 py-0.5 rounded-full">{pet.color}</span>
+								<span class="bg-warm-100 dark:bg-warm-700 px-2 py-0.5 rounded-full">{pet.color}</span>
 							{/if}
 							{#if pet.size}
-								<span class="bg-warm-100 px-2 py-0.5 rounded-full">{sizeLabel[pet.size]}</span>
+								<span class="bg-warm-100 dark:bg-warm-700 px-2 py-0.5 rounded-full">{sizeLabel[pet.size]}</span>
 							{/if}
 						</div>
 
-						<div class="mt-auto pt-2 border-t border-warm-100 flex items-center justify-between text-xs text-warm-500">
+						<div class="mt-auto pt-2 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between text-xs text-warm-500 dark:text-warm-400">
 							<span class="flex items-center gap-1">
 								<svg class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
 									<path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
@@ -129,18 +130,18 @@
 			{#if hasMore}
 				<a
 					href="/mascotas"
-					class="group bg-warm-50 hover:bg-brand-50 rounded-2xl border-2 border-dashed border-warm-200 hover:border-brand-300 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col items-center justify-center gap-3 min-h-[280px]"
+					class="group bg-warm-50 dark:bg-warm-900 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-2xl border-2 border-dashed border-warm-200 dark:border-warm-600 hover:border-brand-300 dark:hover:border-brand-700 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col items-center justify-center gap-3 min-h-[280px]"
 				>
 					<span class="text-4xl">🐾</span>
 					<div class="text-center px-4">
-						<p class="font-display font-semibold text-warm-700 group-hover:text-brand-800 transition-colors">
+						<p class="font-display font-semibold text-warm-700 dark:text-warm-300 group-hover:text-brand-800 dark:group-hover:text-brand-300 transition-colors">
 							Ver todos los reportes
 						</p>
 						<p class="text-xs text-warm-400 mt-1">
 							{data.pets.length - PREVIEW_LIMIT} más sin mostrar
 						</p>
 					</div>
-					<span class="text-xs font-bold text-brand-700 group-hover:underline">
+					<span class="text-xs font-bold text-brand-700 dark:text-brand-300 group-hover:underline">
 						Ver galería completa →
 					</span>
 				</a>

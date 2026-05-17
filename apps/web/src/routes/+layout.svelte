@@ -3,7 +3,9 @@
 	import { dev } from '$app/environment';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 	import { onNavigate } from '$app/navigation';
-	import { NavigationMenu } from '@scmascotas/ui';
+	import { ModeWatcher } from 'mode-watcher';
+	import { NavigationMenu, Button } from '@scmascotas/ui';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 
 	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
@@ -23,14 +25,16 @@
 	});
 </script>
 
-<div class="min-h-screen flex flex-col bg-warm-50">
-	<header class="border-b border-warm-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+<ModeWatcher />
+
+<div class="min-h-screen flex flex-col">
+	<header class="border-b border-warm-200 dark:border-warm-700 bg-white/80 dark:bg-warm-900/80 backdrop-blur-sm sticky top-0 z-50">
 		<div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
 			<!-- Logo -->
 			<a href="/" class="flex items-center gap-2 group shrink-0">
 				<span class="text-2xl">🐾</span>
 				<span
-					class="font-display font-bold text-brand-900 text-xl tracking-tight group-hover:text-brand-700 transition-colors whitespace-nowrap"
+					class="font-display font-bold text-brand-900 dark:text-brand-700 text-xl tracking-tight group-hover:text-brand-700 dark:group-hover:text-brand-500 transition-colors whitespace-nowrap"
 				>
 					SC Mascotas
 				</span>
@@ -49,7 +53,7 @@
 						<NavigationMenu.Item>
 							<NavigationMenu.Link
 								href="/acerca"
-								class="text-sm text-warm-500 hover:text-warm-700 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100"
+								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
 							>
 								Acerca
 							</NavigationMenu.Link>
@@ -57,7 +61,7 @@
 						<NavigationMenu.Item>
 							<NavigationMenu.Link
 								href="/cambios"
-								class="text-sm text-warm-500 hover:text-warm-700 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100"
+								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
 							>
 								Cambios
 							</NavigationMenu.Link>
@@ -65,7 +69,7 @@
 						<NavigationMenu.Item>
 							<NavigationMenu.Link
 								href="/plan"
-								class="text-sm text-warm-500 hover:text-warm-700 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100"
+								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
 							>
 								Plan
 							</NavigationMenu.Link>
@@ -74,21 +78,23 @@
 				</NavigationMenu.Root>
 
 				{#if !data.isProduction}
-					<a
+					<Button.Root
 						href="/reportar"
-						class="bg-brand-800 hover:bg-brand-900 text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors"
+						class="rounded-full text-sm font-semibold px-4 py-2"
 					>
 						+ Reportar mascota
-					</a>
+					</Button.Root>
 				{:else}
 					<span
-						class="text-xs font-semibold text-warm-400 border border-dashed border-warm-300 px-3 py-1.5 rounded-full cursor-default"
+						class="text-xs font-semibold text-warm-400 border border-dashed border-warm-300 dark:border-warm-600 px-3 py-1.5 rounded-full cursor-default"
 						title="Reportes disponibles pronto"
 					>
 						Próximamente
 					</span>
 				{/if}
 			</nav>
+
+			<ThemeToggle />
 
 			<!-- Mobile hamburger -->
 			<button
@@ -114,37 +120,37 @@
 
 		<!-- Mobile menu panel -->
 		{#if mobileMenuOpen}
-			<div class="md:hidden border-t border-warm-200 bg-white/95 backdrop-blur-sm mobile-menu">
+			<div class="md:hidden border-t border-warm-200 dark:border-warm-700 bg-white/95 dark:bg-warm-900/95 backdrop-blur-sm mobile-menu">
 				<nav class="max-w-5xl mx-auto px-4 py-3 flex flex-col gap-1">
 					<a
 						href="/acerca"
-						class="text-sm font-medium text-warm-700 hover:text-warm-900 hover:bg-warm-100 rounded-lg px-3 py-2.5 transition-colors"
+						class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
 					>
 						Acerca
 					</a>
 					<a
 						href="/cambios"
-						class="text-sm font-medium text-warm-700 hover:text-warm-900 hover:bg-warm-100 rounded-lg px-3 py-2.5 transition-colors"
+						class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
 					>
 						Cambios
 					</a>
 					<a
 						href="/plan"
-						class="text-sm font-medium text-warm-700 hover:text-warm-900 hover:bg-warm-100 rounded-lg px-3 py-2.5 transition-colors"
+						class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
 					>
 						Plan
 					</a>
 					<div class="pt-2 pb-1">
 						{#if !data.isProduction}
-							<a
+							<Button.Root
 								href="/reportar"
-								class="block w-full text-center bg-brand-800 hover:bg-brand-900 text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors"
+								class="w-full rounded-full text-sm font-semibold px-4 py-2.5"
 							>
 								+ Reportar mascota
-							</a>
+							</Button.Root>
 						{:else}
 							<span
-								class="block w-full text-center text-xs font-semibold text-warm-400 border border-dashed border-warm-300 px-3 py-2.5 rounded-full cursor-default"
+								class="block w-full text-center text-xs font-semibold text-warm-400 border border-dashed border-warm-300 dark:border-warm-600 px-3 py-2.5 rounded-full cursor-default"
 							>
 								Próximamente
 							</span>
@@ -159,19 +165,19 @@
 		{@render children()}
 	</main>
 
-	<footer class="border-t border-warm-200 bg-white mt-16">
+	<footer class="border-t border-warm-200 dark:border-warm-700 bg-white dark:bg-warm-900 mt-16">
 		<div
-			class="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-warm-500"
+			class="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-warm-500 dark:text-warm-400"
 		>
 			<p>
-				🐾 <span class="font-semibold text-warm-700">SC Mascotas</span> — Registro comunitario de mascotas
+				🐾 <span class="font-semibold text-warm-700 dark:text-warm-200">SC Mascotas</span> — Registro comunitario de mascotas
 				perdidas
 			</p>
 			<p>
 				San Cristóbal de las Casas, Chiapas ·
 				<a
 					href="https://github.com/jesuscovam/scmascotas"
-					class="underline hover:text-warm-700 transition-colors"
+					class="underline hover:text-warm-700 dark:hover:text-warm-200 transition-colors"
 					target="_blank"
 					rel="noopener noreferrer">Código abierto</a
 				>
