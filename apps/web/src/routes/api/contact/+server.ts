@@ -1,7 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import { db, contactMessages } from '@scmascotas/db';
 import { Resend } from 'resend';
-import { RESEND_API_KEY } from '$env/static/private';
+import { RESEND_API_KEY, CONTACT_EMAIL } from '$env/static/private';
 import { checkLimit } from '$lib/server/rate-limit';
 import type { RequestHandler } from './$types';
 
@@ -32,7 +32,7 @@ export const POST: RequestHandler = async ({ request }) => {
   const resend = new Resend(RESEND_API_KEY);
   await resend.emails.send({
     from: 'SC Mascotas <no-reply@emails.jesuscova.com>',
-    to: 'jesuscovam@gmail.com',
+    to: CONTACT_EMAIL,
     subject: `Nuevo mensaje de ${name}`,
     html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;color:#1c1917">
