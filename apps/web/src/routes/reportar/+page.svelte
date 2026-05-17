@@ -4,7 +4,9 @@
 	import { untrack } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	import { Select } from '@scmascotas/ui';
+	import { Select, Calendar, Popover, Button } from '@scmascotas/ui';
+	import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
+	import type { CalendarDate as CalendarDateType } from '@internationalized/date';
 
 	type Colonia = { id: string; name: string };
 
@@ -41,6 +43,21 @@
 	let photoFiles = $state<FileList | null>(null);
 	let submitting = $state(false);
 	let formError = $state('');
+
+	let calendarValue = $state<CalendarDateType | undefined>(undefined);
+	let calendarOpen = $state(false);
+
+	// Sync calendar selection → last_seen_at
+	$effect(() => {
+		const val = calendarValue;
+		if (val) last_seen_at = val.toString();
+	});
+
+	function formatDisplayDate(v: CalendarDateType): string {
+		return v.toDate(getLocalTimeZone()).toLocaleDateString('es-MX', {
+			day: 'numeric', month: 'long', year: 'numeric'
+		});
+	}
 
 	let currentStep = $state(0);
 	let animDir = $state(1);
@@ -85,6 +102,10 @@
 		restore: (data: FormSnapshot) => {
 			({ name, species, breed, color, sex, size, colonia_id,
 			   last_seen_at, description, contact_whatsapp, contact_name, anonymous } = data);
+			if (data.last_seen_at) {
+				const [y, m, d] = data.last_seen_at.split('-').map(Number);
+				calendarValue = new CalendarDate(y, m, d);
+			}
 		}
 	};
 
@@ -475,7 +496,7 @@
 							</div>
 
 							<div>
-								<label for="colonia" class={labelClass}>Colonia donde se perdió <span class="text-red-400">*</span></label>
+								<p class={labelClass}>Colonia donde se perdió <span class="text-red-400">*</span></p>
 								{#if coloniaError}
 									<p class="text-sm text-red-500">No se pudieron cargar las colonias. Recarga la página.</p>
 								{:else if colonias.length === 0}
@@ -483,24 +504,47 @@
 										Cargando colonias…
 									</div>
 								{:else}
-									<select id="colonia" bind:value={colonia_id} required class={inputClass}>
-										{#each colonias as c (c.id)}
-											<option value={c.id}>{c.name}</option>
-										{/each}
-									</select>
+									<Select.Root type="single" value={colonia_id} onValueChange={(v) => (colonia_id = v)}>
+										<Select.Trigger class="w-full">
+											{colonias.find(c => c.id === colonia_id)?.name ?? 'Selecciona una colonia'}
+										</Select.Trigger>
+										<Select.Content>
+											{#each colonias as c (c.id)}
+												<Select.Item value={c.id} label={c.name}>{c.name}</Select.Item>
+											{/each}
+										</Select.Content>
+									</Select.Root>
 								{/if}
 							</div>
 
 							<div>
-								<label for="last_seen_at" class={labelClass}>Fecha de último avistamiento <span class="text-red-400">*</span></label>
-								<input
-									id="last_seen_at"
-									type="date"
-									bind:value={last_seen_at}
-									required
-									max={new Date().toISOString().split('T')[0]}
-									class={inputClass}
-								/>
+								<p class={labelClass}>Fecha de último avistamiento <span class="text-red-400">*</span></p>
+								<Popover.Root bind:open={calendarOpen}>
+									<Popover.Trigger>
+										{#snippet child({ props })}
+											<Button.Button
+												{...props}
+												variant="outline"
+												class="{inputClass} flex items-center justify-between font-normal"
+											>
+												{calendarValue ? formatDisplayDate(calendarValue) : 'Selecciona una fecha'}
+												<svg class="w-4 h-4 shrink-0 text-warm-400" viewBox="0 0 20 20" fill="currentColor">
+													<path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
+												</svg>
+											</Button.Button>
+										{/snippet}
+									</Popover.Trigger>
+									<Popover.Content class="w-auto overflow-hidden p-0" align="start">
+										<Calendar.Calendar
+											type="single"
+											bind:value={calendarValue}
+											locale="es-MX"
+											captionLayout="dropdown"
+											maxValue={today(getLocalTimeZone())}
+											onValueChange={() => (calendarOpen = false)}
+										/>
+									</Popover.Content>
+								</Popover.Root>
 							</div>
 
 							<div>
