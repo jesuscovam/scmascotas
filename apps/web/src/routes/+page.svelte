@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { Button, Badge } from '@scmascotas/ui';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	let { data } = $props();
-	const isProduction = $derived(page.data.isProduction as boolean);
 
 	const speciesLabel: Record<string, string> = {
 		dog: '🐶 Perro',
@@ -84,21 +82,12 @@
 		<p class="text-warm-500 dark:text-warm-400 text-lg max-w-md">
 			Publica un reporte en segundos, sin necesidad de crear una cuenta. La comunidad de San Cristóbal puede ayudarte.
 		</p>
-		{#if !isProduction}
-			<Button.Root
-				href="/reportar"
-				class="text-lg px-8 py-4 rounded-2xl hover:scale-105 shadow-md hover:shadow-lg h-auto"
-			>
-				Reportar mascota perdida →
-			</Button.Root>
-		{:else}
-			<div class="flex flex-col items-center gap-2">
-				<span class="text-warm-400 dark:text-warm-500 font-semibold text-lg border-2 border-dashed border-warm-200 dark:border-warm-700 px-8 py-4 rounded-2xl cursor-default">
-					Reportes disponibles pronto
-				</span>
-				<p class="text-xs text-warm-400">Estamos preparando la app — mientras tanto, explora los reportes</p>
-			</div>
-		{/if}
+		<Button.Root
+			href="/reportar"
+			class="text-lg px-8 py-4 rounded-2xl hover:scale-105 shadow-md hover:shadow-lg h-auto"
+		>
+			Reportar mascota perdida →
+		</Button.Root>
 	</div>
 </section>
 
