@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { Button, Badge } from '@scmascotas/ui';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	let { data } = $props();
-	const isProduction = $derived(page.data.isProduction as boolean);
 
 	const speciesLabel: Record<string, string> = {
 		dog: '🐶 Perro',
