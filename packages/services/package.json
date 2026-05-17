@@ -11,7 +11,7 @@
     "@scmascotas/db": "workspace:*",
     "@scmascotas/schemas": "workspace:*",
     "@vercel/blob": "^2.3.0",
-    "drizzle-orm": "^0.44.0"
+    "drizzle-orm": "^0.45.2"
   },
   "devDependencies": {
     "@scmascotas/typescript-config": "workspace:*",

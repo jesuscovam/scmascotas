@@ -2,14 +2,22 @@
 	import '../app.css';
 	import { dev } from '$app/environment';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
-	import { onNavigate } from '$app/navigation';
+	import { onNavigate, goto } from '$app/navigation';
 	import { ModeWatcher } from 'mode-watcher';
 	import { NavigationMenu, Button } from '@scmascotas/ui';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import { signOut } from '$lib/auth-client';
+	import InfoIcon from '@lucide/svelte/icons/info';
+	import MilestoneIcon from '@lucide/svelte/icons/milestone';
+	import ScrollTextIcon from '@lucide/svelte/icons/scroll-text';
+	import UserIcon from '@lucide/svelte/icons/user';
+	import LogOutIcon from '@lucide/svelte/icons/log-out';
 
 	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
 	let { children, data } = $props();
+
+	const user = $derived(data.user);
 
 	let mobileMenuOpen = $state(false);
 
@@ -23,6 +31,11 @@
 			});
 		});
 	});
+
+	async function handleSignOut() {
+		await signOut();
+		goto('/', { invalidateAll: true });
+	}
 </script>
 
 <ModeWatcher />
@@ -42,40 +55,108 @@
 					class="beta-stamp self-start mt-[5px] inline-block px-[5px] py-[2px] border border-amber-600/55 text-amber-700/75 text-[7.5px] font-mono font-bold uppercase tracking-[0.2em] select-none pointer-events-none"
 					style="transform: rotate(-9deg); box-shadow: inset 0 0 0 1px rgba(180,100,20,0.12);"
 				>
-					beta
+					alfa
 				</span>
 			</a>
 
 			<!-- Desktop nav -->
-			<nav class="hidden md:flex items-center gap-4">
+			<nav class="hidden md:flex items-center gap-2">
 				<NavigationMenu.Root viewport={false}>
 					<NavigationMenu.List class="flex items-center gap-1">
+
+						<!-- Mis mascotas: direct link, user only -->
+						{#if user}
+							<NavigationMenu.Item>
+								<NavigationMenu.Link
+									href="/mis-mascotas"
+									class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
+								>
+									Mis mascotas
+								</NavigationMenu.Link>
+							</NavigationMenu.Item>
+						{/if}
+
+						<!-- Plataforma group: Acerca, Plan, Cambios -->
 						<NavigationMenu.Item>
-							<NavigationMenu.Link
-								href="/acerca"
-								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
+							<NavigationMenu.Trigger
+								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 hover:bg-warm-100 dark:hover:bg-warm-800 data-open:bg-warm-100 dark:data-open:bg-warm-800 data-open:text-warm-700 dark:data-open:text-warm-100 transition-colors font-medium"
 							>
-								Acerca
-							</NavigationMenu.Link>
+								Plataforma
+							</NavigationMenu.Trigger>
+							<NavigationMenu.Content class="min-w-[260px] p-1.5 bg-white dark:bg-warm-900 border border-warm-200 dark:border-warm-700">
+								<NavigationMenu.Link href="/acerca">
+									<div class="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
+										<InfoIcon class="size-4 mt-0.5 shrink-0 text-warm-500 dark:text-warm-400" />
+										<div>
+											<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Acerca</p>
+											<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Conoce el proyecto y cómo funciona</p>
+										</div>
+									</div>
+								</NavigationMenu.Link>
+								<NavigationMenu.Link href="/plan">
+									<div class="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
+										<MilestoneIcon class="size-4 mt-0.5 shrink-0 text-warm-500 dark:text-warm-400" />
+										<div>
+											<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Camino hacia v1</p>
+											<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Ver las opciones disponibles</p>
+										</div>
+									</div>
+								</NavigationMenu.Link>
+								<NavigationMenu.Link href="/cambios">
+									<div class="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
+										<ScrollTextIcon class="size-4 mt-0.5 shrink-0 text-warm-500 dark:text-warm-400" />
+										<div>
+											<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Cambios</p>
+											<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Novedades y actualizaciones recientes</p>
+										</div>
+									</div>
+								</NavigationMenu.Link>
+							</NavigationMenu.Content>
 						</NavigationMenu.Item>
-						<NavigationMenu.Item>
-							<NavigationMenu.Link
-								href="/cambios"
-								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
-							>
-								Cambios
-							</NavigationMenu.Link>
-						</NavigationMenu.Item>
-						<NavigationMenu.Item>
-							<NavigationMenu.Link
-								href="/plan"
-								class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
-							>
-								Plan
-							</NavigationMenu.Link>
-						</NavigationMenu.Item>
+
 					</NavigationMenu.List>
 				</NavigationMenu.Root>
+
+				<!-- Account: Mi cuenta dropdown (logged in) or Iniciar sesión -->
+				{#if user}
+					<NavigationMenu.Root viewport={false}>
+						<NavigationMenu.List>
+							<NavigationMenu.Item>
+								<NavigationMenu.Trigger
+									class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 hover:bg-warm-100 dark:hover:bg-warm-800 data-open:bg-warm-100 dark:data-open:bg-warm-800 data-open:text-warm-700 dark:data-open:text-warm-100 transition-colors font-medium"
+								>
+									Mi cuenta
+								</NavigationMenu.Trigger>
+								<NavigationMenu.Content class="min-w-[200px] right-0 left-auto p-1.5 bg-white dark:bg-warm-900 border border-warm-200 dark:border-warm-700">
+									<NavigationMenu.Link href="/perfil">
+										<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
+											<UserIcon class="size-4 shrink-0 text-warm-500 dark:text-warm-400" />
+											<div>
+												<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Mi perfil</p>
+												<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Editar tu información</p>
+											</div>
+										</div>
+									</NavigationMenu.Link>
+									<div class="my-1 h-px bg-warm-100 dark:bg-warm-800 mx-2"></div>
+									<button
+										onclick={handleSignOut}
+										class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-left"
+									>
+										<LogOutIcon class="size-4 shrink-0 text-warm-500 dark:text-warm-400" />
+										<p class="text-sm font-medium text-warm-600 dark:text-warm-300 hover:text-red-600 dark:hover:text-red-400 transition-colors leading-none">Salir</p>
+									</button>
+								</NavigationMenu.Content>
+							</NavigationMenu.Item>
+						</NavigationMenu.List>
+					</NavigationMenu.Root>
+				{:else}
+					<a
+						href="/login"
+						class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
+					>
+						Iniciar sesión
+					</a>
+				{/if}
 
 				{#if !data.isProduction}
 					<Button.Root
@@ -140,7 +221,21 @@
 					>
 						Plan
 					</a>
-					<div class="pt-2 pb-1">
+					{#if user}
+						<a
+							href="/mis-mascotas"
+							class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+						>
+							Mis mascotas
+						</a>
+						<a
+							href="/perfil"
+							class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+						>
+							Mi perfil
+						</a>
+					{/if}
+					<div class="pt-2 pb-1 flex flex-col gap-2">
 						{#if !data.isProduction}
 							<Button.Root
 								href="/reportar"
@@ -155,6 +250,21 @@
 								Próximamente
 							</span>
 						{/if}
+						{#if user}
+							<button
+								onclick={handleSignOut}
+								class="w-full text-center text-sm font-medium text-warm-500 dark:text-warm-400 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+							>
+								Salir
+							</button>
+						{:else}
+							<a
+								href="/login"
+								class="block text-center text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+							>
+								Iniciar sesión
+							</a>
+						{/if}
 					</div>
 				</nav>
 			</div>
@@ -165,23 +275,40 @@
 		{@render children()}
 	</main>
 
-	<footer class="border-t border-warm-200 dark:border-warm-700 bg-white dark:bg-warm-900 mt-16">
-		<div
-			class="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-warm-500 dark:text-warm-400"
-		>
-			<p>
-				🐾 <span class="font-semibold text-warm-700 dark:text-warm-200">SC Mascotas</span> — Registro comunitario de mascotas
-				perdidas
-			</p>
-			<p>
-				San Cristóbal de las Casas, Chiapas ·
+	<footer class="border-t border-warm-200 dark:border-warm-700 bg-warm-50 dark:bg-warm-900/80 mt-16">
+		<div class="h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent dark:via-amber-600/20"></div>
+		<div class="max-w-5xl mx-auto px-4 py-7">
+			<div class="flex flex-col items-center gap-5 sm:flex-row sm:justify-between sm:gap-3">
+
+				<!-- Brand -->
+				<div class="flex flex-col items-center gap-0.5 sm:items-start">
+					<div class="flex items-center gap-1.5">
+						<span class="text-base leading-none">🐾</span>
+						<span class="font-display font-bold text-warm-800 dark:text-warm-100 text-sm tracking-tight">SC Mascotas</span>
+					</div>
+					<p class="text-xs text-warm-400 dark:text-warm-500">Registro comunitario de mascotas perdidas</p>
+				</div>
+
+				<!-- Made with love -->
+				<p class="text-xs text-warm-400 dark:text-warm-500 text-center leading-relaxed">
+					Hecho con <span class="text-red-400">❤️</span> desde<br class="sm:hidden" />
+					<span class="text-warm-500 dark:text-warm-400 font-medium"> San Cristóbal de las Casas, Chiapas</span>
+				</p>
+
+				<!-- GitHub -->
 				<a
 					href="https://github.com/jesuscovam/scmascotas"
-					class="underline hover:text-warm-700 dark:hover:text-warm-200 transition-colors"
 					target="_blank"
-					rel="noopener noreferrer">Código abierto</a
+					rel="noopener noreferrer"
+					class="inline-flex items-center gap-1.5 text-xs font-medium text-warm-500 dark:text-warm-400 hover:text-warm-800 dark:hover:text-warm-100 border border-warm-200 dark:border-warm-700 hover:border-warm-400 dark:hover:border-warm-500 bg-white dark:bg-warm-800 rounded-full px-3 py-1.5 transition-all shadow-sm hover:shadow"
 				>
-			</p>
+					<svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+						<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+					</svg>
+					Código abierto
+				</a>
+
+			</div>
 		</div>
 	</footer>
 </div>

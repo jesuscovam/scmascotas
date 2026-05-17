@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
-    "drizzle-orm": "^0.44.0"
+    "better-auth": "^1.6.11",
+    "drizzle-orm": "^0.45.2"
   },
   "devDependencies": {
     "@scmascotas/typescript-config": "workspace:*",

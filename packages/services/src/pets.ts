@@ -52,7 +52,7 @@ export const PetsService = {
     return { ...pet.pets, colonia: pet.colonias?.name ?? null, photos };
   },
 
-  async create(data: CreateMissingPet, ipHash?: string) {
+  async create(data: CreateMissingPet, { ipHash, userId }: { ipHash?: string; userId?: string } = {}) {
     const slug = generateSlug(data.name);
     const editToken = randomBytes(16).toString('hex');
 
@@ -73,10 +73,43 @@ export const PetsService = {
         contactWhatsapp: data.contact_whatsapp,
         contactName: data.contact_name,
         anonymous: String(data.anonymous),
-        reporterIpHash: ipHash
+        reporterIpHash: ipHash,
+        reporterUserId: userId
       })
       .returning();
 
     return { ...pet, editToken };
+  },
+
+  async listByUser(userId: string) {
+    return db
+      .select({
+        id: pets.id,
+        slug: pets.slug,
+        name: pets.name,
+        type: pets.type,
+        color: pets.color,
+        size: pets.size,
+        status: pets.status,
+        lastSeenAt: pets.lastSeenAt,
+        colonia: colonias.name,
+        createdAt: pets.createdAt
+      })
+      .from(pets)
+      .leftJoin(colonias, eq(pets.coloniaId, colonias.id))
+      .where(eq(pets.reporterUserId, userId))
+      .orderBy(desc(pets.createdAt));
+  },
+
+  async findByEditToken(editToken: string) {
+    const [pet] = await db.select().from(pets).where(eq(pets.editToken, editToken)).limit(1);
+    return pet ?? null;
+  },
+
+  async claim(petId: string, { editToken, userId }: { editToken: string; userId: string }) {
+    const [pet] = await db.select().from(pets).where(eq(pets.id, petId)).limit(1);
+    if (!pet || pet.editToken !== editToken) return { ok: false as const, error: 'invalid_token' };
+    await db.update(pets).set({ reporterUserId: userId }).where(eq(pets.id, petId));
+    return { ok: true as const };
   }
 };

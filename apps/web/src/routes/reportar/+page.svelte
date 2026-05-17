@@ -5,6 +5,7 @@
 	import { fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { Select, Calendar, Popover, Button, Spinner } from '@scmascotas/ui';
+	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 	import type { CalendarDate as CalendarDateType } from '@internationalized/date';
 
@@ -43,6 +44,7 @@
 	let photoFiles = $state<FileList | null>(null);
 	let submitting = $state(false);
 	let formError = $state('');
+	let rateLimited = $state(false);
 
 	let calendarValue = $state<CalendarDateType | undefined>(undefined);
 	let calendarOpen = $state(false);
@@ -153,6 +155,10 @@
 			});
 
 			if (!res.ok) {
+				if (res.status === 429) {
+					rateLimited = true;
+					return;
+				}
 				const err = await res.text();
 				formError = err || 'Hubo un error al publicar el reporte.';
 				return;
@@ -201,6 +207,79 @@
 			Volver al inicio
 		</a>
 
+		{#if rateLimited}
+			<!-- Rate limit error state -->
+			<div class="mt-12 flex flex-col items-center text-center gap-6">
+				<!-- Illustration -->
+				<div class="relative">
+					<div class="w-24 h-24 rounded-full flex items-center justify-center"
+						style="background: radial-gradient(circle at 35% 35%, #fde68a, #d97706);">
+						<svg viewBox="0 0 96 96" class="w-14 h-14" xmlns="http://www.w3.org/2000/svg">
+							<ellipse cx="48" cy="68" rx="22" ry="18" fill="#92400e"/>
+							<ellipse cx="48" cy="68" rx="18" ry="14" fill="#b45309"/>
+							<ellipse cx="17" cy="47" rx="11" ry="9.5" fill="#92400e"/>
+							<ellipse cx="17" cy="47" rx="8.5" ry="7.5" fill="#b45309"/>
+							<ellipse cx="36" cy="36" rx="11" ry="9.5" fill="#92400e"/>
+							<ellipse cx="36" cy="36" rx="8.5" ry="7.5" fill="#b45309"/>
+							<ellipse cx="60" cy="36" rx="11" ry="9.5" fill="#92400e"/>
+							<ellipse cx="60" cy="36" rx="8.5" ry="7.5" fill="#b45309"/>
+							<ellipse cx="79" cy="47" rx="11" ry="9.5" fill="#92400e"/>
+							<ellipse cx="79" cy="47" rx="8.5" ry="7.5" fill="#b45309"/>
+						</svg>
+					</div>
+					<!-- Clock badge -->
+					<div class="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-white dark:bg-warm-800 border-2 border-brand-200 dark:border-brand-700 flex items-center justify-center shadow-md">
+						<svg class="w-5 h-5 text-brand-700 dark:text-brand-400" viewBox="0 0 20 20" fill="currentColor">
+							<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
+						</svg>
+					</div>
+				</div>
+
+				<!-- Text -->
+				<div class="flex flex-col gap-2 max-w-sm">
+					<h2 class="font-display text-2xl font-bold text-warm-900 dark:text-warm-50 leading-snug">
+						Límite de reportes alcanzado
+					</h2>
+					<p class="text-warm-500 dark:text-warm-400 text-sm leading-relaxed">
+						Para mantener la calidad de los reportes, cada persona puede publicar hasta
+						<strong class="text-warm-700 dark:text-warm-200 font-semibold">5 reportes por día</strong>.
+						Tu límite se renueva mañana.
+					</p>
+				</div>
+
+				<!-- Info card -->
+				<div class="w-full max-w-sm bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800 rounded-2xl px-5 py-4 text-left">
+					<p class="text-xs font-bold text-brand-800 dark:text-brand-300 uppercase tracking-wider mb-2">Mientras tanto</p>
+					<ul class="flex flex-col gap-2 text-sm text-warm-600 dark:text-warm-300">
+						<li class="flex items-start gap-2">
+							<span class="mt-0.5 text-brand-600 dark:text-brand-400 flex-shrink-0">✓</span>
+							Tus reportes ya son visibles para la comunidad de San Cristóbal.
+						</li>
+						<li class="flex items-start gap-2">
+							<span class="mt-0.5 text-brand-600 dark:text-brand-400 flex-shrink-0">✓</span>
+							Comparte el enlace de tu reporte en grupos de WhatsApp o Facebook.
+						</li>
+					</ul>
+				</div>
+
+				<!-- CTAs -->
+				<div class="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+					<a
+						href="/"
+						class="flex-1 py-3 rounded-2xl font-bold text-sm text-center bg-brand-800 hover:bg-brand-900 text-white shadow-md hover:shadow-lg transition-all"
+					>
+						Ver reportes activos →
+					</a>
+					<a
+						href="/"
+						class="flex-1 py-3 rounded-2xl font-semibold text-sm text-center border-2 border-warm-200 dark:border-warm-700 text-warm-600 dark:text-warm-300 hover:border-warm-300 dark:hover:border-warm-600 transition-all"
+					>
+						Volver al inicio
+					</a>
+				</div>
+			</div>
+		{:else}
+
 		<!-- Page title -->
 		<div class="mt-7 mb-8">
 			<h1 class="font-display text-3xl sm:text-4xl font-bold text-warm-900 dark:text-warm-50 leading-tight">
@@ -209,6 +288,11 @@
 			<p class="text-warm-500 dark:text-warm-400 mt-2 text-sm">
 				Completa los pasos y publicaremos tu reporte en segundos.
 			</p>
+		</div>
+
+		<!-- Alpha disclaimer -->
+		<div class="mb-8">
+			<AlphaBanner />
 		</div>
 
 		<!-- Step progress indicator -->
@@ -508,7 +592,7 @@
 										<Select.Trigger class="w-full">
 											{colonias.find(c => c.id === colonia_id)?.name ?? 'Selecciona una colonia'}
 										</Select.Trigger>
-										<Select.Content>
+										<Select.Content class="max-h-60">
 											{#each colonias as c (c.id)}
 												<Select.Item value={c.id} label={c.name}>{c.name}</Select.Item>
 											{/each}
@@ -680,5 +764,6 @@
 			{/if}
 		</div>
 
+		{/if}
 	</div>
 </div>
