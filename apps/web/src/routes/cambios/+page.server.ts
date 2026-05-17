@@ -8,6 +8,11 @@ type Entry = {
 	details: string;
 };
 
+export type MinorGroup = {
+	minorVersion: string;
+	patches: Entry[];
+};
+
 function parseFrontmatter(raw: string): { meta: Record<string, string>; body: string } {
 	const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
 	if (!match) return { meta: {}, body: raw };
@@ -23,6 +28,11 @@ function splitHtml(html: string): { summary: string; details: string } {
 	const match = html.match(/^(<p>[\s\S]*?<\/p>)([\s\S]*)$/);
 	if (!match) return { summary: html, details: '' };
 	return { summary: match[1], details: match[2].trim() };
+}
+
+function getMinorVersion(version: string): string {
+	const match = version.match(/^(v\d+\.\d+)/);
+	return match ? match[1] : version;
 }
 
 export async function load() {
@@ -47,5 +57,23 @@ export async function load() {
 		const byDate = b.fecha.localeCompare(a.fecha);
 		return byDate !== 0 ? byDate : b.version.localeCompare(a.version);
 	});
-	return { entries };
+
+	const groupMap = new Map<string, Entry[]>();
+	for (const entry of entries) {
+		const minor = getMinorVersion(entry.version);
+		if (!groupMap.has(minor)) groupMap.set(minor, []);
+		groupMap.get(minor)!.push(entry);
+	}
+
+	const groups: MinorGroup[] = Array.from(groupMap.entries()).map(([minorVersion, patches]) => ({
+		minorVersion,
+		patches
+	}));
+
+	groups.sort((a, b) => {
+		const byDate = b.patches[0].fecha.localeCompare(a.patches[0].fecha);
+		return byDate !== 0 ? byDate : b.patches[0].version.localeCompare(a.patches[0].version);
+	});
+
+	return { groups };
 }
