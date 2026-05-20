@@ -16,3 +16,5 @@ export * as Input from './lib/components/ui/input/index.js';
 export * as Empty from './lib/components/ui/empty/index.js';
 export * as Item from './lib/components/ui/item/index.js';
 export * as Label from './lib/components/ui/label/index.js';
+export { default as SightingsList } from './lib/components/sightings-list.svelte';
+export { default as ShareButton } from './lib/components/share-button.svelte';

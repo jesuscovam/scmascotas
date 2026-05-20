@@ -1,7 +1,28 @@
 <script lang="ts">
 	import { Button, Badge } from '@scmascotas/ui';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	let { data } = $props();
+
+	let filterType = $state(data.filterType ?? '');
+	let filterColonia = $state(data.filterColonia ?? '');
+
+	function applyFilters() {
+		const params = new URLSearchParams();
+		if (filterType) params.set('tipo', filterType);
+		if (filterColonia) params.set('colonia', filterColonia);
+		const query = params.toString();
+		goto(query ? `/?${query}` : '/', { replaceState: true });
+	}
+
+	function clearFilters() {
+		filterType = '';
+		filterColonia = '';
+		goto('/', { replaceState: true });
+	}
+
+	const hasFilters = $derived(!!(filterType || filterColonia));
 
 	const speciesLabel: Record<string, string> = {
 		dog: '🐶 Perro',
@@ -213,11 +234,51 @@
 		<div class="mb-6">
 			<AlphaBanner />
 		</div>
-		<div class="flex items-baseline justify-between mb-6">
+		<div class="flex items-baseline justify-between mb-4">
 			<h2 class="font-display text-2xl font-semibold text-warm-900 dark:text-warm-50">
 				Mascotas perdidas
 			</h2>
 			<span class="text-warm-500 dark:text-warm-400 text-sm">{data.pets.length} reportes activos</span>
+		</div>
+
+		<!-- Filters -->
+		<div class="flex flex-wrap items-end gap-3 mb-6 bg-warm-50 dark:bg-warm-800/50 rounded-2xl px-4 py-3 border border-warm-200 dark:border-warm-700">
+			<div class="flex flex-col gap-1 min-w-[140px]">
+				<label class="text-xs font-bold text-warm-500 dark:text-warm-400 uppercase tracking-wider">Especie</label>
+				<select
+					bind:value={filterType}
+					onchange={applyFilters}
+					class="rounded-xl border border-warm-200 dark:border-warm-600 bg-white dark:bg-warm-700 text-warm-800 dark:text-warm-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/70 transition-all"
+				>
+					<option value="">Todas</option>
+					<option value="dog">🐶 Perros</option>
+					<option value="cat">🐱 Gatos</option>
+					<option value="other">🐾 Otros</option>
+				</select>
+			</div>
+
+			<div class="flex flex-col gap-1 min-w-[180px]">
+				<label class="text-xs font-bold text-warm-500 dark:text-warm-400 uppercase tracking-wider">Colonia</label>
+				<select
+					bind:value={filterColonia}
+					onchange={applyFilters}
+					class="rounded-xl border border-warm-200 dark:border-warm-600 bg-white dark:bg-warm-700 text-warm-800 dark:text-warm-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/70 transition-all"
+				>
+					<option value="">Todas las colonias</option>
+					{#each data.colonias as col (col.id)}
+						<option value={col.id}>{col.name}</option>
+					{/each}
+				</select>
+			</div>
+
+			{#if hasFilters}
+				<button
+					onclick={clearFilters}
+					class="self-end text-xs text-warm-500 dark:text-warm-400 hover:text-warm-800 dark:hover:text-warm-200 transition-colors underline underline-offset-2 pb-2"
+				>
+					Limpiar filtros
+				</button>
+			{/if}
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 			{#each preview as pet (pet.id)}
