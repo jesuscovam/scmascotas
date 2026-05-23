@@ -141,7 +141,7 @@
 			</div>
 
 			<!-- Colonia select -->
-			<div class="flex flex-col gap-1.5 sm:flex-1">
+			<div class="flex flex-col gap-1.5 flex-1 w-full">
 				<span class="text-[11px] font-semibold text-warm-400 dark:text-warm-500 uppercase tracking-widest">Colonia</span>
 				<Select.Root
 					type="single"
