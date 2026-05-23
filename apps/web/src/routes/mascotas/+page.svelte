@@ -159,61 +159,65 @@
 			</div>
 		{:else}
 			<!-- Card grid -->
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+			<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
 				{#each data.pets as pet, i (pet.id)}
 					<a
 						href="/mascota/{pet.slug}"
-						class="card-appear group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-t-4 {typeTopBorder[pet.type] ?? 'border-t-stone-400'} shadow-sm hover:shadow-md hover:scale-[1.015] transition-all overflow-hidden flex flex-col"
-						style="animation-delay: {i * 35}ms"
+						class="card-appear group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-t-4 {typeTopBorder[pet.type] ?? 'border-t-stone-400'} shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col"
+						style="animation-delay: {i * 30}ms"
 					>
-						<!-- Photo -->
-						<div class="h-44 overflow-hidden bg-amber-50 dark:bg-warm-700 flex items-center justify-center text-6xl shrink-0">
-							{#if pet.photoUrl}
+						<!-- Photo / placeholder -->
+						{#if pet.photoUrl}
+							<div class="h-36 overflow-hidden shrink-0">
 								<img
 									src={pet.photoUrl}
 									alt={pet.name ?? 'Mascota'}
 									class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
 								/>
-							{:else}
-								{typeEmoji[pet.type] ?? '🐾'}
-							{/if}
-						</div>
+							</div>
+						{:else}
+							<div class="h-24 bg-gradient-to-b from-amber-50 to-amber-100/60 dark:from-warm-700/60 dark:to-warm-800 flex items-center justify-center shrink-0">
+								<div class="w-12 h-12 rounded-full bg-white/80 dark:bg-warm-600/60 shadow-sm flex items-center justify-center text-2xl">
+									{typeEmoji[pet.type] ?? '🐾'}
+								</div>
+							</div>
+						{/if}
 
 						<!-- Content -->
-						<div class="p-4 flex flex-col gap-3 flex-1">
-							<div class="flex items-start justify-between gap-2">
-								<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-lg leading-tight group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">
+						<div class="p-3 flex flex-col gap-2 flex-1">
+							<div class="flex items-start justify-between gap-1.5">
+								<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-sm leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors line-clamp-1">
 									{pet.name ?? 'Sin nombre'}
 								</h2>
-								<Badge.Root variant="amber" class="shrink-0 text-xs">
+								<Badge.Root variant="amber" class="shrink-0 !text-[10px] !px-1.5 !py-0">
 									{speciesLabel[pet.type] ?? pet.type}
 								</Badge.Root>
 							</div>
 
 							{#if pet.color || pet.size}
-								<div class="flex flex-wrap gap-1.5 text-xs text-warm-500 dark:text-warm-400">
+								<div class="flex flex-wrap gap-1 text-[11px] text-warm-500 dark:text-warm-400">
 									{#if pet.color}
-										<span class="bg-warm-100 dark:bg-warm-700 px-2 py-0.5 rounded-full">{pet.color}</span>
+										<span class="bg-warm-100 dark:bg-warm-700 px-1.5 py-px rounded-full">{pet.color}</span>
 									{/if}
 									{#if pet.size}
-										<span class="bg-warm-100 dark:bg-warm-700 px-2 py-0.5 rounded-full">{sizeLabel[pet.size]}</span>
+										<span class="bg-warm-100 dark:bg-warm-700 px-1.5 py-px rounded-full">{sizeLabel[pet.size]}</span>
 									{/if}
 								</div>
 							{/if}
 
 							{#if pet.description}
-								<p class="text-xs text-warm-500 dark:text-warm-400 line-clamp-2 leading-relaxed">{pet.description}</p>
+								<p class="text-[11px] text-warm-400 dark:text-warm-500 line-clamp-2 leading-relaxed">{pet.description}</p>
 							{/if}
 
 							<!-- Footer -->
-							<div class="mt-auto pt-3 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between text-xs text-warm-400 dark:text-warm-500">
-								<span class="flex items-center gap-1 truncate">
-									<svg class="w-3 h-3 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+							<div class="mt-auto pt-2 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between text-[11px] text-warm-400 dark:text-warm-500">
+								<span class="flex items-center gap-0.5 truncate">
+									<svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
 										<path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
 									</svg>
-									<span class="truncate">{pet.colonia ?? 'Ubicación desconocida'}</span>
+									<span class="truncate">{pet.colonia ?? 'Desconocida'}</span>
 								</span>
-								<span class="shrink-0 ml-2">{timeAgo(pet.lastSeenAt)}</span>
+								<span class="shrink-0 ml-1">{timeAgo(pet.lastSeenAt)}</span>
 							</div>
 						</div>
 					</a>
