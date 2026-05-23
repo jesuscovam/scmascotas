@@ -1,0 +1,2 @@
+ALTER TABLE "spotted_pets" ADD COLUMN "matched_pet_id" uuid;--> statement-breakpoint
+ALTER TABLE "spotted_pets" ADD CONSTRAINT "spotted_pets_matched_pet_id_pets_id_fk" FOREIGN KEY ("matched_pet_id") REFERENCES "public"."pets"("id") ON DELETE no action ON UPDATE no action;

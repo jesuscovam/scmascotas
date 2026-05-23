@@ -7,6 +7,7 @@ export const createSpottedPetSchema = z.object({
 	color:           z.string().max(80).optional(),
 	size:            z.enum(['small', 'medium', 'large']).optional(),
 	contactWhatsapp: z.string().max(20).optional(),
+	matchedPetId:    z.string().uuid().optional(),
 });
 
 export type CreateSpottedPet = z.infer<typeof createSpottedPetSchema>;

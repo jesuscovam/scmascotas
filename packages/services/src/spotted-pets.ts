@@ -27,6 +27,7 @@ export const SpottedPetsService = {
 				color: data.color,
 				size: data.size,
 				contactWhatsapp: data.contactWhatsapp,
+				matchedPetId: data.matchedPetId,
 				reporterUserId: ctx.userId,
 				reporterIpHash: ctx.ipHash,
 			})
