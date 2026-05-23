@@ -16,6 +16,32 @@ function generateSlug(name: string | null | undefined): string {
 }
 
 export const PetsService = {
+  async listActiveForMatching(opts: { type?: 'dog' | 'cat' | 'other'; coloniaId?: string } = {}) {
+    const conditions = [eq(pets.status, 'missing')];
+    if (opts.type) conditions.push(eq(pets.type, opts.type));
+    if (opts.coloniaId) conditions.push(eq(pets.coloniaId, opts.coloniaId));
+
+    return db
+      .select({
+        id: pets.id,
+        slug: pets.slug,
+        name: pets.name,
+        type: pets.type,
+        color: pets.color,
+        size: pets.size,
+        description: pets.description,
+        lastSeenAt: pets.lastSeenAt,
+        colonia: colonias.name,
+        coloniaId: pets.coloniaId,
+        photoUrl: petPhotos.url
+      })
+      .from(pets)
+      .leftJoin(colonias, eq(pets.coloniaId, colonias.id))
+      .leftJoin(petPhotos, and(eq(petPhotos.petId, pets.id), eq(petPhotos.isPrimary, true)))
+      .where(and(...conditions))
+      .orderBy(desc(pets.createdAt));
+  },
+
   async listActive(opts: { type?: 'dog' | 'cat' | 'other'; coloniaId?: string } = {}) {
     const conditions = [eq(pets.status, 'missing')];
     if (opts.type) conditions.push(eq(pets.type, opts.type));
