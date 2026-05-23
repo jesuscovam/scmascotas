@@ -1,5 +1,5 @@
 import { db, spottedPets, colonias } from '@scmascotas/db';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 import { put } from '@vercel/blob';
 import type { CreateSpottedPet } from '@scmascotas/schemas';
@@ -54,6 +54,30 @@ export const SpottedPetsService = {
 			.from(spottedPets)
 			.leftJoin(colonias, eq(spottedPets.coloniaId, colonias.id))
 			.where(eq(spottedPets.coloniaId, coloniaId))
+			.orderBy(desc(spottedPets.createdAt));
+	},
+
+	async listAll(opts: { type?: 'dog' | 'cat' | 'other'; coloniaId?: string } = {}) {
+		const conditions: ReturnType<typeof eq>[] = [eq(spottedPets.status, 'open')];
+		if (opts.type) conditions.push(eq(spottedPets.type, opts.type));
+		if (opts.coloniaId) conditions.push(eq(spottedPets.coloniaId, opts.coloniaId));
+		return db
+			.select({
+				id: spottedPets.id,
+				slug: spottedPets.slug,
+				type: spottedPets.type,
+				description: spottedPets.description,
+				color: spottedPets.color,
+				size: spottedPets.size,
+				photoUrl: spottedPets.photoUrl,
+				colonia: colonias.name,
+				coloniaId: spottedPets.coloniaId,
+				status: spottedPets.status,
+				createdAt: spottedPets.createdAt,
+			})
+			.from(spottedPets)
+			.leftJoin(colonias, eq(spottedPets.coloniaId, colonias.id))
+			.where(and(...conditions))
 			.orderBy(desc(spottedPets.createdAt));
 	},
 
