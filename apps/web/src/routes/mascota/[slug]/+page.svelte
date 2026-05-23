@@ -158,7 +158,7 @@
 				</Button.Root>
 			{/if}
 
-			<!-- Share + Edit actions -->
+			<!-- Actions -->
 			<div class="flex flex-wrap gap-2">
 				<ShareButton
 					petSlug={pet.slug}
@@ -177,7 +177,7 @@
 				</a>
 				<a
 					href="/mascota/{pet.slug}/vista"
-					class="inline-flex items-center gap-2 border border-amber-200 dark:border-amber-700 hover:border-amber-400 dark:hover:border-amber-500 text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 font-semibold text-sm px-4 py-3 rounded-2xl transition-colors"
+					class="inline-flex items-center gap-2 border border-teal-200 dark:border-teal-700 hover:border-teal-400 dark:hover:border-teal-500 bg-teal-50/50 dark:bg-teal-900/10 hover:bg-teal-50 dark:hover:bg-teal-900/20 text-teal-700 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-300 font-semibold text-sm px-4 py-3 rounded-2xl transition-colors"
 				>
 					👀 Vi a esta mascota
 				</a>
