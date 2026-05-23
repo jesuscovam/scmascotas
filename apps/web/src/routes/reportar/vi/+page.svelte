@@ -118,33 +118,37 @@
 		</div>
 
 		<!-- Filter bar -->
-		<div class="bg-white dark:bg-warm-800 border border-warm-200 dark:border-warm-700 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+		<div class="bg-white dark:bg-warm-800 border border-warm-200 dark:border-warm-700 rounded-2xl shadow-sm mb-6 px-5 py-4 flex flex-col sm:flex-row gap-5 sm:items-end">
 
-			<!-- Species pills -->
-			<div class="flex items-center gap-2 flex-wrap">
-				<span class="text-xs font-medium text-warm-500 dark:text-warm-400 uppercase tracking-wide whitespace-nowrap">Especie:</span>
-				{#each (['dog', 'cat', 'other'] as const) as t}
-					{@const label = t === 'dog' ? '🐶 Perro' : t === 'cat' ? '🐱 Gato' : '🐾 Otro'}
-					<button
-						onclick={() => toggleType(t)}
-						class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium border transition-all {selectedType === t
-							? 'bg-amber-500 border-amber-500 text-white shadow-sm'
-							: 'bg-warm-50 dark:bg-warm-700 border-warm-200 dark:border-warm-600 text-warm-700 dark:text-warm-200 hover:border-amber-300 dark:hover:border-amber-600'}"
-					>
-						{label}
-					</button>
-				{/each}
+			<!-- Species segmented control -->
+			<div class="flex flex-col gap-1.5">
+				<span class="text-[11px] font-semibold text-warm-400 dark:text-warm-500 uppercase tracking-widest">Especie</span>
+				<div class="flex items-center gap-1 bg-warm-100 dark:bg-warm-700/60 rounded-xl p-1">
+					{#each (['dog', 'cat', 'other'] as const) as t}
+						{@const emoji = t === 'dog' ? '🐶' : t === 'cat' ? '🐱' : '🐾'}
+						{@const label = t === 'dog' ? 'Perro' : t === 'cat' ? 'Gato' : 'Otro'}
+						<button
+							onclick={() => toggleType(t)}
+							class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap {selectedType === t
+								? 'bg-amber-500 text-white shadow-sm'
+								: 'text-warm-600 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50'}"
+						>
+							<span class="text-base leading-none">{emoji}</span>
+							{label}
+						</button>
+					{/each}
+				</div>
 			</div>
 
 			<!-- Colonia select -->
-			<div class="flex items-center gap-2 sm:ml-auto w-full sm:w-auto">
-				<span class="text-xs font-medium text-warm-500 dark:text-warm-400 uppercase tracking-wide whitespace-nowrap">Colonia:</span>
+			<div class="flex flex-col gap-1.5 sm:flex-1">
+				<span class="text-[11px] font-semibold text-warm-400 dark:text-warm-500 uppercase tracking-widest">Colonia</span>
 				<Select.Root
 					type="single"
 					value={selectedColoniaId}
 					onValueChange={(v) => { selectedColoniaId = v; selectedPetId = null; }}
 				>
-					<Select.Trigger class="flex-1 sm:w-52">
+					<Select.Trigger class="w-full">
 						{data.colonias.find((c) => c.id === selectedColoniaId)?.name ?? 'Todas las colonias'}
 					</Select.Trigger>
 					<Select.Content class="max-h-60">
