@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { Select } from '@scmascotas/ui';
 
 	let { data }: { data: PageData } = $props();
 
@@ -138,16 +139,21 @@
 			<!-- Colonia select -->
 			<div class="flex items-center gap-2 sm:ml-auto w-full sm:w-auto">
 				<span class="text-xs font-medium text-warm-500 dark:text-warm-400 uppercase tracking-wide whitespace-nowrap">Colonia:</span>
-				<select
-					bind:value={selectedColoniaId}
-					onchange={() => (selectedPetId = null)}
-					class="flex-1 sm:w-52 bg-warm-50 dark:bg-warm-700 border border-warm-200 dark:border-warm-600 rounded-xl px-3 py-1.5 text-sm text-warm-900 dark:text-warm-100 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+				<Select.Root
+					type="single"
+					value={selectedColoniaId}
+					onValueChange={(v) => { selectedColoniaId = v; selectedPetId = null; }}
 				>
-					<option value="">Todas las colonias</option>
-					{#each data.colonias as colonia (colonia.id)}
-						<option value={colonia.id}>{colonia.name}</option>
-					{/each}
-				</select>
+					<Select.Trigger class="flex-1 sm:w-52">
+						{data.colonias.find((c) => c.id === selectedColoniaId)?.name ?? 'Todas las colonias'}
+					</Select.Trigger>
+					<Select.Content class="max-h-60">
+						<Select.Item value="" label="Todas las colonias">Todas las colonias</Select.Item>
+						{#each data.colonias as colonia (colonia.id)}
+							<Select.Item value={colonia.id} label={colonia.name}>{colonia.name}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
 			</div>
 		</div>
 
