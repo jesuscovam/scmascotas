@@ -75,7 +75,6 @@
 </button>
 
 {#if showFallback}
-	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
 	<div
 		class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
 		style="background:rgba(0,0,0,0.55);backdrop-filter:blur(6px)"

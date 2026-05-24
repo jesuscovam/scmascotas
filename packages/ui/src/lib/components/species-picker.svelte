@@ -24,7 +24,7 @@
 		</div>
 	</div>
 	<div class="grid grid-cols-3 gap-3">
-		{#each OPTIONS as [species, emoji, label]}
+		{#each OPTIONS as [species, emoji, label] (species)}
 			<button
 				type="button"
 				onclick={() => onSelect(species)}
