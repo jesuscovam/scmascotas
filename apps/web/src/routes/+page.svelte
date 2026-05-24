@@ -1,40 +1,17 @@
 <script lang="ts">
 	import { Button, Badge } from '@scmascotas/ui';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	let { data } = $props();
 
-	let filterType = $state(data.filterType ?? '');
-	let filterColonia = $state(data.filterColonia ?? '');
-
-	function applyFilters() {
-		const params = new URLSearchParams();
-		if (filterType) params.set('tipo', filterType);
-		if (filterColonia) params.set('colonia', filterColonia);
-		const query = params.toString();
-		goto(query ? `/?${query}` : '/', { replaceState: true });
-	}
-
-	function clearFilters() {
-		filterType = '';
-		filterColonia = '';
-		goto('/', { replaceState: true });
-	}
-
-	const hasFilters = $derived(!!(filterType || filterColonia));
-
-	const speciesLabel: Record<string, string> = {
-		dog: '🐶 Perro',
-		cat: '🐱 Gato',
-		other: '🐾 Otro'
+	const speciesLabel: Record<string, string> = { dog: 'Perro', cat: 'Gato', other: 'Otro' };
+	const sizeLabel: Record<string, string> = { small: 'Pequeño', medium: 'Mediano', large: 'Grande' };
+	const typeTopBorder: Record<string, string> = {
+		dog: 'border-t-amber-400',
+		cat: 'border-t-teal-400',
+		other: 'border-t-stone-400'
 	};
-
-	const sizeLabel: Record<string, string> = {
-		small: 'Pequeño',
-		medium: 'Mediano',
-		large: 'Grande'
-	};
+	const typeEmoji: Record<string, string> = { dog: '🐶', cat: '🐱', other: '🐾' };
+	const typeLabel: Record<string, string> = { dog: 'Perro', cat: 'Gato', other: 'Otro' };
 
 	function timeAgo(date: string | Date): string {
 		const d = new Date(date);
@@ -42,19 +19,15 @@
 		if (diff === 0) return 'Hoy';
 		if (diff === 1) return 'Ayer';
 		if (diff < 7) return `Hace ${diff} días`;
-		if (diff < 30) return `Hace ${Math.floor(diff / 7)} semanas`;
+		if (diff < 30) return `Hace ${Math.floor(diff / 7)} sem.`;
 		return `Hace ${Math.floor(diff / 30)} meses`;
 	}
 
-	const typeColor: Record<string, string> = {
-		dog: 'border-amber-400',
-		cat: 'border-teal-400',
-		other: 'border-stone-400'
-	};
-
-	const PREVIEW_LIMIT = 5;
-	const preview = $derived(data.pets.slice(0, PREVIEW_LIMIT));
-	const hasMore = $derived(data.pets.length > PREVIEW_LIMIT);
+	const PREVIEW_LIMIT = 4;
+	const petPreview = $derived(data.pets.slice(0, PREVIEW_LIMIT));
+	const hasMorePets = $derived(data.pets.length > PREVIEW_LIMIT);
+	const sightingPreview = $derived(data.sightings.slice(0, PREVIEW_LIMIT));
+	const hasMoreSightings = $derived(data.sightings.length > PREVIEW_LIMIT);
 
 	let contactName = $state('');
 	let contactEmail = $state('');
@@ -221,128 +194,191 @@
 </section>
 
 <!-- Listings -->
-<section class="max-w-5xl mx-auto px-4 py-12">
-	{#if data.pets.length === 0}
-		<div class="text-center py-20 flex flex-col items-center gap-4">
-			<span class="text-6xl">🐾</span>
-			<p class="text-warm-500 dark:text-warm-400 text-lg font-medium">No hay reportes activos por ahora.</p>
-			<a href="/reportar" class="text-brand-800 dark:text-brand-300 hover:underline font-semibold">
-				¿Tienes una mascota perdida? Publícalo →
+<section class="max-w-5xl mx-auto px-4 py-12 flex flex-col gap-14">
+	<div class="mb-2">
+		<AlphaBanner />
+	</div>
+
+	<!-- ── Missing pets ── -->
+	<div>
+		<div class="flex items-center justify-between mb-4 gap-3">
+			<div class="flex items-center gap-2.5">
+				<span class="text-xl">🐾</span>
+				<h2 class="font-display text-2xl font-bold text-warm-900 dark:text-warm-50">
+					Mascotas perdidas
+				</h2>
+				{#if data.pets.length > 0}
+					<span class="text-xs font-bold text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 border border-amber-300 dark:border-amber-700 px-2 py-0.5 rounded-full">
+						{data.pets.length}
+					</span>
+				{/if}
+			</div>
+			<a href="/mascotas" class="shrink-0 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 transition-colors">
+				Ver todas →
 			</a>
 		</div>
-	{:else}
-		<div class="mb-6">
-			<AlphaBanner />
-		</div>
-		<div class="flex items-baseline justify-between mb-4">
-			<h2 class="font-display text-2xl font-semibold text-warm-900 dark:text-warm-50">
-				Mascotas perdidas
-			</h2>
-			<span class="text-warm-500 dark:text-warm-400 text-sm">{data.pets.length} reportes activos</span>
-		</div>
 
-		<!-- Filters -->
-		<div class="flex flex-wrap items-end gap-3 mb-6 bg-warm-50 dark:bg-warm-800/50 rounded-2xl px-4 py-3 border border-warm-200 dark:border-warm-700">
-			<div class="flex flex-col gap-1 min-w-[140px]">
-				<label class="text-xs font-bold text-warm-500 dark:text-warm-400 uppercase tracking-wider">Especie</label>
-				<select
-					bind:value={filterType}
-					onchange={applyFilters}
-					class="rounded-xl border border-warm-200 dark:border-warm-600 bg-white dark:bg-warm-700 text-warm-800 dark:text-warm-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/70 transition-all"
-				>
-					<option value="">Todas</option>
-					<option value="dog">🐶 Perros</option>
-					<option value="cat">🐱 Gatos</option>
-					<option value="other">🐾 Otros</option>
-				</select>
-			</div>
-
-			<div class="flex flex-col gap-1 min-w-[180px]">
-				<label class="text-xs font-bold text-warm-500 dark:text-warm-400 uppercase tracking-wider">Colonia</label>
-				<select
-					bind:value={filterColonia}
-					onchange={applyFilters}
-					class="rounded-xl border border-warm-200 dark:border-warm-600 bg-white dark:bg-warm-700 text-warm-800 dark:text-warm-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/70 transition-all"
-				>
-					<option value="">Todas las colonias</option>
-					{#each data.colonias as col (col.id)}
-						<option value={col.id}>{col.name}</option>
-					{/each}
-				</select>
-			</div>
-
-			{#if hasFilters}
-				<button
-					onclick={clearFilters}
-					class="self-end text-xs text-warm-500 dark:text-warm-400 hover:text-warm-800 dark:hover:text-warm-200 transition-colors underline underline-offset-2 pb-2"
-				>
-					Limpiar filtros
-				</button>
-			{/if}
-		</div>
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-			{#each preview as pet (pet.id)}
-				<a
-					href="/mascota/{pet.slug}"
-					class="group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col border-t-4 {typeColor[pet.type] ?? 'border-stone-300'}"
-				>
-					<div class="bg-warm-100 dark:bg-warm-700 h-44 flex items-center justify-center text-5xl">
-						{pet.type === 'dog' ? '🐶' : pet.type === 'cat' ? '🐱' : '🐾'}
-					</div>
-
-					<div class="p-4 flex flex-col gap-3 flex-1">
-						<div class="flex items-start justify-between gap-2">
-							<h3 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-lg leading-tight group-hover:text-brand-800 dark:group-hover:text-brand-300 transition-colors">
-								{pet.name ?? 'Sin nombre'}
-							</h3>
-							<Badge.Root variant="amber">
-								{speciesLabel[pet.type] ?? pet.type}
-							</Badge.Root>
-						</div>
-
-						<div class="flex flex-wrap gap-2 text-xs text-warm-500 dark:text-warm-400">
-							{#if pet.color}
-								<span class="bg-warm-100 dark:bg-warm-700 px-2 py-0.5 rounded-full">{pet.color}</span>
-							{/if}
-							{#if pet.size}
-								<span class="bg-warm-100 dark:bg-warm-700 px-2 py-0.5 rounded-full">{sizeLabel[pet.size]}</span>
-							{/if}
-						</div>
-
-						<div class="mt-auto pt-2 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between text-xs text-warm-500 dark:text-warm-400">
-							<span class="flex items-center gap-1">
-								<svg class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-									<path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
-								</svg>
-								{pet.colonia ?? 'Ubicación desconocida'}
-							</span>
-							<span>{timeAgo(pet.lastSeenAt)}</span>
-						</div>
-					</div>
+		{#if data.pets.length === 0}
+			<div class="rounded-2xl border border-dashed border-warm-200 dark:border-warm-700 py-12 flex flex-col items-center gap-3 text-center">
+				<span class="text-4xl">🐾</span>
+				<p class="text-warm-500 dark:text-warm-400 text-sm">No hay reportes activos por ahora.</p>
+				<a href="/reportar" class="text-amber-700 dark:text-amber-400 font-semibold text-sm hover:underline">
+					Publicar un reporte →
 				</a>
-			{/each}
+			</div>
+		{:else}
+			<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+				{#each petPreview as pet (pet.id)}
+					<a
+						href="/mascota/{pet.slug}"
+						class="group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-t-4 {typeTopBorder[pet.type] ?? 'border-t-stone-400'} shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col"
+					>
+						{#if pet.photoUrl}
+							<div class="aspect-[4/3] overflow-hidden shrink-0">
+								<img src={pet.photoUrl} alt={pet.name ?? 'Mascota'} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+							</div>
+						{:else}
+							<div class="aspect-[4/3] shrink-0 relative overflow-hidden bg-gradient-to-br from-amber-50 via-amber-100/50 to-warm-50 dark:from-warm-700 dark:via-warm-700/60 dark:to-warm-800 flex items-center justify-center">
+								<div class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle, #d97706 1px, transparent 1px); background-size: 14px 14px;"></div>
+								<span class="text-4xl drop-shadow-sm relative z-10">{typeEmoji[pet.type] ?? '🐾'}</span>
+							</div>
+						{/if}
+						<div class="p-3 flex flex-col gap-2 flex-1">
+							<div class="flex items-start justify-between gap-1.5">
+								<h3 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-sm leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors line-clamp-2">
+									{pet.name ?? 'Sin nombre'}
+								</h3>
+								<Badge.Root variant="amber" class="shrink-0 !text-[10px] !px-1.5 !py-0 ml-1">
+									{speciesLabel[pet.type] ?? pet.type}
+								</Badge.Root>
+							</div>
+							{#if pet.color || pet.size}
+								<div class="flex flex-wrap gap-1 text-[11px] text-warm-500 dark:text-warm-400">
+									{#if pet.color}<span class="bg-warm-100 dark:bg-warm-700 px-1.5 py-px rounded-full">{pet.color}</span>{/if}
+									{#if pet.size}<span class="bg-warm-100 dark:bg-warm-700 px-1.5 py-px rounded-full">{sizeLabel[pet.size]}</span>{/if}
+								</div>
+							{/if}
+							<div class="mt-auto pt-2 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between gap-1 text-[11px] text-warm-400 dark:text-warm-500">
+								<span class="flex items-center gap-1 min-w-0">
+									<span class="shrink-0 w-1.5 h-1.5 rounded-full bg-amber-300 dark:bg-amber-700"></span>
+									<span class="truncate">{pet.colonia ?? 'Desconocida'}</span>
+								</span>
+								<span class="shrink-0">{timeAgo(pet.lastSeenAt)}</span>
+							</div>
+						</div>
+					</a>
+				{/each}
 
-			{#if hasMore}
-				<a
-					href="/mascotas"
-					class="group bg-warm-50 dark:bg-warm-900 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-2xl border-2 border-dashed border-warm-200 dark:border-warm-600 hover:border-brand-300 dark:hover:border-brand-700 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col items-center justify-center gap-3 min-h-[280px]"
-				>
-					<span class="text-4xl">🐾</span>
-					<div class="text-center px-4">
-						<p class="font-display font-semibold text-warm-700 dark:text-warm-300 group-hover:text-brand-800 dark:group-hover:text-brand-300 transition-colors">
-							Ver todos los reportes
+				{#if hasMorePets}
+					<a
+						href="/mascotas"
+						class="group rounded-2xl border-2 border-dashed border-warm-200 dark:border-warm-700 hover:border-amber-300 dark:hover:border-amber-700 hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-all flex flex-col items-center justify-center gap-2 p-4 text-center aspect-[4/3]"
+					>
+						<span class="text-2xl">🐾</span>
+						<p class="text-xs font-semibold text-warm-500 dark:text-warm-400 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
+							+{data.pets.length - PREVIEW_LIMIT} más
 						</p>
-						<p class="text-xs text-warm-400 mt-1">
-							{data.pets.length - PREVIEW_LIMIT} más sin mostrar
-						</p>
-					</div>
-					<span class="text-xs font-bold text-brand-700 dark:text-brand-300 group-hover:underline">
-						Ver galería completa →
+						<span class="text-[11px] font-bold text-amber-600 dark:text-amber-500 group-hover:underline">Ver todas →</span>
+					</a>
+				{/if}
+			</div>
+		{/if}
+	</div>
+
+	<!-- ── Spotted pets ── -->
+	<div>
+		<div class="flex items-center justify-between mb-4 gap-3">
+			<div class="flex items-center gap-2.5">
+				<span class="text-xl">👀</span>
+				<h2 class="font-display text-2xl font-bold text-warm-900 dark:text-warm-50">
+					Avistamientos recientes
+				</h2>
+				{#if data.sightings.length > 0}
+					<span class="text-xs font-bold text-teal-800 dark:text-teal-300 bg-teal-100 dark:bg-teal-900/40 border border-teal-300 dark:border-teal-700 px-2 py-0.5 rounded-full">
+						{data.sightings.length}
 					</span>
+				{/if}
+			</div>
+			<div class="flex items-center gap-4 shrink-0">
+				<a href="/avistamientos" class="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-200 transition-colors">
+					Ver todos →
 				</a>
-			{/if}
+				<a href="/reportar/vi" class="text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 px-3 py-1.5 rounded-xl transition-colors">
+					+ Reportar
+				</a>
+			</div>
 		</div>
-	{/if}
+
+		{#if data.sightings.length === 0}
+			<div class="rounded-2xl border border-dashed border-teal-200 dark:border-teal-800 py-12 flex flex-col items-center gap-3 text-center bg-teal-50/30 dark:bg-teal-900/5">
+				<span class="text-4xl">👀</span>
+				<p class="text-warm-500 dark:text-warm-400 text-sm">¿Viste una mascota perdida?</p>
+				<a href="/reportar/vi" class="text-teal-700 dark:text-teal-400 font-semibold text-sm hover:underline">
+					Sé el primero en reportarlo →
+				</a>
+			</div>
+		{:else}
+			<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+				{#each sightingPreview as s (s.id)}
+					<div class="group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-l-4 border-l-teal-400 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col">
+						{#if s.photoUrl}
+							<div class="aspect-[4/3] overflow-hidden shrink-0 relative">
+								<img src={s.photoUrl} alt="Avistamiento" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+								<span class="absolute top-2 left-2 text-[11px] font-bold text-teal-800 dark:text-teal-200 bg-teal-100/90 dark:bg-teal-900/80 backdrop-blur-sm border border-teal-200 dark:border-teal-700 px-1.5 py-px rounded-full">
+									{typeEmoji[s.type]} {typeLabel[s.type] ?? s.type}
+								</span>
+							</div>
+						{:else}
+							<div class="aspect-[4/3] shrink-0 relative overflow-hidden bg-gradient-to-br from-teal-50 via-teal-100/40 to-warm-50 dark:from-teal-900/30 dark:via-teal-900/20 dark:to-warm-800 flex items-center justify-center">
+								<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, #0d9488 1px, transparent 1px); background-size: 14px 14px;"></div>
+								<span class="text-4xl drop-shadow-sm relative z-10">{typeEmoji[s.type] ?? '🐾'}</span>
+								<span class="absolute top-2 left-2 text-[11px] font-bold text-teal-700 dark:text-teal-300 bg-teal-100/80 dark:bg-teal-900/60 border border-teal-200 dark:border-teal-700 px-1.5 py-px rounded-full">
+									{typeLabel[s.type] ?? s.type}
+								</span>
+							</div>
+						{/if}
+						<div class="p-3 flex flex-col gap-2 flex-1">
+							{#if s.photoUrl}
+								<span class="text-xs font-semibold text-teal-700 dark:text-teal-400">{typeLabel[s.type] ?? s.type}</span>
+							{/if}
+							{#if s.description}
+								<p class="text-[11px] text-warm-600 dark:text-warm-300 leading-relaxed line-clamp-3">{s.description}</p>
+							{:else}
+								<p class="text-[11px] text-warm-400 dark:text-warm-500 italic">Sin descripción.</p>
+							{/if}
+							{#if s.color || s.size}
+								<div class="flex flex-wrap gap-1 text-[11px] text-warm-500 dark:text-warm-400">
+									{#if s.color}<span class="bg-warm-100 dark:bg-warm-700 px-1.5 py-px rounded-full">{s.color}</span>{/if}
+									{#if s.size}<span class="bg-warm-100 dark:bg-warm-700 px-1.5 py-px rounded-full">{sizeLabel[s.size]}</span>{/if}
+								</div>
+							{/if}
+							<div class="mt-auto pt-2 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between gap-1 text-[11px] text-warm-400 dark:text-warm-500">
+								<span class="flex items-center gap-1 min-w-0">
+									<span class="shrink-0 w-1.5 h-1.5 rounded-full bg-teal-300 dark:bg-teal-700"></span>
+									<span class="truncate">{s.colonia ?? 'Desconocida'}</span>
+								</span>
+								<span class="shrink-0">{timeAgo(s.createdAt)}</span>
+							</div>
+						</div>
+					</div>
+				{/each}
+
+				{#if hasMoreSightings}
+					<a
+						href="/avistamientos"
+						class="group rounded-2xl border-2 border-dashed border-warm-200 dark:border-warm-700 hover:border-teal-300 dark:hover:border-teal-700 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 transition-all flex flex-col items-center justify-center gap-2 p-4 text-center aspect-[4/3]"
+					>
+						<span class="text-2xl">👀</span>
+						<p class="text-xs font-semibold text-warm-500 dark:text-warm-400 group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors">
+							+{data.sightings.length - PREVIEW_LIMIT} más
+						</p>
+						<span class="text-[11px] font-bold text-teal-600 dark:text-teal-500 group-hover:underline">Ver todos →</span>
+					</a>
+				{/if}
+			</div>
+		{/if}
+	</div>
+
 </section>
 
 <!-- Tablero comunitario -->
