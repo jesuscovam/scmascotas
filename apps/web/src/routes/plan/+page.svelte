@@ -2,7 +2,7 @@
 	import { Progress, Card } from '@scmascotas/ui';
 
 	const TOTAL_PHASES = 7;
-	const DONE_PHASES = 4;
+	const DONE_PHASES = 5;
 	const progress = Math.round((DONE_PHASES / TOTAL_PHASES) * 100);
 </script>
 
@@ -97,6 +97,20 @@
 					</div>
 				</Card.Content>
 			</Card.Root>
+
+			<Card.Root class="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
+				<Card.Content class="pt-5 pb-5">
+					<div class="flex items-start gap-3">
+						<span class="text-lg mt-0.5">✅</span>
+						<div>
+							<p class="font-semibold text-warm-800 dark:text-warm-100">Fase 5 — Emparejamiento estructurado</p>
+							<p class="text-sm text-warm-500 dark:text-warm-400 mt-1">
+								Los avistamientos sugieren automáticamente mascotas perdidas con perfil similar usando un algoritmo de puntuación por especie, colonia, color, tamaño y recencia. El algoritmo usa grupos de sinónimos de color en español, es de código abierto y acepta contribuciones de la comunidad.
+							</p>
+						</div>
+					</div>
+				</Card.Content>
+			</Card.Root>
 		</div>
 	</section>
 
@@ -107,7 +121,6 @@
 		</h2>
 		<div class="flex flex-col gap-4">
 			{#each [
-				{ icon: '⏳', title: 'Fase 5 — Mascota encontrada + emparejamiento', desc: 'Flujo para reportar una mascota encontrada. Algoritmo de emparejamiento estructurado (especie, colonia, color, tamaño, descripción) que sugiere posibles dueños. El algoritmo es público y abierto a contribuciones de la comunidad.' },
 				{ icon: '⏳', title: 'Fase 6 — Similitud visual por imagen', desc: 'Embeddings de imagen con Replicate (CLIP) almacenados en pgvector. Solo se ejecutan en candidatos "tibios" del algoritmo para mantener costos bajos. Mejora la precisión del emparejamiento cuando hay fotos disponibles.' },
 				{ icon: '⏳', title: 'Fase 7 — PWA, moderación y lanzamiento', desc: 'Instalable como app en celular (PWA). Panel de moderación. Seguimiento de errores con Sentry. Pruebas en dispositivos reales con datos móviles lentos. Contacto con los admins del grupo de Facebook. Lanzamiento suave.' },
 			] as sprint (sprint.title)}
