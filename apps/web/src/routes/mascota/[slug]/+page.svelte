@@ -187,6 +187,6 @@
 
 	<!-- Sightings -->
 	<div class="mt-12">
-		<SightingsList petId={pet.id} {sightings} />
+		<SightingsList {sightings} reportHref="/mascota/{pet.slug}/vista" />
 	</div>
 </div>
