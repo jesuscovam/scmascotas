@@ -2,7 +2,7 @@ import { pgTable, uuid, text, timestamp, pgEnum } from 'drizzle-orm/pg-core';
 import { colonias } from './colonias.js';
 import { pets, petTypeEnum, petSizeEnum } from './pets.js';
 
-export const spottedPetStatusEnum = pgEnum('spotted_pet_status', ['open', 'resolved']);
+export const spottedPetStatusEnum = pgEnum('spotted_pet_status', ['open', 'resolved', 'archived']);
 
 export const spottedPets = pgTable('spotted_pets', {
 	id:              uuid('id').primaryKey().defaultRandom(),
