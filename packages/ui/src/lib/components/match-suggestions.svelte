@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { SvelteSet } from 'svelte/reactivity';
+
   type MatchResult = {
     id: string;
     score: number;
@@ -48,9 +50,9 @@
   function stripAccents(text: string): string {
     return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
   }
-  function colorGroupsFor(text: string | null | undefined): Set<number> {
-    if (!text) return new Set();
-    const groups = new Set<number>();
+  function colorGroupsFor(text: string | null | undefined): SvelteSet<number> {
+    if (!text) return new SvelteSet();
+    const groups = new SvelteSet<number>();
     for (const word of stripAccents(text).split(/[\s,/]+/)) {
       const g = WORD_TO_GROUP.get(word);
       if (g !== undefined) groups.add(g);
