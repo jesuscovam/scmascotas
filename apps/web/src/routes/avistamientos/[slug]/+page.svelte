@@ -58,8 +58,7 @@
 	}
 </style>
 
-<div class="min-h-screen bg-[#f4faf9] dark:bg-warm-900"
-	style="background-image: radial-gradient(circle, rgba(20,184,166,0.06) 1px, transparent 1px); background-size: 22px 22px;">
+<div class="min-h-screen bg-[#f4faf9] dark:bg-warm-900 bg-dots-teal">
 
 	<div class="max-w-3xl mx-auto px-4 py-10 pb-20">
 

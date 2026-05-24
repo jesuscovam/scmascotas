@@ -82,6 +82,7 @@ async function _computeAndSave(spottedPetId: string) {
       color:     spottedPets.color,
       size:      spottedPets.size,
       createdAt: spottedPets.createdAt,
+      embedding: spottedPets.embedding,  // Sprint 5+
     })
     .from(spottedPets)
     .where(eq(spottedPets.id, spottedPetId))
@@ -89,11 +90,17 @@ async function _computeAndSave(spottedPetId: string) {
 
   if (!spotted) return;
 
-  // Fetch candidates — same type, with primary photo (PetsService already does this join)
+  // Fetch candidates — same type, with primary photo and embedding (PetsService already does the join)
   const candidates = await PetsService.listActiveForMatching({ type: spotted.type });
 
   const topMatches = candidates
-    .map(pet => ({ pet, score: scoreMatch(spotted, pet).total }))
+    .map(pet => ({
+      pet,
+      score: scoreMatch(
+        { ...spotted, embedding: spotted.embedding },
+        { ...pet,     embedding: pet.embedding },
+      ).total,
+    }))
     .filter(({ score }) => score >= MATCH_THRESHOLD)
     .sort((a, b) => b.score - a.score)
     .slice(0, MAX_RESULTS);

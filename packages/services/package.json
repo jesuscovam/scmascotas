@@ -11,7 +11,8 @@
     "@scmascotas/db": "workspace:*",
     "@scmascotas/schemas": "workspace:*",
     "@vercel/blob": "^2.3.0",
-    "drizzle-orm": "^0.45.2"
+    "drizzle-orm": "^0.45.2",
+    "replicate": "^1.4.0"
   },
   "scripts": {
     "test": "vitest run"

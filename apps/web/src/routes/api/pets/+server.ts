@@ -21,5 +21,5 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   }
 
   const pet = await PetsService.create(parsed.data, { ipHash, userId: locals.user?.id });
-  return json({ slug: pet.slug, editToken: pet.editToken }, { status: 201 });
+  return json({ id: pet.id, slug: pet.slug, editToken: pet.editToken }, { status: 201 });
 };

@@ -3,6 +3,7 @@ import { eq, desc, and, isNull } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 import { put } from '@vercel/blob';
 import type { CreateSpottedPet } from '@scmascotas/schemas';
+import { EmbeddingsService } from './embeddings.js';
 
 function generateSlug(): string {
 	return `avistamiento-${randomBytes(4).toString('hex')}`;
@@ -192,12 +193,24 @@ export const SpottedPetsService = {
 			.where(eq(spottedPets.id, id));
 	},
 
-	async uploadPhoto(id: string, file: File) {
-		const blob = await put(`spotted/${id}/${file.name}`, file, { access: 'public' });
+	async uploadPhoto(id: string, file: File, blobToken?: string, replicateToken?: string) {
+		const blob = await put(`spotted/${id}/${file.name}`, file, { access: 'public', ...(blobToken ? { token: blobToken } : {}) });
 		await db
 			.update(spottedPets)
 			.set({ photoUrl: blob.url, updatedAt: new Date() })
 			.where(eq(spottedPets.id, id));
+
+		// Fire-and-forget: embed after URL is saved; don't block the response
+		EmbeddingsService.generate(blob.url, replicateToken)
+			.then((embedding) => {
+				if (!embedding) return;
+				return db
+					.update(spottedPets)
+					.set({ embedding })
+					.where(eq(spottedPets.id, id));
+			})
+			.catch((err) => console.error('[embeddings] spotted pet failed, id=', id, err));
+
 		return blob.url;
 	},
 };
