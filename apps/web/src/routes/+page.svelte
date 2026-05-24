@@ -1,7 +1,34 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Button, Badge } from '@scmascotas/ui';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	let { data } = $props();
+
+	// ── Filter state ──────────────────────────────────────────
+	let filterType = $state(data.filterType);
+	let filterColonia = $state(data.filterColonia);
+	const hasFilters = $derived(filterType !== '' || filterColonia !== '');
+
+	function applyFilters() {
+		const params = new URLSearchParams();
+		if (filterType) params.set('tipo', filterType);
+		if (filterColonia) params.set('colonia', filterColonia);
+		goto(`/${params.size ? '?' + params : ''}`, { replaceState: true, noScroll: true });
+	}
+
+	function clearFilters() {
+		filterType = '';
+		filterColonia = '';
+		goto('/', { replaceState: true, noScroll: true });
+	}
+
+	const verTodasHref = $derived.by(() => {
+		const params = new URLSearchParams();
+		if (filterType) params.set('tipo', filterType);
+		if (filterColonia) params.set('colonia', filterColonia);
+		return `/mascotas${params.size ? '?' + params : ''}`;
+	});
+	// ─────────────────────────────────────────────────────────
 
 	const speciesLabel: Record<string, string> = { dog: 'Perro', cat: 'Gato', other: 'Otro' };
 	const sizeLabel: Record<string, string> = { small: 'Pequeño', medium: 'Mediano', large: 'Grande' };
@@ -213,9 +240,49 @@
 					</span>
 				{/if}
 			</div>
-			<a href="/mascotas" class="shrink-0 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 transition-colors">
+			<a href={verTodasHref} class="shrink-0 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 transition-colors">
 				Ver todas →
 			</a>
+		</div>
+
+		<!-- Filters -->
+		<div class="flex flex-wrap items-end gap-3 mb-6 bg-white dark:bg-warm-800/70 rounded-2xl px-4 py-3 border border-warm-200 dark:border-warm-700 shadow-sm">
+			<div class="flex flex-col gap-1 min-w-[130px]">
+				<label class="text-xs font-bold text-warm-500 dark:text-warm-400 uppercase tracking-wider">Especie</label>
+				<select
+					bind:value={filterType}
+					onchange={applyFilters}
+					class="rounded-xl border border-warm-200 dark:border-warm-600 bg-warm-50 dark:bg-warm-700 text-warm-800 dark:text-warm-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/70 transition-all"
+				>
+					<option value="">Todas</option>
+					<option value="dog">🐶 Perros</option>
+					<option value="cat">🐱 Gatos</option>
+					<option value="other">🐾 Otros</option>
+				</select>
+			</div>
+
+			<div class="flex flex-col gap-1 min-w-[180px] flex-1">
+				<label class="text-xs font-bold text-warm-500 dark:text-warm-400 uppercase tracking-wider">Colonia</label>
+				<select
+					bind:value={filterColonia}
+					onchange={applyFilters}
+					class="w-full rounded-xl border border-warm-200 dark:border-warm-600 bg-warm-50 dark:bg-warm-700 text-warm-800 dark:text-warm-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/70 transition-all"
+				>
+					<option value="">Todas las colonias</option>
+					{#each data.colonias as col (col.id)}
+						<option value={col.id}>{col.name}</option>
+					{/each}
+				</select>
+			</div>
+
+			{#if hasFilters}
+				<button
+					onclick={clearFilters}
+					class="self-end text-xs text-warm-500 dark:text-warm-400 hover:text-warm-800 dark:hover:text-warm-200 transition-colors underline underline-offset-2 pb-2"
+				>
+					Limpiar filtros
+				</button>
+			{/if}
 		</div>
 
 		{#if data.pets.length === 0}
@@ -271,7 +338,7 @@
 
 				{#if hasMorePets}
 					<a
-						href="/mascotas"
+						href={verTodasHref}
 						class="group rounded-2xl border-2 border-dashed border-warm-200 dark:border-warm-700 hover:border-amber-300 dark:hover:border-amber-700 hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-all flex flex-col items-center justify-center gap-2 p-4 text-center aspect-[4/3]"
 					>
 						<span class="text-2xl">🐾</span>
