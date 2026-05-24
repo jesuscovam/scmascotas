@@ -376,7 +376,8 @@
 
 </section>
 
-<!-- Tablero comunitario -->
+<!-- Tablero comunitario — hidden while platform features grow; re-enable when relevant -->
+{#if false}
 <section
 	class="relative overflow-hidden border-y border-amber-800/20 py-12"
 	style="background-color:#b5763a; background-image:radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px), radial-gradient(circle at 10px 10px, rgba(255,255,255,0.04) 1px, transparent 1px); background-size:18px 18px, 18px 18px;"
@@ -468,6 +469,7 @@
 		</div>
 	</div>
 </section>
+{/if}
 
 <!-- Contact / Suggestions -->
 <section class="relative py-14 overflow-hidden">
