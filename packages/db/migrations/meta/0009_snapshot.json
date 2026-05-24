@@ -1,5 +1,5 @@
 {
-  "id": "f517a39f-fbf9-4f83-b24a-e432bad6d8da",
+  "id": "f6e9e8f6-4d37-4d61-8f48-43e927813fba",
   "prevId": "a7f61f5b-5aaf-43fe-b75f-0173ac769299",
   "version": "7",
   "dialect": "postgresql",
@@ -251,6 +251,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "embedding": {
+          "name": "embedding",
+          "type": "vector(768)",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -1218,6 +1224,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "embedding": {
+          "name": "embedding",
+          "type": "vector(768)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "contact_whatsapp": {
           "name": "contact_whatsapp",
           "type": "text",
@@ -1479,8 +1491,7 @@
       "schema": "public",
       "values": [
         "open",
-        "resolved",
-        "archived"
+        "resolved"
       ]
     }
   },

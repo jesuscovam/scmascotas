@@ -155,6 +155,22 @@ export const PetsService = {
       .where(eq(pets.id, petId));
   },
 
+  async markArchived(petId: string, ctx: ActorCtx) {
+    await assertCanEdit(petId, ctx);
+    await db
+      .update(pets)
+      .set({ status: 'archived', updatedAt: new Date() })
+      .where(eq(pets.id, petId));
+  },
+
+  async markActive(petId: string, ctx: ActorCtx) {
+    await assertCanEdit(petId, ctx);
+    await db
+      .update(pets)
+      .set({ status: 'missing', updatedAt: new Date() })
+      .where(eq(pets.id, petId));
+  },
+
   async update(petId: string, data: UpdatePet, ctx: ActorCtx) {
     await assertCanEdit(petId, ctx);
     const { editToken: _token, ...fields } = data;
