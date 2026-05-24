@@ -6,6 +6,7 @@
 	import { cubicOut } from 'svelte/easing';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Select, SpeciesPicker } from '@scmascotas/ui';
+	import PhotoPicker from '$lib/components/PhotoPicker.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -44,8 +45,7 @@
 	let size = $state<SizeType | ''>('');
 	let description = $state('');
 	let contactWhatsapp = $state('');
-	let photoFile = $state<File | null>(null);
-	let photoPreviewUrl = $state('');
+	let photoFiles = $state<File[]>([]);
 
 	// ── Match step state ──
 	let matchedPetId = $state<string | null>(null);
@@ -96,17 +96,6 @@
 		setTimeout(() => goto('?step=1', { replaceState: false, noScroll: true }), 350);
 	}
 
-	function handlePhotoChange(e: Event) {
-		const file = (e.target as HTMLInputElement).files?.[0] ?? null;
-		photoFile = file;
-		photoPreviewUrl = file ? URL.createObjectURL(file) : '';
-	}
-
-	function removePhoto() {
-		photoFile = null;
-		photoPreviewUrl = '';
-	}
-
 	function toggleMatch(petId: string) {
 		matchedPetId = matchedPetId === petId ? null : petId;
 	}
@@ -144,9 +133,9 @@
 
 			const { id } = await res.json();
 
-			if (photoFile) {
+			if (photoFiles[0]) {
 				const form = new FormData();
-				form.append('file', photoFile);
+				form.append('file', photoFiles[0]);
 				await fetch(`/api/spotted-pets/${id}/photo`, { method: 'POST', body: form });
 			}
 
@@ -375,25 +364,7 @@
 							<!-- Photo -->
 							<div>
 								<p class={labelClass}>Foto <span class="text-warm-400 font-normal">(opcional)</span></p>
-								{#if photoPreviewUrl}
-									<div class="flex items-center gap-4">
-										<img src={photoPreviewUrl} alt="Vista previa" class="w-24 h-24 object-cover rounded-xl border border-warm-200 dark:border-warm-600" />
-										<div class="flex flex-col gap-1.5">
-											<label class="text-sm font-medium text-amber-600 dark:text-amber-400 cursor-pointer hover:underline">
-												Cambiar foto
-												<input type="file" accept="image/*" class="hidden" onchange={handlePhotoChange} />
-											</label>
-											<button type="button" onclick={removePhoto} class="text-sm text-red-400 hover:text-red-600 text-left">Quitar foto</button>
-										</div>
-									</div>
-								{:else}
-									<label class="flex flex-col items-center gap-2 border-2 border-dashed border-warm-200 dark:border-warm-600 rounded-xl p-6 cursor-pointer hover:border-amber-300 dark:hover:border-amber-600 hover:bg-amber-50/40 dark:hover:bg-amber-900/10 transition-all text-center">
-										<span class="text-3xl">📷</span>
-										<span class="text-sm font-medium text-warm-700 dark:text-warm-200">Agregar foto</span>
-										<span class="text-xs text-warm-400">JPG o PNG · Máx 5 MB</span>
-										<input type="file" accept="image/*" class="hidden" onchange={handlePhotoChange} />
-									</label>
-								{/if}
+								<PhotoPicker bind:files={photoFiles} />
 							</div>
 						</div>
 
