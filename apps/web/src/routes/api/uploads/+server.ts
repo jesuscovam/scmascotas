@@ -1,7 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import { PhotosService } from '@scmascotas/services';
 import { checkLimit } from '$lib/server/rate-limit';
-import { BLOB_READ_WRITE_TOKEN } from '$env/static/private';
+import { BLOB_READ_WRITE_TOKEN, REPLICATE_API_TOKEN } from '$env/static/private';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -25,6 +25,6 @@ export const POST: RequestHandler = async ({ request }) => {
   }
 
   const isPrimary = form.get('isPrimary') === 'true';
-  const photo = await PhotosService.upload(petId, file, isPrimary, BLOB_READ_WRITE_TOKEN);
+  const photo = await PhotosService.upload(petId, file, isPrimary, BLOB_READ_WRITE_TOKEN, REPLICATE_API_TOKEN);
   return json(photo, { status: 201 });
 };

@@ -165,15 +165,15 @@ export const SpottedPetsService = {
 		return row ?? null;
 	},
 
-	async uploadPhoto(id: string, file: File, token?: string) {
-		const blob = await put(`spotted/${id}/${file.name}`, file, { access: 'public', ...(token ? { token } : {}) });
+	async uploadPhoto(id: string, file: File, blobToken?: string, replicateToken?: string) {
+		const blob = await put(`spotted/${id}/${file.name}`, file, { access: 'public', ...(blobToken ? { token: blobToken } : {}) });
 		await db
 			.update(spottedPets)
 			.set({ photoUrl: blob.url, updatedAt: new Date() })
 			.where(eq(spottedPets.id, id));
 
 		// Fire-and-forget: embed after URL is saved; don't block the response
-		EmbeddingsService.generate(blob.url)
+		EmbeddingsService.generate(blob.url, replicateToken)
 			.then((embedding) => {
 				if (!embedding) return;
 				return db
