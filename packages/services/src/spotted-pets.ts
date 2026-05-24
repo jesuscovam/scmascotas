@@ -3,6 +3,7 @@ import { eq, desc, and, isNull } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 import { put } from '@vercel/blob';
 import type { CreateSpottedPet } from '@scmascotas/schemas';
+import { EmbeddingsService } from './embeddings.js';
 
 function generateSlug(): string {
 	return `avistamiento-${randomBytes(4).toString('hex')}`;
@@ -170,6 +171,18 @@ export const SpottedPetsService = {
 			.update(spottedPets)
 			.set({ photoUrl: blob.url, updatedAt: new Date() })
 			.where(eq(spottedPets.id, id));
+
+		// Fire-and-forget: embed after URL is saved; don't block the response
+		EmbeddingsService.generate(blob.url)
+			.then((embedding) => {
+				if (!embedding) return;
+				return db
+					.update(spottedPets)
+					.set({ embedding })
+					.where(eq(spottedPets.id, id));
+			})
+			.catch((err) => console.error('[embeddings] spotted pet failed, id=', id, err));
+
 		return blob.url;
 	},
 };
