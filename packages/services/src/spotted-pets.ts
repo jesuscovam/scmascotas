@@ -1,5 +1,5 @@
 import { db, spottedPets, colonias, pets } from '@scmascotas/db';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, isNull } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 import { put } from '@vercel/blob';
 import type { CreateSpottedPet } from '@scmascotas/schemas';
@@ -107,6 +107,38 @@ export const SpottedPetsService = {
 			.leftJoin(colonias, eq(spottedPets.coloniaId, colonias.id))
 			.where(and(...conditions))
 			.orderBy(desc(spottedPets.createdAt));
+	},
+
+	async listByUser(userId: string) {
+		return db
+			.select({
+				id: spottedPets.id,
+				slug: spottedPets.slug,
+				type: spottedPets.type,
+				description: spottedPets.description,
+				color: spottedPets.color,
+				size: spottedPets.size,
+				photoUrl: spottedPets.photoUrl,
+				status: spottedPets.status,
+				createdAt: spottedPets.createdAt,
+				colonia: colonias.name,
+				matchedPetSlug: pets.slug,
+				matchedPetName: pets.name,
+			})
+			.from(spottedPets)
+			.leftJoin(colonias, eq(spottedPets.coloniaId, colonias.id))
+			.leftJoin(pets, eq(spottedPets.matchedPetId, pets.id))
+			.where(eq(spottedPets.reporterUserId, userId))
+			.orderBy(desc(spottedPets.createdAt));
+	},
+
+	async claim(editToken: string, userId: string) {
+		const [row] = await db
+			.update(spottedPets)
+			.set({ reporterUserId: userId, updatedAt: new Date() })
+			.where(and(eq(spottedPets.editToken, editToken), isNull(spottedPets.reporterUserId)))
+			.returning({ id: spottedPets.id });
+		return row ?? null;
 	},
 
 	async uploadPhoto(id: string, file: File) {

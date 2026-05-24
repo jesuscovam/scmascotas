@@ -91,7 +91,7 @@
 							</NavigationMenu.Link>
 						</NavigationMenu.Item>
 
-						<!-- Mis mascotas: direct link, user only -->
+						<!-- Mis mascotas / Mis avistamientos: direct links, user only -->
 						{#if user}
 							<NavigationMenu.Item>
 								<NavigationMenu.Link
@@ -99,6 +99,14 @@
 									class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
 								>
 									Mis mascotas
+								</NavigationMenu.Link>
+							</NavigationMenu.Item>
+							<NavigationMenu.Item>
+								<NavigationMenu.Link
+									href="/mis-avistamientos"
+									class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
+								>
+									Mis avistamientos
 								</NavigationMenu.Link>
 							</NavigationMenu.Item>
 						{/if}
@@ -261,7 +269,13 @@
 							href="/mis-mascotas"
 							class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
 						>
-							Mis mascotas
+							🐾 Mis mascotas
+						</a>
+						<a
+							href="/mis-avistamientos"
+							class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+						>
+							👀 Mis avistamientos
 						</a>
 						<a
 							href="/perfil"
