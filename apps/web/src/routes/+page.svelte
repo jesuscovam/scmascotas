@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Button, Badge } from '@scmascotas/ui';
+	import { Button, Badge, Select } from '@scmascotas/ui';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	let { data } = $props();
 
@@ -28,6 +28,12 @@
 		if (filterColonia) params.set('colonia', filterColonia);
 		return `/mascotas${params.size ? '?' + params : ''}`;
 	});
+
+	const selectedColoniaName = $derived(
+		filterColonia
+			? (data.colonias.find((c) => c.id === filterColonia)?.name ?? 'Todas las colonias')
+			: 'Todas las colonias'
+	);
 	// ─────────────────────────────────────────────────────────
 
 	const speciesLabel: Record<string, string> = { dog: 'Perro', cat: 'Gato', other: 'Otro' };
@@ -263,16 +269,20 @@
 
 			<div class="flex flex-col gap-1 min-w-[180px] flex-1">
 				<label class="text-xs font-bold text-warm-500 dark:text-warm-400 uppercase tracking-wider">Colonia</label>
-				<select
-					bind:value={filterColonia}
-					onchange={applyFilters}
-					class="w-full rounded-xl border border-warm-200 dark:border-warm-600 bg-warm-50 dark:bg-warm-700 text-warm-800 dark:text-warm-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/70 transition-all"
+				<Select.Root
+					type="single"
+					value={filterColonia || undefined}
+					onValueChange={(v) => { filterColonia = v ?? ''; applyFilters(); }}
 				>
-					<option value="">Todas las colonias</option>
-					{#each data.colonias as col (col.id)}
-						<option value={col.id}>{col.name}</option>
-					{/each}
-				</select>
+					<Select.Trigger class="text-sm text-warm-800 dark:text-warm-100 bg-warm-50 dark:bg-warm-700 border-warm-200 dark:border-warm-600">
+						{selectedColoniaName}
+					</Select.Trigger>
+					<Select.Content>
+						{#each data.colonias as col (col.id)}
+							<Select.Item value={col.id} label={col.name}>{col.name}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
 			</div>
 
 			{#if hasFilters}
