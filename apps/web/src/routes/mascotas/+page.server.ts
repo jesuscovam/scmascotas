@@ -1,0 +1,13 @@
+import { PetsService, ColoniasService } from '@scmascotas/services';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ url }) => {
+	const tipo = url.searchParams.get('tipo') ?? undefined;
+	const colonia = url.searchParams.get('colonia') ?? undefined;
+	const type = tipo === 'dog' || tipo === 'cat' || tipo === 'other' ? tipo : undefined;
+	const [pets, colonias] = await Promise.all([
+		PetsService.listActiveForMatching({ type, coloniaId: colonia }),
+		ColoniasService.list()
+	]);
+	return { pets, colonias, filterType: tipo ?? '', filterColonia: colonia ?? '' };
+};

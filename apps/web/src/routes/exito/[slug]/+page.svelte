@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Button, Card } from '@scmascotas/ui';
+	import { Button, Card, ShareButton } from '@scmascotas/ui';
 
-	const slug = $derived($page.params.slug);
+	const slug = $derived($page.params.slug ?? '');
 	const token = $derived($page.url.searchParams.get('token') ?? '');
 	const shareUrl = $derived(`${$page.url.origin}/mascota/${slug}`);
+	const siteUrl = $derived($page.url.origin ?? '');
 
 	let copied = $state(false);
 	let copiedLink = $state(false);
@@ -85,6 +86,7 @@
 					{copiedLink ? '✓' : 'Copiar'}
 				</Button.Root>
 			</div>
+			<ShareButton petSlug={slug} petName={null} petType={'dog' as const} {siteUrl} />
 		</Card.Content>
 	</Card.Root>
 

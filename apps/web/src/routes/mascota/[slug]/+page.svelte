@@ -1,7 +1,10 @@
 <script lang="ts">
-	import { Badge, Button, Card } from '@scmascotas/ui';
+	import { Badge, Button, Card, SightingsList, ShareButton } from '@scmascotas/ui';
 	let { data } = $props();
 	const pet = $derived(data.pet);
+	const sightings = $derived(data.sightings ?? []);
+
+	const siteUrl = $derived(typeof window !== 'undefined' ? window.location.origin : '');
 
 	const speciesLabel: Record<string, string> = { dog: 'Perro', cat: 'Gato', other: 'Otro' };
 	const sizeLabel: Record<string, string> = {
@@ -153,17 +156,36 @@
 					Contactar por WhatsApp
 				</Button.Root>
 			{/if}
+
+			<!-- Actions -->
+			<div class="flex flex-wrap gap-2">
+				<ShareButton
+					petSlug={pet.slug}
+					petName={pet.name}
+					petType={pet.type}
+					{siteUrl}
+				/>
+				<a
+					href="/mascota/{pet.slug}/editar"
+					class="inline-flex items-center gap-2 border border-warm-200 dark:border-warm-600 hover:border-warm-400 dark:hover:border-warm-400 text-warm-600 dark:text-warm-400 hover:text-warm-800 dark:hover:text-warm-200 font-semibold text-sm px-4 py-3 rounded-2xl transition-colors"
+				>
+					<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+					</svg>
+					Editar reporte
+				</a>
+				<a
+					href="/mascota/{pet.slug}/vista"
+					class="inline-flex items-center gap-2 border border-teal-200 dark:border-teal-700 hover:border-teal-400 dark:hover:border-teal-500 bg-teal-50/50 dark:bg-teal-900/10 hover:bg-teal-50 dark:hover:bg-teal-900/20 text-teal-700 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-300 font-semibold text-sm px-4 py-3 rounded-2xl transition-colors"
+				>
+					👀 Vi a esta mascota
+				</a>
+			</div>
 		</div>
 	</div>
 
-	<!-- Sightings placeholder -->
-	<Card.Root class="mt-12 border-warm-200 dark:border-warm-700">
-		<Card.Content class="pt-6 pb-6">
-			<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-xl mb-2">¿Lo viste? 👀</h2>
-			<p class="text-warm-500 dark:text-warm-400 text-sm">
-				La función de reportar avistamientos estará disponible próximamente. Por ahora, contacta
-				directamente al dueño.
-			</p>
-		</Card.Content>
-	</Card.Root>
+	<!-- Sightings -->
+	<div class="mt-12">
+		<SightingsList {sightings} reportHref="/mascota/{pet.slug}/vista" />
+	</div>
 </div>
