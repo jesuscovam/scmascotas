@@ -33,7 +33,8 @@ export const PetsService = {
         lastSeenAt: pets.lastSeenAt,
         colonia: colonias.name,
         coloniaId: pets.coloniaId,
-        photoUrl: petPhotos.url
+        photoUrl:  petPhotos.url,
+      embedding: petPhotos.embedding,
       })
       .from(pets)
       .leftJoin(colonias, eq(pets.coloniaId, colonias.id))
