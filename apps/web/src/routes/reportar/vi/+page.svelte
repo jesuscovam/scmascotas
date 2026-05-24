@@ -4,6 +4,7 @@
 	import { untrack } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Select, SpeciesPicker } from '@scmascotas/ui';
 	import type { PageData } from './$types';
 
@@ -72,7 +73,7 @@
 		if (currentStep === 3 && !matchFetched && selectedColoniaId && selectedType) {
 			matchFetched = true;
 			loadingMatches = true;
-			const params = new URLSearchParams({ coloniaId: selectedColoniaId });
+			const params = new SvelteURLSearchParams({ coloniaId: selectedColoniaId });
 			if (selectedType) params.set('type', selectedType);
 			fetch(`/api/pets/active?${params}`)
 				.then(r => r.ok ? r.json() : [])
@@ -348,7 +349,7 @@
 							<div>
 								<p class={labelClass}>Tamaño</p>
 								<div class="flex items-center gap-1 bg-warm-100 dark:bg-warm-700/60 rounded-xl p-1">
-									{#each ([['small','Pequeño'],['medium','Mediano'],['large','Grande']] as const) as [s, label]}
+									{#each ([['small','Pequeño'],['medium','Mediano'],['large','Grande']] as const) as [s, label] (s)}
 										<button
 											type="button"
 											onclick={() => { size = size === s ? '' : s; }}
@@ -419,7 +420,7 @@
 
 							{#if loadingMatches}
 								<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-									{#each [1,2,3] as _}
+									{#each [1,2,3] as _, i (i)}
 										<div class="bg-warm-100 dark:bg-warm-700 rounded-2xl overflow-hidden animate-pulse">
 											<div class="aspect-[4/3]"></div>
 											<div class="p-3 flex flex-col gap-2">

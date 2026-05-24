@@ -3,7 +3,6 @@
 	let { data } = $props();
 	const pet = $derived(data.pet);
 	const sightings = $derived(data.sightings ?? []);
-	const user = $derived(data.user ?? null);
 
 	const siteUrl = $derived(typeof window !== 'undefined' ? window.location.origin : '');
 

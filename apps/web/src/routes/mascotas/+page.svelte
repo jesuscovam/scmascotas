@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Badge, Select } from '@scmascotas/ui';
 	import type { PageData } from './$types';
 
@@ -31,7 +32,7 @@
 	const typeEmoji: Record<string, string> = { dog: '🐶', cat: '🐱', other: '🐾' };
 
 	function applyFilters() {
-		const params = new URLSearchParams();
+		const params = new SvelteURLSearchParams();
 		if (filterType) params.set('tipo', filterType);
 		if (filterColonia) params.set('colonia', filterColonia);
 		goto(`/mascotas${params.size ? '?' + params : ''}`, { replaceState: true, noScroll: true });

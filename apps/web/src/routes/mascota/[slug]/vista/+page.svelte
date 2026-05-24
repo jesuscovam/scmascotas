@@ -19,7 +19,6 @@
 	let submitError = $state('');
 	let rateLimited = $state(false);
 	let done = $state(false);
-	let doneSlug = $state('');
 
 	const selectedColoniaName = $derived(
 		colonias.find((c: { id: string; name: string }) => c.id === coloniaId)?.name ?? ''
@@ -64,8 +63,7 @@
 				return;
 			}
 
-			const { id, slug } = await res.json();
-			doneSlug = slug;
+			const { id } = await res.json();
 
 			if (photoFile) {
 				const form = new FormData();

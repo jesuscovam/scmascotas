@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Button, Badge, Select } from '@scmascotas/ui';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	let { data } = $props();
@@ -10,7 +11,7 @@
 	const hasFilters = $derived(filterType !== '' || filterColonia !== '');
 
 	function applyFilters() {
-		const params = new URLSearchParams();
+		const params = new SvelteURLSearchParams();
 		if (filterType) params.set('tipo', filterType);
 		if (filterColonia) params.set('colonia', filterColonia);
 		goto(`/${params.size ? '?' + params : ''}`, { replaceState: true, noScroll: true });
@@ -23,7 +24,7 @@
 	}
 
 	const verTodasHref = $derived.by(() => {
-		const params = new URLSearchParams();
+		const params = new SvelteURLSearchParams();
 		if (filterType) params.set('tipo', filterType);
 		if (filterColonia) params.set('colonia', filterColonia);
 		return `/mascotas${params.size ? '?' + params : ''}`;

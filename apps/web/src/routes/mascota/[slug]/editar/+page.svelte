@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { Card, Badge } from '@scmascotas/ui';
+	import { Card } from '@scmascotas/ui';
 
 	let { data } = $props();
 	const pet = $derived(data.pet);
 	const user = $derived(data.user ?? null);
-	const colonias = $derived(data.colonias ?? []);
 
 	const isOwner = $derived(!!user?.id && user.id === pet.reporterUserId);
 

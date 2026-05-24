@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Select } from '@scmascotas/ui';
 	import type { PageData } from './$types';
 
@@ -26,7 +27,7 @@
 	const sizeLabel: Record<string, string> = { small: 'Pequeño', medium: 'Mediano', large: 'Grande' };
 
 	function applyFilters() {
-		const params = new URLSearchParams();
+		const params = new SvelteURLSearchParams();
 		if (filterType) params.set('tipo', filterType);
 		if (filterColonia) params.set('colonia', filterColonia);
 		goto(`/avistamientos${params.size ? '?' + params : ''}`, { replaceState: true, noScroll: true });
