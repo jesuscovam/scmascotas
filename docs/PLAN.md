@@ -1321,7 +1321,7 @@ Each sprint ≈ one week of focused evening/weekend work (~10-12h). Ship somethi
 
 **Deliverable:** Full auth foundations. Anonymous flow unchanged.
 
-### Sprint 3: Sightings + sharing + edit/reunite ✅ — v0.8.0 (2026-05-24)
+### Sprint 3: Sightings + sharing + edit/reunite ✅ — v0.6.0 (2026-05-24)
 
 **Goal:** Bumping problem solved. Pets get sighting updates. Share-to-Facebook ships.
 
