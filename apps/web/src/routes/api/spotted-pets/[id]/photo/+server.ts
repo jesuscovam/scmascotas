@@ -1,6 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import { SpottedPetsService } from '@scmascotas/services';
 import { checkLimit } from '$lib/server/rate-limit';
+import { BLOB_READ_WRITE_TOKEN } from '$env/static/private';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request, params }) => {
@@ -19,6 +20,6 @@ export const POST: RequestHandler = async ({ request, params }) => {
 		throw error(400, 'file is required');
 	}
 
-	const url = await SpottedPetsService.uploadPhoto(params.id, file);
+	const url = await SpottedPetsService.uploadPhoto(params.id, file, BLOB_READ_WRITE_TOKEN);
 	return json({ url }, { status: 201 });
 };

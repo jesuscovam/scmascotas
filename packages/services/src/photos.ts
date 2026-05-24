@@ -4,8 +4,8 @@ import { eq } from 'drizzle-orm';
 import { EmbeddingsService } from './embeddings.js';
 
 export const PhotosService = {
-  async upload(petId: string, file: File, isPrimary = false) {
-    const blob = await put(`pets/${petId}/${file.name}`, file, { access: 'public' });
+  async upload(petId: string, file: File, isPrimary = false, token?: string) {
+    const blob = await put(`pets/${petId}/${file.name}`, file, { access: 'public', ...(token ? { token } : {}) });
     const [photo] = await db
       .insert(petPhotos)
       .values({ petId, url: blob.url, isPrimary })

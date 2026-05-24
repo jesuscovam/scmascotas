@@ -165,8 +165,8 @@ export const SpottedPetsService = {
 		return row ?? null;
 	},
 
-	async uploadPhoto(id: string, file: File) {
-		const blob = await put(`spotted/${id}/${file.name}`, file, { access: 'public' });
+	async uploadPhoto(id: string, file: File, token?: string) {
+		const blob = await put(`spotted/${id}/${file.name}`, file, { access: 'public', ...(token ? { token } : {}) });
 		await db
 			.update(spottedPets)
 			.set({ photoUrl: blob.url, updatedAt: new Date() })
