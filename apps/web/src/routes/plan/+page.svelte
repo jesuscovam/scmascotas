@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Progress, Card } from '@scmascotas/ui';
 
-	const TOTAL_SPRINTS = 7; // sprints 0–6
-	const DONE_SPRINTS = 4;  // sprints 0, 1, 2 and 3
-	const progress = Math.round((DONE_SPRINTS / TOTAL_SPRINTS) * 100);
+	const TOTAL_PHASES = 7;
+	const DONE_PHASES = 4;
+	const progress = Math.round((DONE_PHASES / TOTAL_PHASES) * 100);
 </script>
 
 <svelte:head>
@@ -22,7 +22,7 @@
 	<div class="mb-12 rounded-xl border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-900/20 px-5 py-4">
 		<div class="flex items-baseline justify-between mb-2">
 			<span class="text-sm font-semibold text-brand-800 dark:text-brand-300">Progreso hacia v1.0</span>
-			<span class="text-xs font-mono text-brand-700 dark:text-brand-400">{DONE_SPRINTS} de {TOTAL_SPRINTS} sprints</span>
+			<span class="text-xs font-mono text-brand-700 dark:text-brand-400">{DONE_PHASES} de {TOTAL_PHASES} fases</span>
 		</div>
 		<Progress.Root
 			value={progress}
@@ -44,7 +44,7 @@
 					<div class="flex items-start gap-3">
 						<span class="text-lg mt-0.5">✅</span>
 						<div>
-							<p class="font-semibold text-warm-800 dark:text-warm-100">Sprint 0 — Infraestructura open-source</p>
+							<p class="font-semibold text-warm-800 dark:text-warm-100">Fase 1 — Infraestructura open-source</p>
 							<p class="text-sm text-warm-500 dark:text-warm-400 mt-1">
 								Repositorio público con licencia MIT, monorepo Turborepo, CI con GitHub Actions, semilla de
 								colonias, entorno nightly con datos de prueba.
@@ -59,7 +59,7 @@
 					<div class="flex items-start gap-3">
 						<span class="text-lg mt-0.5">✅</span>
 						<div>
-							<p class="font-semibold text-warm-800 dark:text-warm-100">Sprint 1 — Reporte y exploración básica</p>
+							<p class="font-semibold text-warm-800 dark:text-warm-100">Fase 2 — Reporte y exploración básica</p>
 							<p class="text-sm text-warm-500 dark:text-warm-400 mt-1">
 								Cualquier persona puede reportar una mascota perdida de forma anónima con token de edición.
 								Galería pública, página de detalle, subida de fotos a Vercel Blob, analítica.
@@ -74,7 +74,7 @@
 					<div class="flex items-start gap-3">
 						<span class="text-lg mt-0.5">✅</span>
 						<div>
-							<p class="font-semibold text-warm-800 dark:text-warm-100">Sprint 2 — Autenticación</p>
+							<p class="font-semibold text-warm-800 dark:text-warm-100">Fase 3 — Autenticación</p>
 							<p class="text-sm text-warm-500 dark:text-warm-400 mt-1">
 								Inicio de sesión con correo, Google y passkeys. Llaves de API para la futura app móvil.
 								Los reportes anónimos del pasado se pueden reclamar al crear cuenta.
@@ -89,7 +89,7 @@
 					<div class="flex items-start gap-3">
 						<span class="text-lg mt-0.5">✅</span>
 						<div>
-							<p class="font-semibold text-warm-800 dark:text-warm-100">Sprint 3 — Avistamientos, edición y compartir</p>
+							<p class="font-semibold text-warm-800 dark:text-warm-100">Fase 4 — Avistamientos, edición y compartir</p>
 							<p class="text-sm text-warm-500 dark:text-warm-400 mt-1">
 								Cualquier persona puede reportar que vio a la mascota. Los avistamientos actualizan la fecha de último avistamiento. Botón de compartir a Facebook. Filtros por especie y colonia en la galería y portada. Marcar como reencontrada.
 							</p>
@@ -107,9 +107,9 @@
 		</h2>
 		<div class="flex flex-col gap-4">
 			{#each [
-				{ icon: '⏳', title: 'Sprint 4 — Mascota encontrada + emparejamiento', desc: 'Flujo para reportar una mascota encontrada. Algoritmo de emparejamiento estructurado (especie, colonia, color, tamaño, descripción) que sugiere posibles dueños. El algoritmo es público y abierto a contribuciones de la comunidad.' },
-				{ icon: '⏳', title: 'Sprint 5 — Similitud visual por imagen', desc: 'Embeddings de imagen con Replicate (CLIP) almacenados en pgvector. Solo se ejecutan en candidatos "tibios" del algoritmo para mantener costos bajos. Mejora la precisión del emparejamiento cuando hay fotos disponibles.' },
-				{ icon: '⏳', title: 'Sprint 6 — PWA, moderación y lanzamiento', desc: 'Instalable como app en celular (PWA). Panel de moderación. Seguimiento de errores con Sentry. Pruebas en dispositivos reales con datos móviles lentos. Contacto con los admins del grupo de Facebook. Lanzamiento suave.' },
+				{ icon: '⏳', title: 'Fase 5 — Mascota encontrada + emparejamiento', desc: 'Flujo para reportar una mascota encontrada. Algoritmo de emparejamiento estructurado (especie, colonia, color, tamaño, descripción) que sugiere posibles dueños. El algoritmo es público y abierto a contribuciones de la comunidad.' },
+				{ icon: '⏳', title: 'Fase 6 — Similitud visual por imagen', desc: 'Embeddings de imagen con Replicate (CLIP) almacenados en pgvector. Solo se ejecutan en candidatos "tibios" del algoritmo para mantener costos bajos. Mejora la precisión del emparejamiento cuando hay fotos disponibles.' },
+				{ icon: '⏳', title: 'Fase 7 — PWA, moderación y lanzamiento', desc: 'Instalable como app en celular (PWA). Panel de moderación. Seguimiento de errores con Sentry. Pruebas en dispositivos reales con datos móviles lentos. Contacto con los admins del grupo de Facebook. Lanzamiento suave.' },
 			] as sprint (sprint.title)}
 				<Card.Root class="border-warm-200 dark:border-warm-700">
 					<Card.Content class="pt-5 pb-5">
