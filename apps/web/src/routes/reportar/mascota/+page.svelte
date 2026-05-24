@@ -64,7 +64,7 @@
 	let currentStep = $state(0);
 	let animDir = $state(1);
 
-	const STEPS = ['Tipo', 'Detalles', 'Ubicación', 'Contacto'];
+	const STEPS = ['Especie', 'Detalles', 'Ubicación', 'Contacto'];
 
 	// Sync URL ?step param → currentStep + animDir.
 	// untrack(currentStep) avoids a dependency cycle while still reading the previous value for direction.
@@ -335,179 +335,38 @@
 					out:fly={{ x: -animDir * 72, opacity: 0, duration: 370, easing: cubicOut }}
 				>
 
-					<!-- ── STEP 0: Pet type ── -->
+					<!-- ── STEP 0: Especie ── -->
 					{#if currentStep === 0}
-						<div class="px-2 pb-6">
-							<p class="text-center font-display font-semibold text-warm-800 dark:text-warm-100 text-xl mb-1">¿Qué tipo de mascota es?</p>
-							<p class="text-center text-warm-400 dark:text-warm-500 text-sm mb-8">Elige una tarjeta para comenzar</p>
-
-							<div class="grid grid-cols-3 gap-3 sm:gap-4">
-
-								<!-- Dog -->
-								<button
-									onclick={() => selectSpecies('dog')}
-									class="relative rounded-3xl overflow-hidden border-2 cursor-pointer transition-all duration-300 text-left {
-										species === 'dog'
-											? 'border-amber-300 dark:border-amber-600 shadow-xl shadow-amber-100/80 scale-[1.04] bg-amber-50/60 dark:bg-amber-900/20'
-											: 'border-warm-200 dark:border-warm-600 shadow-sm hover:shadow-lg hover:scale-[1.03] hover:border-amber-200 bg-white dark:bg-warm-800'
-									}"
-								>
-									{#if species === 'dog'}
-										<div class="absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full bg-amber-700 flex items-center justify-center shadow-sm">
-											<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor">
-												<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-											</svg>
-										</div>
-									{/if}
-									<div
-										class="h-36 sm:h-44 flex items-center justify-center"
-										style="background: linear-gradient(150deg, #EDE3CF 0%, #DECCAF 100%);"
-									>
-										<svg viewBox="0 0 96 96" class="w-20 h-20 sm:w-24 sm:h-24" xmlns="http://www.w3.org/2000/svg">
-											<!-- Floppy left ear -->
-											<ellipse cx="18" cy="57" rx="13" ry="21" fill="#B8916A" transform="rotate(-9 18 50)"/>
-											<ellipse cx="18" cy="59" rx="9" ry="15" fill="#C9A47C" transform="rotate(-9 18 52)"/>
-											<!-- Floppy right ear -->
-											<ellipse cx="78" cy="57" rx="13" ry="21" fill="#B8916A" transform="rotate(9 78 50)"/>
-											<ellipse cx="78" cy="59" rx="9" ry="15" fill="#C9A47C" transform="rotate(9 78 52)"/>
-											<!-- Head — warm muted tan -->
-											<circle cx="48" cy="52" r="30" fill="#D4B896"/>
-											<!-- Snout -->
-											<ellipse cx="48" cy="65" rx="18" ry="13" fill="#E2CDB0"/>
-											<!-- Left eye — deep warm brown, soulful -->
-											<circle cx="36" cy="46" r="7" fill="#2A1A0E"/>
-											<circle cx="36" cy="46" r="5" fill="#3D2510"/>
-											<circle cx="33.5" cy="43.5" r="1.6" fill="white" opacity="0.5"/>
-											<!-- Right eye -->
-											<circle cx="60" cy="46" r="7" fill="#2A1A0E"/>
-											<circle cx="60" cy="46" r="5" fill="#3D2510"/>
-											<circle cx="57.5" cy="43.5" r="1.6" fill="white" opacity="0.5"/>
-											<!-- Quiet brow lines — subtle expressiveness -->
-											<path d="M29 40 Q36 37 43 39" fill="none" stroke="#B8916A" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
-											<path d="M53 39 Q60 37 67 40" fill="none" stroke="#B8916A" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
-											<!-- Nose -->
-											<ellipse cx="48" cy="60" rx="8.5" ry="5.5" fill="#6B4A30"/>
-											<line x1="48" y1="55.5" x2="48" y2="60" stroke="#6B4A30" stroke-width="1.5" stroke-linecap="round"/>
-											<!-- Gentle closed mouth — neutral resting -->
-											<path d="M42 68 Q48 70.5 54 68" fill="none" stroke="#9A7054" stroke-width="1.5" stroke-linecap="round"/>
-										</svg>
+						<div class="flex flex-col gap-4">
+							<div class="bg-white dark:bg-warm-800 rounded-3xl border border-warm-200 dark:border-warm-700 shadow-sm p-6">
+								<div class="flex items-center gap-3 pb-4 border-b border-warm-100 dark:border-warm-700 mb-5">
+									<div class="w-9 h-9 rounded-xl flex items-center justify-center text-xl" style="background: linear-gradient(135deg,#FEF3C7,#FDE68A);">🐾</div>
+									<div>
+										<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-lg">¿Qué tipo de mascota es?</h2>
+										<p class="text-xs text-warm-400 dark:text-warm-500">Selecciona para continuar</p>
 									</div>
-									<div class="p-3 text-center">
-										<p class="font-display font-bold text-warm-900 dark:text-warm-50 text-sm sm:text-base">Perro</p>
-										<p class="text-xs text-warm-400 dark:text-warm-500 mt-0.5 hidden sm:block">Can doméstico</p>
-									</div>
-								</button>
-
-								<!-- Cat -->
-								<button
-									onclick={() => selectSpecies('cat')}
-									class="relative rounded-3xl overflow-hidden border-2 cursor-pointer transition-all duration-300 text-left {
-										species === 'cat'
-											? 'border-slate-300 dark:border-slate-600 shadow-xl shadow-slate-100/80 scale-[1.04] bg-slate-50/60 dark:bg-slate-900/20'
-											: 'border-warm-200 dark:border-warm-600 shadow-sm hover:shadow-lg hover:scale-[1.03] hover:border-slate-200 bg-white dark:bg-warm-800'
-									}"
-								>
-									{#if species === 'cat'}
-										<div class="absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full bg-slate-500 flex items-center justify-center shadow-sm">
-											<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor">
-												<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-											</svg>
-										</div>
-									{/if}
-									<div
-										class="h-36 sm:h-44 flex items-center justify-center"
-										style="background: linear-gradient(150deg, #D8E6EE 0%, #C2D4DF 100%);"
-									>
-										<svg viewBox="0 0 96 96" class="w-20 h-20 sm:w-24 sm:h-24" xmlns="http://www.w3.org/2000/svg">
-											<!-- Left ear outer -->
-											<polygon points="15,48 27,14 41,46" fill="#8AAAB8"/>
-											<!-- Left ear inner -->
-											<polygon points="19,45 27,22 37,44" fill="#C4D4DE"/>
-											<!-- Right ear outer -->
-											<polygon points="55,46 69,14 81,48" fill="#8AAAB8"/>
-											<!-- Right ear inner -->
-											<polygon points="59,44 69,22 77,45" fill="#C4D4DE"/>
-											<!-- Head -->
-											<ellipse cx="48" cy="58" rx="32" ry="27" fill="#C8D8E4"/>
-											<!-- Left eye dark circle -->
-											<circle cx="35" cy="53" r="8" fill="#2A2018"/>
-											<circle cx="35" cy="53" r="6" fill="#3A2E20"/>
-											<circle cx="33" cy="51" r="1.6" fill="white" opacity="0.45"/>
-											<!-- Left upper eyelid — half-lidded slow blink -->
-											<path d="M 27 53 Q 35 46 43 53 Z" fill="#C8D8E4"/>
-											<path d="M 27 53 Q 35 46.5 43 53" fill="none" stroke="#97B0BE" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
-											<!-- Right eye dark circle -->
-											<circle cx="61" cy="53" r="8" fill="#2A2018"/>
-											<circle cx="61" cy="53" r="6" fill="#3A2E20"/>
-											<circle cx="59" cy="51" r="1.6" fill="white" opacity="0.45"/>
-											<!-- Right upper eyelid -->
-											<path d="M 53 53 Q 61 46 69 53 Z" fill="#C8D8E4"/>
-											<path d="M 53 53 Q 61 46.5 69 53" fill="none" stroke="#97B0BE" stroke-width="1" stroke-linecap="round" opacity="0.7"/>
-											<!-- Nose — muted dusty rose -->
-											<path d="M 44.5 65 L 51.5 65 L 48 69.5 Z" fill="#C4897A"/>
-											<line x1="48" y1="61.5" x2="48" y2="65" stroke="#A07068" stroke-width="1.2" stroke-linecap="round"/>
-											<!-- Mouth — barely there -->
-											<path d="M44.5 69.5 Q42 72 40 71" fill="none" stroke="#8AAAB8" stroke-width="1.2" stroke-linecap="round"/>
-											<path d="M51.5 69.5 Q54 72 56 71" fill="none" stroke="#8AAAB8" stroke-width="1.2" stroke-linecap="round"/>
-											<!-- Whiskers — soft, refined -->
-											<line x1="10" y1="61" x2="30" y2="64" stroke="#8AAAB8" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
-											<line x1="10" y1="67" x2="30" y2="67.5" stroke="#8AAAB8" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
-											<line x1="10" y1="73" x2="30" y2="71" stroke="#8AAAB8" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
-											<line x1="66" y1="64" x2="86" y2="61" stroke="#8AAAB8" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
-											<line x1="66" y1="67.5" x2="86" y2="67" stroke="#8AAAB8" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
-											<line x1="66" y1="71" x2="86" y2="73" stroke="#8AAAB8" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
-										</svg>
-									</div>
-									<div class="p-3 text-center">
-										<p class="font-display font-bold text-warm-900 dark:text-warm-50 text-sm sm:text-base">Gato</p>
-										<p class="text-xs text-warm-400 dark:text-warm-500 mt-0.5 hidden sm:block">Felino doméstico</p>
-									</div>
-								</button>
-
-								<!-- Other -->
-								<button
-									onclick={() => selectSpecies('other')}
-									class="relative rounded-3xl overflow-hidden border-2 cursor-pointer transition-all duration-300 text-left {
-										species === 'other'
-											? 'border-stone-300 dark:border-stone-600 shadow-xl shadow-stone-100/80 scale-[1.04] bg-stone-50/60 dark:bg-stone-900/20'
-											: 'border-warm-200 dark:border-warm-600 shadow-sm hover:shadow-lg hover:scale-[1.03] hover:border-stone-200 bg-white dark:bg-warm-800'
-									}"
-								>
-									{#if species === 'other'}
-										<div class="absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full bg-stone-500 flex items-center justify-center shadow-sm">
-											<svg class="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor">
-												<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-											</svg>
-										</div>
-									{/if}
-									<div
-										class="h-36 sm:h-44 flex items-center justify-center"
-										style="background: linear-gradient(150deg, #E8DDD0 0%, #D5C9BA 100%);"
-									>
-										<svg viewBox="0 0 96 96" class="w-20 h-20 sm:w-24 sm:h-24" xmlns="http://www.w3.org/2000/svg">
-											<!-- Main pad -->
-											<ellipse cx="48" cy="68" rx="22" ry="18" fill="#A8978A"/>
-											<ellipse cx="48" cy="68" rx="18" ry="14" fill="#BEB0A5"/>
-											<!-- Toe far-left -->
-											<ellipse cx="17" cy="47" rx="11" ry="9.5" fill="#A8978A"/>
-											<ellipse cx="17" cy="47" rx="8.5" ry="7.5" fill="#BEB0A5"/>
-											<!-- Toe center-left -->
-											<ellipse cx="36" cy="36" rx="11" ry="9.5" fill="#A8978A"/>
-											<ellipse cx="36" cy="36" rx="8.5" ry="7.5" fill="#BEB0A5"/>
-											<!-- Toe center-right -->
-											<ellipse cx="60" cy="36" rx="11" ry="9.5" fill="#A8978A"/>
-											<ellipse cx="60" cy="36" rx="8.5" ry="7.5" fill="#BEB0A5"/>
-											<!-- Toe far-right -->
-											<ellipse cx="79" cy="47" rx="11" ry="9.5" fill="#A8978A"/>
-											<ellipse cx="79" cy="47" rx="8.5" ry="7.5" fill="#BEB0A5"/>
-										</svg>
-									</div>
-									<div class="p-3 text-center">
-										<p class="font-display font-bold text-warm-900 dark:text-warm-50 text-sm sm:text-base">Otro</p>
-										<p class="text-xs text-warm-400 dark:text-warm-500 mt-0.5 hidden sm:block">Ave, conejo…</p>
-									</div>
-								</button>
-
+								</div>
+								<div class="grid grid-cols-3 gap-3">
+									{#each ([['dog','🐶','Perro'], ['cat','🐱','Gato'], ['other','🐾','Otro']] as const) as [t, emoji, label]}
+										<button
+											type="button"
+											onclick={() => selectSpecies(t)}
+											class="relative flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all duration-200 {species === t
+												? 'border-amber-400 bg-amber-50 dark:bg-amber-900/20 shadow-md'
+												: 'border-warm-200 dark:border-warm-700 bg-warm-50 dark:bg-warm-900/30 hover:border-amber-300 dark:hover:border-amber-700 hover:bg-amber-50/50 dark:hover:bg-amber-900/10'}"
+										>
+											{#if species === t}
+												<div class="absolute top-2.5 right-2.5 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center">
+													<svg class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+														<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+													</svg>
+												</div>
+											{/if}
+											<span class="text-4xl leading-none">{emoji}</span>
+											<span class="text-sm font-bold text-warm-800 dark:text-warm-100">{label}</span>
+										</button>
+									{/each}
+								</div>
 							</div>
 						</div>
 
