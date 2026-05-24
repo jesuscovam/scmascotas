@@ -1,4 +1,4 @@
-import { db, spottedPets, colonias } from '@scmascotas/db';
+import { db, spottedPets, colonias, pets } from '@scmascotas/db';
 import { eq, desc, and } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 import { put } from '@vercel/blob';
@@ -34,6 +34,34 @@ export const SpottedPetsService = {
 			.returning();
 
 		return { ...record, editToken };
+	},
+
+	async getBySlug(slug: string) {
+		const [row] = await db
+			.select({
+				id: spottedPets.id,
+				slug: spottedPets.slug,
+				type: spottedPets.type,
+				description: spottedPets.description,
+				coloniaId: spottedPets.coloniaId,
+				color: spottedPets.color,
+				size: spottedPets.size,
+				photoUrl: spottedPets.photoUrl,
+				contactWhatsapp: spottedPets.contactWhatsapp,
+				matchedPetId: spottedPets.matchedPetId,
+				status: spottedPets.status,
+				createdAt: spottedPets.createdAt,
+				colonia: colonias.name,
+				matchedPetSlug: pets.slug,
+				matchedPetName: pets.name,
+				matchedPetType: pets.type,
+			})
+			.from(spottedPets)
+			.leftJoin(colonias, eq(spottedPets.coloniaId, colonias.id))
+			.leftJoin(pets, eq(spottedPets.matchedPetId, pets.id))
+			.where(eq(spottedPets.slug, slug))
+			.limit(1);
+		return row ?? null;
 	},
 
 	async listByColonia(coloniaId: string) {

@@ -315,7 +315,7 @@
 		{:else}
 			<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
 				{#each sightingPreview as s (s.id)}
-					<div class="group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-l-4 border-l-teal-400 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col">
+					<a href="/avistamientos/{s.slug}" class="group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-l-4 border-l-teal-400 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col">
 						{#if s.photoUrl}
 							<div class="aspect-[4/3] overflow-hidden shrink-0 relative">
 								<img src={s.photoUrl} alt="Avistamiento" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -355,7 +355,7 @@
 								<span class="shrink-0">{timeAgo(s.createdAt)}</span>
 							</div>
 						</div>
-					</div>
+					</a>
 				{/each}
 
 				{#if hasMoreSightings}

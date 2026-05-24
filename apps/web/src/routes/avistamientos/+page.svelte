@@ -155,7 +155,8 @@
 			<!-- Card grid -->
 			<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
 				{#each data.sightings as s, i (s.id)}
-					<div
+					<a
+						href="/avistamientos/{s.slug}"
 						class="card-appear bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-l-4 border-l-teal-400 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col"
 						style="animation-delay: {i * 30}ms"
 					>
@@ -216,7 +217,7 @@
 								<span class="shrink-0">{timeAgo(s.createdAt)}</span>
 							</div>
 						</div>
-					</div>
+					</a>
 				{/each}
 			</div>
 		{/if}
