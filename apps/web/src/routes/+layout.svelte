@@ -91,26 +91,6 @@
 							</NavigationMenu.Link>
 						</NavigationMenu.Item>
 
-						<!-- Mis mascotas / Mis avistamientos: direct links, user only -->
-						{#if user}
-							<NavigationMenu.Item>
-								<NavigationMenu.Link
-									href="/mis-mascotas"
-									class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
-								>
-									Mis mascotas
-								</NavigationMenu.Link>
-							</NavigationMenu.Item>
-							<NavigationMenu.Item>
-								<NavigationMenu.Link
-									href="/mis-avistamientos"
-									class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
-								>
-									Mis avistamientos
-								</NavigationMenu.Link>
-							</NavigationMenu.Item>
-						{/if}
-
 						<!-- Plataforma group: Acerca, Plan, Cambios -->
 						<NavigationMenu.Item>
 							<NavigationMenu.Trigger
@@ -162,13 +142,32 @@
 								>
 									Mi cuenta
 								</NavigationMenu.Trigger>
-								<NavigationMenu.Content class="min-w-[200px] right-0 left-auto p-1.5 bg-white dark:bg-warm-900 border border-warm-200 dark:border-warm-700">
+								<NavigationMenu.Content class="min-w-[220px] right-0 left-auto p-1.5 bg-white dark:bg-warm-900 border border-warm-200 dark:border-warm-700">
 									<NavigationMenu.Link href="/perfil">
 										<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
 											<UserIcon class="size-4 shrink-0 text-warm-500 dark:text-warm-400" />
 											<div>
 												<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Mi perfil</p>
 												<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Editar tu información</p>
+											</div>
+										</div>
+									</NavigationMenu.Link>
+									<div class="my-1 h-px bg-warm-100 dark:bg-warm-800 mx-2"></div>
+									<NavigationMenu.Link href="/mis-mascotas">
+										<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors cursor-pointer">
+											<span class="text-base leading-none shrink-0">🐾</span>
+											<div>
+												<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Mis mascotas</p>
+												<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Tus reportes de mascotas perdidas</p>
+											</div>
+										</div>
+									</NavigationMenu.Link>
+									<NavigationMenu.Link href="/mis-avistamientos">
+										<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors cursor-pointer">
+											<span class="text-base leading-none shrink-0">👀</span>
+											<div>
+												<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Mis avistamientos</p>
+												<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Mascotas que has reportado ver</p>
 											</div>
 										</div>
 									</NavigationMenu.Link>
