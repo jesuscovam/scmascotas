@@ -165,19 +165,15 @@
 				return;
 			}
 
-			const { slug, editToken } = await res.json();
+			const { id: petId, slug, editToken } = await res.json();
 
 			if (photoFiles.length > 0) {
-				const petRes = await fetch(`/api/pets?slug=${slug}`);
-				if (petRes.ok) {
-					const { id: petId } = await petRes.json();
-					for (let i = 0; i < photoFiles.length; i++) {
-						const form = new FormData();
-						form.set('petId', petId);
-						form.set('file', photoFiles[i]);
-						form.set('isPrimary', String(i === 0));
-						await fetch('/api/uploads', { method: 'POST', body: form });
-					}
+				for (let i = 0; i < photoFiles.length; i++) {
+					const form = new FormData();
+					form.set('petId', petId);
+					form.set('file', photoFiles[i]);
+					form.set('isPrimary', String(i === 0));
+					await fetch('/api/uploads', { method: 'POST', body: form });
 				}
 			}
 
