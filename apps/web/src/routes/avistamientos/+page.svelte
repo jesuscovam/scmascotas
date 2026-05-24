@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { Select } from '@scmascotas/ui';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -8,6 +9,17 @@
 	let filterColonia = $state(data.filterColonia);
 
 	const hasFilters = $derived(filterType !== '' || filterColonia !== '');
+
+	const selectedTypeName = $derived(
+		filterType === 'dog' ? '🐶 Perros' :
+		filterType === 'cat' ? '🐱 Gatos' :
+		filterType === 'other' ? '🐾 Otros' : 'Todas'
+	);
+	const selectedColoniaName = $derived(
+		filterColonia
+			? (data.colonias.find((c) => c.id === filterColonia)?.name ?? 'Todas las colonias')
+			: 'Todas las colonias'
+	);
 
 	const typeEmoji: Record<string, string> = { dog: '🐶', cat: '🐱', other: '🐾' };
 	const typeLabel: Record<string, string> = { dog: 'Perro', cat: 'Gato', other: 'Otro' };
@@ -93,30 +105,34 @@
 		<div class="flex flex-wrap items-end gap-3 mb-8 bg-white dark:bg-warm-800/70 rounded-2xl px-4 py-3 border border-warm-200 dark:border-warm-700 shadow-sm">
 			<div class="flex flex-col gap-1 min-w-[140px]">
 				<label class="text-xs font-bold text-warm-500 dark:text-warm-400 uppercase tracking-wider">Especie</label>
-				<select
-					bind:value={filterType}
-					onchange={applyFilters}
-					class="rounded-xl border border-warm-200 dark:border-warm-600 bg-warm-50 dark:bg-warm-700 text-warm-800 dark:text-warm-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400/70 transition-all"
+				<Select.Root
+					type="single"
+					value={filterType || undefined}
+					onValueChange={(v) => { filterType = v ?? ''; applyFilters(); }}
 				>
-					<option value="">Todas</option>
-					<option value="dog">🐶 Perros</option>
-					<option value="cat">🐱 Gatos</option>
-					<option value="other">🐾 Otros</option>
-				</select>
+					<Select.Trigger class="text-sm">{selectedTypeName}</Select.Trigger>
+					<Select.Content>
+						<Select.Item value="dog" label="🐶 Perros">🐶 Perros</Select.Item>
+						<Select.Item value="cat" label="🐱 Gatos">🐱 Gatos</Select.Item>
+						<Select.Item value="other" label="🐾 Otros">🐾 Otros</Select.Item>
+					</Select.Content>
+				</Select.Root>
 			</div>
 
 			<div class="flex flex-col gap-1 min-w-[200px] flex-1">
 				<label class="text-xs font-bold text-warm-500 dark:text-warm-400 uppercase tracking-wider">Colonia</label>
-				<select
-					bind:value={filterColonia}
-					onchange={applyFilters}
-					class="w-full rounded-xl border border-warm-200 dark:border-warm-600 bg-warm-50 dark:bg-warm-700 text-warm-800 dark:text-warm-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400/70 transition-all"
+				<Select.Root
+					type="single"
+					value={filterColonia || undefined}
+					onValueChange={(v) => { filterColonia = v ?? ''; applyFilters(); }}
 				>
-					<option value="">Todas las colonias</option>
-					{#each data.colonias as col (col.id)}
-						<option value={col.id}>{col.name}</option>
-					{/each}
-				</select>
+					<Select.Trigger class="text-sm">{selectedColoniaName}</Select.Trigger>
+					<Select.Content>
+						{#each data.colonias as col (col.id)}
+							<Select.Item value={col.id} label={col.name}>{col.name}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
 			</div>
 
 			{#if hasFilters}
