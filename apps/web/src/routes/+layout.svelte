@@ -7,6 +7,7 @@
 	import { NavigationMenu, Button } from '@scmascotas/ui';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { signOut } from '$lib/auth-client';
+	import { page } from '$app/state';
 	import InfoIcon from '@lucide/svelte/icons/info';
 	import MilestoneIcon from '@lucide/svelte/icons/milestone';
 	import ScrollTextIcon from '@lucide/svelte/icons/scroll-text';
@@ -64,17 +65,31 @@
 				<NavigationMenu.Root viewport={false}>
 					<NavigationMenu.List class="flex items-center gap-1">
 
-						<!-- Mis mascotas: direct link, user only -->
-						{#if user}
-							<NavigationMenu.Item>
-								<NavigationMenu.Link
-									href="/mis-mascotas"
-									class="text-sm text-warm-500 dark:text-warm-400 hover:text-warm-700 dark:hover:text-warm-100 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-warm-100 dark:hover:bg-warm-800"
-								>
-									Mis mascotas
-								</NavigationMenu.Link>
-							</NavigationMenu.Item>
-						{/if}
+						<!-- Mascotas -->
+						<NavigationMenu.Item>
+							<NavigationMenu.Link
+								href="/mascotas"
+								class="text-sm font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 {page.url.pathname === '/mascotas'
+									? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300'
+									: 'text-warm-500 dark:text-warm-400 hover:text-amber-700 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'}"
+							>
+								<span class="text-base leading-none">🐾</span>
+								Mascotas
+							</NavigationMenu.Link>
+						</NavigationMenu.Item>
+
+						<!-- Avistamientos -->
+						<NavigationMenu.Item>
+							<NavigationMenu.Link
+								href="/avistamientos"
+								class="text-sm font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 {page.url.pathname === '/avistamientos'
+									? 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300'
+									: 'text-warm-500 dark:text-warm-400 hover:text-teal-700 dark:hover:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/20'}"
+							>
+								<span class="text-base leading-none">👀</span>
+								Avistamientos
+							</NavigationMenu.Link>
+						</NavigationMenu.Item>
 
 						<!-- Plataforma group: Acerca, Plan, Cambios -->
 						<NavigationMenu.Item>
@@ -127,13 +142,32 @@
 								>
 									Mi cuenta
 								</NavigationMenu.Trigger>
-								<NavigationMenu.Content class="min-w-[200px] right-0 left-auto p-1.5 bg-white dark:bg-warm-900 border border-warm-200 dark:border-warm-700">
+								<NavigationMenu.Content class="min-w-[220px] right-0 left-auto p-1.5 bg-white dark:bg-warm-900 border border-warm-200 dark:border-warm-700">
 									<NavigationMenu.Link href="/perfil">
 										<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-warm-50 dark:hover:bg-warm-800 transition-colors cursor-pointer">
 											<UserIcon class="size-4 shrink-0 text-warm-500 dark:text-warm-400" />
 											<div>
 												<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Mi perfil</p>
 												<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Editar tu información</p>
+											</div>
+										</div>
+									</NavigationMenu.Link>
+									<div class="my-1 h-px bg-warm-100 dark:bg-warm-800 mx-2"></div>
+									<NavigationMenu.Link href="/mis-mascotas">
+										<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors cursor-pointer">
+											<span class="text-base leading-none shrink-0">🐾</span>
+											<div>
+												<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Mis mascotas</p>
+												<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Tus reportes de mascotas perdidas</p>
+											</div>
+										</div>
+									</NavigationMenu.Link>
+									<NavigationMenu.Link href="/mis-avistamientos">
+										<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors cursor-pointer">
+											<span class="text-base leading-none shrink-0">👀</span>
+											<div>
+												<p class="text-sm font-medium text-warm-800 dark:text-warm-100 leading-none">Mis avistamientos</p>
+												<p class="text-xs text-warm-500 dark:text-warm-400 mt-1">Mascotas que has reportado ver</p>
 											</div>
 										</div>
 									</NavigationMenu.Link>
@@ -195,6 +229,23 @@
 			<div class="md:hidden border-t border-warm-200 dark:border-warm-700 bg-white/95 dark:bg-warm-900/95 backdrop-blur-sm mobile-menu">
 				<nav class="max-w-5xl mx-auto px-4 py-3 flex flex-col gap-1">
 					<a
+						href="/mascotas"
+						class="flex items-center gap-2 text-sm font-semibold rounded-lg px-3 py-2.5 transition-colors {page.url.pathname === '/mascotas'
+							? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300'
+							: 'text-warm-700 dark:text-warm-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-300'}"
+					>
+						🐾 Mascotas perdidas
+					</a>
+					<a
+						href="/avistamientos"
+						class="flex items-center gap-2 text-sm font-semibold rounded-lg px-3 py-2.5 transition-colors {page.url.pathname === '/avistamientos'
+							? 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300'
+							: 'text-warm-700 dark:text-warm-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-700 dark:hover:text-teal-300'}"
+					>
+						👀 Avistamientos
+					</a>
+					<div class="my-1 h-px bg-warm-100 dark:bg-warm-800"></div>
+					<a
 						href="/acerca"
 						class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
 					>
@@ -217,7 +268,13 @@
 							href="/mis-mascotas"
 							class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
 						>
-							Mis mascotas
+							🐾 Mis mascotas
+						</a>
+						<a
+							href="/mis-avistamientos"
+							class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+						>
+							👀 Mis avistamientos
 						</a>
 						<a
 							href="/perfil"

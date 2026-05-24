@@ -16,3 +16,9 @@ export const createMissingPetSchema = z.object({
 });
 
 export type CreateMissingPet = z.infer<typeof createMissingPetSchema>;
+
+export const updatePetSchema = createMissingPetSchema.partial().extend({
+  editToken: z.string().optional()
+});
+
+export type UpdatePet = z.infer<typeof updatePetSchema>;

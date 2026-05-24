@@ -28,7 +28,7 @@
 		data-slot="select-content"
 		style="width: var(--bits-select-anchor-width);"
 		class={cn(
-			"relative isolate z-50 min-w-36 overflow-x-hidden overflow-y-auto rounded-xl border border-warm-200 bg-white text-warm-900 shadow-lg duration-100 data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95",
+			"relative isolate z-50 min-w-36 max-h-64 overflow-x-hidden overflow-y-auto rounded-xl border border-warm-200 bg-white text-warm-900 shadow-lg duration-100 data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95",
 			className
 		)}
 		{...restProps}
