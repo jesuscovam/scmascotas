@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MatchSuggestions } from '@scmascotas/ui';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -165,6 +166,18 @@
 				</div>
 			{/if}
 		</div>
+
+		<!-- Match suggestions (shown when no manual match is set) -->
+		{#if data.matches.length > 0}
+			<div class="reveal mb-4" style="animation-delay: 160ms">
+				<MatchSuggestions
+					matches={data.matches}
+					coloniaId={s.coloniaId}
+					color={s.color}
+					size={s.size}
+				/>
+			</div>
+		{/if}
 
 		<!-- Matched pet card — shown if this sighting is linked to a reported missing pet -->
 		{#if s.matchedPetName && s.matchedPetSlug}
