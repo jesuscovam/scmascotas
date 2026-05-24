@@ -93,13 +93,5 @@
 			{/each}
 		</div>
 
-		{#if reportHref}
-			<a
-				href={reportHref}
-				class="self-start inline-flex items-center gap-2 text-sm font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 transition-colors"
-			>
-				👀 Reportar otro avistamiento →
-			</a>
-		{/if}
 	{/if}
 </section>
