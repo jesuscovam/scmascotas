@@ -159,9 +159,9 @@
 						class="card-appear bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-l-4 border-l-teal-400 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col"
 						style="animation-delay: {i * 30}ms"
 					>
-						<!-- Photo (only shown when available) -->
+						<!-- Photo zone — always shown, placeholder when no photo -->
 						{#if s.photoUrl}
-							<div class="h-36 overflow-hidden shrink-0 relative">
+							<div class="aspect-[4/3] overflow-hidden shrink-0 relative">
 								<img
 									src={s.photoUrl}
 									alt="Avistamiento"
@@ -171,23 +171,22 @@
 									{typeEmoji[s.type]} {typeLabel[s.type] ?? s.type}
 								</span>
 							</div>
+						{:else}
+							<div class="aspect-[4/3] shrink-0 relative overflow-hidden bg-gradient-to-br from-teal-50 via-teal-100/40 to-warm-50 dark:from-teal-900/30 dark:via-teal-900/20 dark:to-warm-800 flex items-center justify-center">
+								<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, #0d9488 1px, transparent 1px); background-size: 14px 14px;"></div>
+								<span class="text-4xl drop-shadow-sm relative z-10">{typeEmoji[s.type] ?? '🐾'}</span>
+								<span class="absolute top-2 left-2 text-[11px] font-bold text-teal-700 dark:text-teal-300 bg-teal-100/80 dark:bg-teal-900/60 border border-teal-200 dark:border-teal-700 px-1.5 py-px rounded-full">
+									{typeLabel[s.type] ?? s.type}
+								</span>
+							</div>
 						{/if}
 
 						<!-- Content -->
 						<div class="p-3 flex flex-col gap-2 flex-1">
-							<!-- Type row: emoji pill + description -->
-							<div class="flex items-start gap-2">
-								{#if !s.photoUrl}
-									<span class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-base bg-teal-50 dark:bg-teal-900/30 border border-teal-100 dark:border-teal-800">
-										{typeEmoji[s.type] ?? '🐾'}
-									</span>
-								{/if}
-								<div class="flex items-start justify-between gap-1 flex-1 min-w-0">
-									<span class="text-xs font-semibold text-teal-700 dark:text-teal-400">
-										{typeLabel[s.type] ?? s.type}
-									</span>
-								</div>
-							</div>
+							<!-- Type label (photo cards) -->
+							{#if s.photoUrl}
+								<span class="text-xs font-semibold text-teal-700 dark:text-teal-400">{typeLabel[s.type] ?? s.type}</span>
+							{/if}
 
 							{#if s.description}
 								<p class="text-[11px] text-warm-600 dark:text-warm-300 leading-relaxed line-clamp-3">

@@ -166,34 +166,32 @@
 						class="card-appear group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-t-4 {typeTopBorder[pet.type] ?? 'border-t-stone-400'} shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col"
 						style="animation-delay: {i * 30}ms"
 					>
-						<!-- Photo (only shown when available) -->
+						<!-- Photo zone — always shown, placeholder when no photo -->
 						{#if pet.photoUrl}
-							<div class="h-36 overflow-hidden shrink-0">
+							<div class="aspect-[4/3] overflow-hidden shrink-0">
 								<img
 									src={pet.photoUrl}
 									alt={pet.name ?? 'Mascota'}
 									class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
 								/>
 							</div>
+						{:else}
+							<div class="aspect-[4/3] shrink-0 relative overflow-hidden bg-gradient-to-br from-amber-50 via-amber-100/50 to-warm-50 dark:from-warm-700 dark:via-warm-700/60 dark:to-warm-800 flex items-center justify-center">
+								<div class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle, #d97706 1px, transparent 1px); background-size: 14px 14px;"></div>
+								<span class="text-4xl drop-shadow-sm relative z-10">{typeEmoji[pet.type] ?? '🐾'}</span>
+							</div>
 						{/if}
 
 						<!-- Content -->
 						<div class="p-3 flex flex-col gap-2 flex-1">
-							<!-- Name row: emoji pill + name + badge -->
-							<div class="flex items-start gap-2">
-								{#if !pet.photoUrl}
-									<span class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-base bg-amber-50 dark:bg-warm-700 border border-amber-100 dark:border-warm-600">
-										{typeEmoji[pet.type] ?? '🐾'}
-									</span>
-								{/if}
-								<div class="flex items-start justify-between gap-1 flex-1 min-w-0">
-									<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-sm leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors line-clamp-2">
-										{pet.name ?? 'Sin nombre'}
-									</h2>
-									<Badge.Root variant="amber" class="shrink-0 !text-[10px] !px-1.5 !py-0 ml-1">
-										{speciesLabel[pet.type] ?? pet.type}
-									</Badge.Root>
-								</div>
+							<!-- Name + badge -->
+							<div class="flex items-start justify-between gap-1.5">
+								<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-sm leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors line-clamp-2">
+									{pet.name ?? 'Sin nombre'}
+								</h2>
+								<Badge.Root variant="amber" class="shrink-0 !text-[10px] !px-1.5 !py-0 ml-1">
+									{speciesLabel[pet.type] ?? pet.type}
+								</Badge.Root>
 							</div>
 
 							{#if pet.color || pet.size}
