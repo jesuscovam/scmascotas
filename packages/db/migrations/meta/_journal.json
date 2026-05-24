@@ -50,6 +50,13 @@
       "when": 1779555044588,
       "tag": "0006_absent_piledriver",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1779644099973,
+      "tag": "0007_good_the_fury",
+      "breakpoints": true
     }
   ]
 }
