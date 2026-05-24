@@ -1353,31 +1353,38 @@ Each sprint ≈ one week of focused evening/weekend work (~10-12h). Ship somethi
 
 **Deliverable:** Full bumping cycle. Sightings visible. Shareable. Reunited pets celebrated.
 
-### Sprint 4: Found-pet flow + structured matching
+### Sprint 4: Structured matching
 
-**Goal:** Killer feature ships. Found pets get matched to missing ones via cheap structured signals.
+**Goal:** Killer feature ships. Spotted pet reports surface possible missing-pet matches via cheap structured signals.
+
+**Note:** The "found pet" flow originally planned here shipped in Sprint 3 via `spotted_pets` / `SpottedPetsService` / `/reportar/vi` / `/avistamientos/[slug]`. This sprint is the matching intelligence layer on top.
 
 **Service layer:**
 
-- [ ] `FoundService.create()`, `getBySlug()`, `listActive()`, `resolve()`.
-- [ ] `MatchesService.runForFoundReport(foundId)`.
-- [ ] `MatchesService.recordVerdict()`.
-- [ ] Pure `scoreMatch()` in `matching/score.ts` with vitest coverage.
-- [ ] Publish `matching/README.md` for community discussion.
+- [x] `SpottedPetsService.create()`, `getBySlug()`, `listAll()`, `listForPet()` — shipped in Sprint 3 (covers `FoundService`).
+- [x] `match_results` table — Drizzle schema + migration `0007`. `(spotted_pet_id, pet_id)` composite unique, `score integer`, `human_verdict text`.
+- [x] `MatchesService.getMatchesFor(spottedPetId)` — lazy-compute: returns cached rows or scores on first visit.
+- [x] `MatchesService.recordVerdict(matchId, verdict)`.
+- [x] Pure `scoreMatch(spotted, missing): MatchBreakdown` in `packages/services/src/matching/score.ts` — type(40) + colonia(30) + color(10) + size(10) + recency(10). 11 vitest tests pass.
+- [x] Color synonym normalization in `packages/services/src/matching/color-normalize.ts` — group-based Spanish synonyms, accent-stripped. No external deps.
+- [x] Published `packages/services/src/matching/README.md` for community discussion.
 
 **API routes:**
 
-- [ ] `POST /api/found`, `POST /api/matches/[id]/verdict`.
+- [x] `POST /api/spotted-pets` — covers `POST /api/found` (Sprint 3).
+- [x] `POST /api/matches/[id]/verdict` — zod-validated, records `human_verdict` in DB.
 
 **UI components:**
 
-- [ ] `MatchSuggestions`.
+- [x] `MatchSuggestions` (`@scmascotas/ui`) — SVG score ring (r=15.9, circumference≈100), amber gradient header, signal pills (colonia/color/size lit amber when matching), staggered reveals. Color matching mirrors `colorsOverlap()` groups in component.
 
 **App routes:**
 
-- [ ] `/encontre`, `/encontrada/[slug]`.
+- [x] `/reportar/vi` — covers `/encontre` (Sprint 3).
+- [x] `/avistamientos/[slug]` — covers `/encontrada/[slug]` (Sprint 3).
+- [x] `MatchSuggestions` wired into `/avistamientos/[slug]` detail page — shown only when `status='open'` and `matchedPetId` is null.
 
-**Deliverable:** Found-pet reports surface possible owners with breakdown. Community can now propose algorithm tweaks via PR.
+**Deliverable:** Spotted pet reports surface possible owners with score breakdown. Community can propose algorithm tweaks via PR. ✅ — v0.7.0
 
 ### Sprint 5: Image embeddings (cold→warm→hot)
 

@@ -6,3 +6,4 @@ export * from './rate_limits.js';
 export * from './auth.js';
 export * from './contact_messages.js';
 export * from './spotted_pets.js';
+export * from './match_results.js';

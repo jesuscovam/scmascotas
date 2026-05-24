@@ -13,8 +13,12 @@
     "@vercel/blob": "^2.3.0",
     "drizzle-orm": "^0.45.2"
   },
+  "scripts": {
+    "test": "vitest run"
+  },
   "devDependencies": {
     "@scmascotas/typescript-config": "workspace:*",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   }
 }

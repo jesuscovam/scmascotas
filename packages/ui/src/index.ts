@@ -19,3 +19,4 @@ export * as Label from './lib/components/ui/label/index.js';
 export { default as SightingsList } from './lib/components/sightings-list.svelte';
 export { default as ShareButton } from './lib/components/share-button.svelte';
 export { default as SpeciesPicker } from './lib/components/species-picker.svelte';
+export { default as MatchSuggestions } from './lib/components/match-suggestions.svelte';
