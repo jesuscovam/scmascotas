@@ -159,7 +159,7 @@
 						class="card-appear bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-l-4 border-l-teal-400 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col"
 						style="animation-delay: {i * 30}ms"
 					>
-						<!-- Photo / placeholder -->
+						<!-- Photo (only shown when available) -->
 						{#if s.photoUrl}
 							<div class="h-36 overflow-hidden shrink-0 relative">
 								<img
@@ -171,19 +171,24 @@
 									{typeEmoji[s.type]} {typeLabel[s.type] ?? s.type}
 								</span>
 							</div>
-						{:else}
-							<div class="h-24 bg-gradient-to-b from-teal-50 to-teal-100/50 dark:from-teal-900/30 dark:to-warm-800 flex items-center justify-center shrink-0 relative">
-								<div class="w-12 h-12 rounded-full bg-white/80 dark:bg-warm-600/60 shadow-sm flex items-center justify-center text-2xl">
-									{typeEmoji[s.type] ?? '🐾'}
-								</div>
-								<span class="absolute top-2 left-2 text-[11px] font-bold text-teal-800 dark:text-teal-200 bg-teal-100/90 dark:bg-teal-900/50 border border-teal-200 dark:border-teal-700 px-1.5 py-px rounded-full">
-									{typeLabel[s.type] ?? s.type}
-								</span>
-							</div>
 						{/if}
 
 						<!-- Content -->
 						<div class="p-3 flex flex-col gap-2 flex-1">
+							<!-- Type row: emoji pill + description -->
+							<div class="flex items-start gap-2">
+								{#if !s.photoUrl}
+									<span class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-base bg-teal-50 dark:bg-teal-900/30 border border-teal-100 dark:border-teal-800">
+										{typeEmoji[s.type] ?? '🐾'}
+									</span>
+								{/if}
+								<div class="flex items-start justify-between gap-1 flex-1 min-w-0">
+									<span class="text-xs font-semibold text-teal-700 dark:text-teal-400">
+										{typeLabel[s.type] ?? s.type}
+									</span>
+								</div>
+							</div>
+
 							{#if s.description}
 								<p class="text-[11px] text-warm-600 dark:text-warm-300 leading-relaxed line-clamp-3">
 									{s.description}
@@ -204,14 +209,12 @@
 							{/if}
 
 							<!-- Footer -->
-							<div class="mt-auto pt-2 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between text-[11px] text-warm-400 dark:text-warm-500">
-								<span class="flex items-center gap-0.5 truncate">
-									<svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-										<path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
-									</svg>
+							<div class="mt-auto pt-2 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between gap-1 text-[11px] text-warm-400 dark:text-warm-500">
+								<span class="flex items-center gap-1 min-w-0">
+									<span class="shrink-0 w-1.5 h-1.5 rounded-full bg-teal-300 dark:bg-teal-700"></span>
 									<span class="truncate">{s.colonia ?? 'Desconocida'}</span>
 								</span>
-								<span class="shrink-0 ml-1">{timeAgo(s.createdAt)}</span>
+								<span class="shrink-0">{timeAgo(s.createdAt)}</span>
 							</div>
 						</div>
 					</div>

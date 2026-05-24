@@ -166,7 +166,7 @@
 						class="card-appear group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-t-4 {typeTopBorder[pet.type] ?? 'border-t-stone-400'} shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col"
 						style="animation-delay: {i * 30}ms"
 					>
-						<!-- Photo / placeholder -->
+						<!-- Photo (only shown when available) -->
 						{#if pet.photoUrl}
 							<div class="h-36 overflow-hidden shrink-0">
 								<img
@@ -175,23 +175,25 @@
 									class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
 								/>
 							</div>
-						{:else}
-							<div class="h-24 bg-gradient-to-b from-amber-50 to-amber-100/60 dark:from-warm-700/60 dark:to-warm-800 flex items-center justify-center shrink-0">
-								<div class="w-12 h-12 rounded-full bg-white/80 dark:bg-warm-600/60 shadow-sm flex items-center justify-center text-2xl">
-									{typeEmoji[pet.type] ?? '🐾'}
-								</div>
-							</div>
 						{/if}
 
 						<!-- Content -->
 						<div class="p-3 flex flex-col gap-2 flex-1">
-							<div class="flex items-start justify-between gap-1.5">
-								<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-sm leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors line-clamp-1">
-									{pet.name ?? 'Sin nombre'}
-								</h2>
-								<Badge.Root variant="amber" class="shrink-0 !text-[10px] !px-1.5 !py-0">
-									{speciesLabel[pet.type] ?? pet.type}
-								</Badge.Root>
+							<!-- Name row: emoji pill + name + badge -->
+							<div class="flex items-start gap-2">
+								{#if !pet.photoUrl}
+									<span class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-base bg-amber-50 dark:bg-warm-700 border border-amber-100 dark:border-warm-600">
+										{typeEmoji[pet.type] ?? '🐾'}
+									</span>
+								{/if}
+								<div class="flex items-start justify-between gap-1 flex-1 min-w-0">
+									<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-sm leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors line-clamp-2">
+										{pet.name ?? 'Sin nombre'}
+									</h2>
+									<Badge.Root variant="amber" class="shrink-0 !text-[10px] !px-1.5 !py-0 ml-1">
+										{speciesLabel[pet.type] ?? pet.type}
+									</Badge.Root>
+								</div>
 							</div>
 
 							{#if pet.color || pet.size}
@@ -210,14 +212,12 @@
 							{/if}
 
 							<!-- Footer -->
-							<div class="mt-auto pt-2 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between text-[11px] text-warm-400 dark:text-warm-500">
-								<span class="flex items-center gap-0.5 truncate">
-									<svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-										<path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
-									</svg>
+							<div class="mt-auto pt-2 border-t border-warm-100 dark:border-warm-700 flex items-center justify-between gap-1 text-[11px] text-warm-400 dark:text-warm-500">
+								<span class="flex items-center gap-1 min-w-0">
+									<span class="shrink-0 w-1.5 h-1.5 rounded-full bg-warm-300 dark:bg-warm-600"></span>
 									<span class="truncate">{pet.colonia ?? 'Desconocida'}</span>
 								</span>
-								<span class="shrink-0 ml-1">{timeAgo(pet.lastSeenAt)}</span>
+								<span class="shrink-0">{timeAgo(pet.lastSeenAt)}</span>
 							</div>
 						</div>
 					</a>
