@@ -31,7 +31,7 @@
 		"marked": "^15.0.0",
 		"mode-watcher": "^1.1.0",
 		"resend": "^6.12.3",
-		"zod": "^3.25.0"
+		"zod": "^4.4.3"
 	},
 	"devDependencies": {
 		"@scmascotas/eslint-config": "workspace:*",
