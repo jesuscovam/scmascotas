@@ -1,4 +1,4 @@
-import { db, spottedPets, colonias, pets, sightings } from '@scmascotas/db';
+import { db, spottedPets, colonias, pets } from '@scmascotas/db';
 import { eq, desc, and, isNull } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 import { put } from '@vercel/blob';
@@ -33,26 +33,8 @@ export const SpottedPetsService = {
 			})
 			.returning();
 
-		// When this spotted-pet is linked to a lost-pet report, mirror it as a
-		// sighting so the pet detail page reflects the activity immediately and
-		// the pet gets bumped to the top of the listing.
+		// Bump the linked pet's lastSeenAt so it rises in the listing.
 		if (data.matchedPetId) {
-			const colonia = data.coloniaId
-				? await db
-						.select({ name: colonias.name })
-						.from(colonias)
-						.where(eq(colonias.id, data.coloniaId))
-						.then((rows) => rows[0]?.name ?? null)
-				: null;
-
-			await db.insert(sightings).values({
-				petId: data.matchedPetId,
-				description: data.description ?? null,
-				colonia,
-				reporterUserId: ctx.userId ?? null,
-				reporterIpHash: ctx.ipHash ?? null,
-			});
-
 			await db
 				.update(pets)
 				.set({ lastSeenAt: new Date(), updatedAt: new Date() })
@@ -88,6 +70,21 @@ export const SpottedPetsService = {
 			.where(eq(spottedPets.slug, slug))
 			.limit(1);
 		return row ?? null;
+	},
+
+	async listForPet(petId: string) {
+		return db
+			.select({
+				id: spottedPets.id,
+				description: spottedPets.description,
+				colonia: colonias.name,
+				createdAt: spottedPets.createdAt,
+			})
+			.from(spottedPets)
+			.leftJoin(colonias, eq(spottedPets.coloniaId, colonias.id))
+			.where(eq(spottedPets.matchedPetId, petId))
+			.orderBy(desc(spottedPets.createdAt))
+			.limit(20);
 	},
 
 	async listByColonia(coloniaId: string) {
