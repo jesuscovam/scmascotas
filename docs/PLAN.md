@@ -1390,14 +1390,16 @@ Each sprint ≈ one week of focused evening/weekend work (~10-12h). Ship somethi
 
 **Goal:** Image similarity for warm leads. Cost-conscious by design.
 
-- [ ] Enable `pgvector` on Neon.
-- [ ] Add `embedding vector(768)` columns to photo tables.
-- [ ] Replicate integration.
-- [ ] `EmbeddingsService.generate(photoUrl)`.
-- [ ] Embed on photo upload, async.
-- [ ] Extend `scoreMatch()` with visual score.
-- [ ] Re-tune thresholds based on Sprint 4 labeled data.
-- [ ] Cost monitoring + alerts.
+**Model:** CLIP via Replicate → `vector(768)`. Photo URLs already exist on `pet_photos.url` and `spotted_pets.photoUrl`.
+
+- [ ] Enable `pgvector` extension on Neon.
+- [ ] Add `embedding vector(768)` column to `pet_photos` table + migration.
+- [ ] Add `embedding vector(768)` column to `spotted_pets` table + migration.
+- [ ] `EmbeddingsService.generate(photoUrl)` — calls Replicate CLIP API, returns `number[]`.
+- [ ] Embed on photo upload, async (best-effort — don't block the upload response).
+- [ ] Extend `scoreMatch()` with `visual` score (cosine similarity, only when both embeddings exist).
+- [ ] Document threshold calibration process in `matching/README.md`; defer actual re-tuning until post-launch `human_verdict` data is available (Sprint 4 just shipped — zero labeled rows exist yet).
+- [ ] Cost monitoring + alerts — document Replicate free-tier limits and alert thresholds in repo.
 
 **Deliverable:** Visual matching for warm leads. Documented cost profile in repo.
 
@@ -1405,11 +1407,11 @@ Each sprint ≈ one week of focused evening/weekend work (~10-12h). Ship somethi
 
 - [ ] PWA: manifest, install banner, offline shell, app icons.
 - [ ] Admin moderation page.
-- [ ] Rate-limit hardening.
-- [ ] Error tracking (Sentry free tier).
+- [x] Rate-limit hardening — Upstash Redis sliding-window limits already in place (`apps/web/src/lib/server/rate-limit.ts`).
+- [x] Error tracking (Sentry) — already integrated in `hooks.{server,client}.ts` + `vite.config.ts` with source maps and session replays.
 - [ ] Plausible/Umami analytics.
 - [ ] Long-term-missing section.
-- [ ] `/reunidos` page.
+- [ ] `/reunidos` listing page — individual `/reunido/[slug]` celebration page already ships; this is a gallery of all reunited pets.
 - [ ] Real-device QA on slow 3G.
 - [ ] Reach out to FB group admins.
 
