@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { untrack } from 'svelte';
-	import { fly } from 'svelte/transition';
+	import { fly, fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { Select, SpeciesPicker } from '@scmascotas/ui';
@@ -177,6 +177,7 @@
 </svelte:head>
 
 <div
+	in:fade={{ duration: 280 }}
 	class="min-h-screen bg-[#faf9f7] dark:bg-warm-900 bg-dots-amber"
 >
 	<div class="max-w-2xl mx-auto px-4 py-10 pb-24">

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
-	import { Button, Badge, Select } from '@scmascotas/ui';
+	import { Button, Select } from '@scmascotas/ui';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	let { data } = $props();
 
@@ -179,10 +179,32 @@
 				</div>
 			</div>
 
-			<!-- Step 3 — Coming soon -->
-			<div class="relative bg-warm-900/60 border-2 border-dashed border-warm-700 rounded-2xl p-6 flex flex-col gap-4 opacity-75">
+			<!-- Step 3 -->
+			<div class="relative bg-warm-800 border border-warm-700 rounded-2xl p-6 border-l-4 border-l-brand-600 flex flex-col gap-4">
 				<div class="flex items-center justify-between">
-					<div class="w-8 h-8 rounded-full bg-warm-800 border border-warm-700 flex items-center justify-center text-warm-500 text-sm font-bold font-display">3</div>
+					<div class="w-8 h-8 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-brand-300 text-sm font-bold font-display">3</div>
+					<span class="text-2xl">🔍</span>
+				</div>
+				<div>
+					<h3 class="font-display font-bold text-warm-50 text-base leading-snug mb-2">
+						Comparación por imagen
+					</h3>
+					<p class="text-warm-400 text-xs leading-relaxed">
+						Sube una foto de una mascota encontrada y el sistema la comparará con los reportes activos.
+					</p>
+				</div>
+				<!-- Desktop arrow -->
+				<div class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center">
+					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" class="text-warm-600">
+						<path d="M0 8 H18 M14 3 L20 8 L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
+					</svg>
+				</div>
+			</div>
+
+			<!-- Step 4 — Coming soon -->
+			<div class="bg-warm-900/60 border-2 border-dashed border-warm-700 rounded-2xl p-6 flex flex-col gap-4 opacity-75">
+				<div class="flex items-center justify-between">
+					<div class="w-8 h-8 rounded-full bg-warm-800 border border-warm-700 flex items-center justify-center text-warm-500 text-sm font-bold font-display">4</div>
 					<span class="text-2xl grayscale">🗺️</span>
 				</div>
 				<div>
@@ -194,31 +216,6 @@
 					</h3>
 					<p class="text-warm-500 text-xs leading-relaxed">
 						Un mapa interactivo mostrará todos los reportes activos cerca de ti en tiempo real.
-					</p>
-				</div>
-				<!-- Desktop arrow -->
-				<div class="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 items-center">
-					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" class="text-warm-700">
-						<path d="M0 8 H18 M14 3 L20 8 L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
-					</svg>
-				</div>
-			</div>
-
-			<!-- Step 4 — Coming soon -->
-			<div class="bg-warm-900/60 border-2 border-dashed border-warm-700 rounded-2xl p-6 flex flex-col gap-4 opacity-75">
-				<div class="flex items-center justify-between">
-					<div class="w-8 h-8 rounded-full bg-warm-800 border border-warm-700 flex items-center justify-center text-warm-500 text-sm font-bold font-display">4</div>
-					<span class="text-2xl grayscale">🔍</span>
-				</div>
-				<div>
-					<div class="inline-flex items-center gap-1 bg-warm-800 text-warm-500 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2">
-						Próximamente
-					</div>
-					<h3 class="font-display font-bold text-warm-300 text-base leading-snug mb-2">
-						Comparación por imagen
-					</h3>
-					<p class="text-warm-500 text-xs leading-relaxed">
-						Sube una foto de una mascota encontrada y el sistema la comparará con los reportes activos.
 					</p>
 				</div>
 			</div>
@@ -312,23 +309,26 @@
 						class="group bg-white dark:bg-warm-800 rounded-2xl border border-warm-200 dark:border-warm-700 border-t-4 {typeTopBorder[pet.type] ?? 'border-t-stone-400'} shadow-sm hover:shadow-md hover:scale-[1.02] transition-all overflow-hidden flex flex-col"
 					>
 						{#if pet.photoUrl}
-							<div class="aspect-[4/3] overflow-hidden shrink-0">
+							<div class="aspect-[4/3] overflow-hidden shrink-0 relative">
 								<img src={pet.photoUrl} alt={pet.name ?? 'Mascota'} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+								<span class="absolute top-2 left-2 text-[11px] font-bold text-amber-800 dark:text-amber-200 bg-amber-100/90 dark:bg-amber-900/80 backdrop-blur-sm border border-amber-200 dark:border-amber-700 px-1.5 py-px rounded-full">
+									{typeEmoji[pet.type]} {speciesLabel[pet.type] ?? pet.type}
+								</span>
 							</div>
 						{:else}
 							<div class="aspect-[4/3] shrink-0 relative overflow-hidden bg-gradient-to-br from-amber-50 via-amber-100/50 to-warm-50 dark:from-warm-700 dark:via-warm-700/60 dark:to-warm-800 flex items-center justify-center">
 								<div class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle, #d97706 1px, transparent 1px); background-size: 14px 14px;"></div>
 								<span class="text-4xl drop-shadow-sm relative z-10">{typeEmoji[pet.type] ?? '🐾'}</span>
+								<span class="absolute top-2 left-2 text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-900/60 border border-amber-200 dark:border-amber-700 px-1.5 py-px rounded-full">
+									{speciesLabel[pet.type] ?? pet.type}
+								</span>
 							</div>
 						{/if}
 						<div class="p-3 flex flex-col gap-2 flex-1">
-							<div class="flex items-start justify-between gap-1.5">
+							<div>
 								<h3 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-sm leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors line-clamp-2">
 									{pet.name ?? 'Sin nombre'}
 								</h3>
-								<Badge.Root variant="amber" class="shrink-0 !text-[10px] !px-1.5 !py-0 ml-1">
-									{speciesLabel[pet.type] ?? pet.type}
-								</Badge.Root>
 							</div>
 							{#if pet.color || pet.size}
 								<div class="flex flex-wrap gap-1 text-[11px] text-warm-500 dark:text-warm-400">
