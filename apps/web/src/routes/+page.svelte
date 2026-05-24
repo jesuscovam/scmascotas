@@ -299,14 +299,9 @@
 					</span>
 				{/if}
 			</div>
-			<div class="flex items-center gap-4 shrink-0">
-				<a href="/avistamientos" class="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-200 transition-colors">
-					Ver todos →
-				</a>
-				<a href="/reportar/vi" class="text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 px-3 py-1.5 rounded-xl transition-colors">
-					+ Reportar
-				</a>
-			</div>
+			<a href="/avistamientos" class="shrink-0 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-200 transition-colors">
+				Ver todos →
+			</a>
 		</div>
 
 		{#if data.sightings.length === 0}
