@@ -33,7 +33,8 @@ export const PetsService = {
         lastSeenAt: pets.lastSeenAt,
         colonia: colonias.name,
         coloniaId: pets.coloniaId,
-        photoUrl: petPhotos.url
+        photoUrl:  petPhotos.url,
+      embedding: petPhotos.embedding,
       })
       .from(pets)
       .leftJoin(colonias, eq(pets.coloniaId, colonias.id))
@@ -151,6 +152,22 @@ export const PetsService = {
     await db
       .update(pets)
       .set({ status: 'reunited', reunitedAt: new Date(), updatedAt: new Date() })
+      .where(eq(pets.id, petId));
+  },
+
+  async markArchived(petId: string, ctx: ActorCtx) {
+    await assertCanEdit(petId, ctx);
+    await db
+      .update(pets)
+      .set({ status: 'archived', updatedAt: new Date() })
+      .where(eq(pets.id, petId));
+  },
+
+  async markActive(petId: string, ctx: ActorCtx) {
+    await assertCanEdit(petId, ctx);
+    await db
+      .update(pets)
+      .set({ status: 'missing', updatedAt: new Date() })
       .where(eq(pets.id, petId));
   },
 

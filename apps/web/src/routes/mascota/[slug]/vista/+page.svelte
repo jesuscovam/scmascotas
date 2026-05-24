@@ -86,8 +86,7 @@
 </svelte:head>
 
 <div
-	class="min-h-screen bg-[#f5faf9] dark:bg-warm-900"
-	style="background-image: radial-gradient(circle, rgba(20,184,166,0.06) 1px, transparent 1px); background-size: 20px 20px;"
+	class="min-h-screen bg-[#f5faf9] dark:bg-warm-900 bg-dots-teal"
 >
 	<div class="max-w-lg mx-auto px-4 py-8 flex flex-col gap-6 pb-20">
 

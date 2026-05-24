@@ -53,3 +53,55 @@ Los grupos están definidos en `color-normalize.ts`. Ejemplos:
 ## Calibración actual
 
 (Se llenará con datos de producción anonimizados después del lanzamiento suave.)
+
+---
+
+## Sprint 5: Similitud visual (embeddings CLIP)
+
+### Modelo
+
+**CLIP ViT-L/14** vía [andreasjansson/clip-features](https://replicate.com/andreasjansson/clip-features) en Replicate.
+- Salida: `vector(768)` — 768 valores float32 por imagen
+- Almacenado en: `pet_photos.embedding` y `spotted_pets.embedding` (nullable — filas antiguas tienen `NULL`)
+
+### Puntos adicionales
+
+El puntaje visual **sólo se activa** cuando tanto el avistamiento como la mascota candidata tienen embedding.
+
+| Similitud coseno | Puntos |
+|---|---|
+| ≥ 0.90 | +20 |
+| 0.80–0.89 | +15 |
+| 0.70–0.79 | +10 |
+| 0.60–0.69 | +5 |
+| < 0.60 | 0 |
+
+Puntuación máxima con visual: **120 pts** (100 estructurado + 20 visual).
+El umbral de 30 pts no cambia.
+
+### Costo
+
+Replicate CLIP cuesta ~$0.000115 por predicción (a 2026-05).
+Plan gratuito: 500 predicciones/mes.
+A ~50 reportes nuevos/mes (escala actual): ~$0.006/mes.
+
+**Monitorear:** [Panel de facturación de Replicate](https://replicate.com/account/billing).
+Configurar alerta en $1/mes; investigar si se supera.
+
+### Calibración de umbrales (diferida)
+
+Sprint 4 lanzó el endpoint `POST /api/matches/[id]/verdict`.
+Una vez que haya 50+ filas `human_verdict` en producción, re-calibrar con:
+
+```sql
+SELECT score,
+       COUNT(*) FILTER (WHERE human_verdict = 'match')    AS verdaderos_positivos,
+       COUNT(*) FILTER (WHERE human_verdict = 'no_match') AS falsos_positivos
+FROM match_results
+WHERE human_verdict IS NOT NULL
+GROUP BY score
+ORDER BY score DESC;
+```
+
+Actualizar `MATCH_THRESHOLD` en `packages/services/src/matches.ts` y los
+umbrales de `visualScore()` en `packages/services/src/matching/cosine.ts`.

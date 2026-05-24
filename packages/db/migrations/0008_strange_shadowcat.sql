@@ -1,0 +1,1 @@
+ALTER TYPE "public"."spotted_pet_status" ADD VALUE 'archived';

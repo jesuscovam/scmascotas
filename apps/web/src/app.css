@@ -85,6 +85,25 @@
   to   { height: 0; opacity: 0; }
 }
 
+/* ─── Dot grid backgrounds ───────────────────────────────────────────────────
+   Change --dot-amber or --dot-teal here to restyle every page at once.
+   Opacity is embedded in the color so a single variable controls both hue
+   and intensity.                                                              */
+:root {
+  --dot-amber: rgba(180, 140, 60, 0.13);
+  --dot-teal:  rgba(20, 184, 166, 0.13);
+}
+
+.bg-dots-amber {
+  background-image: radial-gradient(circle, var(--dot-amber) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.bg-dots-teal {
+  background-image: radial-gradient(circle, var(--dot-teal) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
 @layer base {
   html {
     font-family: var(--font-body);

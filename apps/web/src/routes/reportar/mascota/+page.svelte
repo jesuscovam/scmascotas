@@ -2,10 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { untrack } from 'svelte';
-	import { fly } from 'svelte/transition';
+	import { fly, fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { Select, Calendar, Popover, Button, Spinner, SpeciesPicker } from '@scmascotas/ui';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
+	import PhotoPicker from '$lib/components/PhotoPicker.svelte';
 	import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 	import type { CalendarDate as CalendarDateType } from '@internationalized/date';
 
@@ -41,7 +42,7 @@
 	let contact_whatsapp = $state('');
 	let contact_name = $state('');
 	let anonymous = $state(false);
-	let photoFiles = $state<FileList | null>(null);
+	let photoFiles = $state<File[]>([]);
 	let submitting = $state(false);
 	let formError = $state('');
 	let rateLimited = $state(false);
@@ -164,19 +165,15 @@
 				return;
 			}
 
-			const { slug, editToken } = await res.json();
+			const { id: petId, slug, editToken } = await res.json();
 
-			if (photoFiles && photoFiles.length > 0) {
-				const petRes = await fetch(`/api/pets?slug=${slug}`);
-				if (petRes.ok) {
-					const { id: petId } = await petRes.json();
-					for (let i = 0; i < photoFiles.length; i++) {
-						const form = new FormData();
-						form.set('petId', petId);
-						form.set('file', photoFiles[i]);
-						form.set('isPrimary', String(i === 0));
-						await fetch('/api/uploads', { method: 'POST', body: form });
-					}
+			if (photoFiles.length > 0) {
+				for (let i = 0; i < photoFiles.length; i++) {
+					const form = new FormData();
+					form.set('petId', petId);
+					form.set('file', photoFiles[i]);
+					form.set('isPrimary', String(i === 0));
+					await fetch('/api/uploads', { method: 'POST', body: form });
 				}
 			}
 
@@ -194,8 +191,8 @@
 </script>
 
 <div
-	class="min-h-screen bg-[#faf9f7] dark:bg-warm-900"
-	style="background-image: radial-gradient(circle, rgba(180,140,60,0.07) 1px, transparent 1px); background-size: 22px 22px;"
+	in:fade={{ duration: 280 }}
+	class="min-h-screen bg-[#faf9f7] dark:bg-warm-900 bg-dots-amber"
 >
 	<div class="max-w-2xl mx-auto px-4 py-10 pb-24">
 
@@ -489,15 +486,12 @@
 										<p class="text-xs text-warm-400 dark:text-warm-500">Aumenta las chances de encontrarla</p>
 									</div>
 								</div>
-								<label class="border-2 border-dashed border-warm-200 dark:border-warm-600 rounded-2xl p-8 flex flex-col items-center gap-2 cursor-pointer hover:border-brand-300 dark:hover:border-brand-600 hover:bg-brand-50/50 dark:hover:bg-brand-900/20 transition-all text-center">
-									<span class="text-4xl">📷</span>
-									<span class="text-sm font-semibold text-warm-700 dark:text-warm-200">Haz clic para subir fotos</span>
-									<span class="text-xs text-warm-400 dark:text-warm-500">JPG, PNG · Máx. 5 MB cada una</span>
-									<input type="file" accept="image/*" multiple bind:files={photoFiles} class="hidden" />
-								</label>
-								{#if photoFiles && photoFiles.length > 0}
-									<p class="text-sm text-warm-500 dark:text-warm-400 text-center">{photoFiles.length} foto(s) seleccionada(s)</p>
-								{/if}
+								<PhotoPicker
+									multiple
+									label="Haz clic para subir fotos"
+									hint="JPG, PNG · Máx. 5 MB cada una"
+									bind:files={photoFiles}
+								/>
 							</div>
 
 							<!-- Contact -->
