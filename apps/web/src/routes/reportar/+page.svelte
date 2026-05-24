@@ -10,19 +10,6 @@
 <div
 	class="min-h-screen bg-[#faf9f7] dark:bg-warm-900 flex flex-col bg-dots-amber"
 >
-	<!-- Back link -->
-	<div class="px-6 pt-6">
-		<a
-			href="/"
-			class="inline-flex items-center gap-1.5 text-sm text-warm-500 dark:text-warm-400 hover:text-warm-900 dark:hover:text-warm-100 transition-colors"
-		>
-			<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-			</svg>
-			Volver al inicio
-		</a>
-	</div>
-
 	<!-- Main content -->
 	<div class="flex-1 flex flex-col items-center justify-start px-4 pt-8 pb-12 sm:pt-10 sm:pb-16">
 
