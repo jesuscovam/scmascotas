@@ -2,7 +2,7 @@
 	import { Progress, Card } from '@scmascotas/ui';
 
 	const TOTAL_SPRINTS = 7; // sprints 0–6
-	const DONE_SPRINTS = 3;  // sprints 0, 1 and 2
+	const DONE_SPRINTS = 4;  // sprints 0, 1, 2 and 3
 	const progress = Math.round((DONE_SPRINTS / TOTAL_SPRINTS) * 100);
 </script>
 
@@ -83,6 +83,20 @@
 					</div>
 				</Card.Content>
 			</Card.Root>
+
+			<Card.Root class="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
+				<Card.Content class="pt-5 pb-5">
+					<div class="flex items-start gap-3">
+						<span class="text-lg mt-0.5">✅</span>
+						<div>
+							<p class="font-semibold text-warm-800 dark:text-warm-100">Sprint 3 — Avistamientos, edición y compartir</p>
+							<p class="text-sm text-warm-500 dark:text-warm-400 mt-1">
+								Cualquier persona puede reportar que vio a la mascota. Los avistamientos actualizan la fecha de último avistamiento. Botón de compartir a Facebook. Filtros por especie y colonia en la galería y portada. Marcar como reencontrada.
+							</p>
+						</div>
+					</div>
+				</Card.Content>
+			</Card.Root>
 		</div>
 	</section>
 
@@ -92,20 +106,6 @@
 			Próximamente
 		</h2>
 		<div class="flex flex-col gap-4">
-			<Card.Root class="border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-900/20">
-				<Card.Content class="pt-5 pb-5">
-					<div class="flex items-start gap-3">
-						<span class="text-lg mt-0.5">🔄</span>
-						<div>
-							<p class="font-semibold text-warm-800 dark:text-warm-100">Sprint 3 — Avistamientos, edición y compartir</p>
-							<p class="text-sm text-warm-500 dark:text-warm-400 mt-1">
-								Cualquier persona puede reportar que vio a la mascota. Los avistamientos actualizan la fecha de último visteo. Botón de compartir a Facebook. Filtros en la galería por especie y colonia. Marcar como reencontrada.
-							</p>
-						</div>
-					</div>
-				</Card.Content>
-			</Card.Root>
-
 			{#each [
 				{ icon: '⏳', title: 'Sprint 4 — Mascota encontrada + emparejamiento', desc: 'Flujo para reportar una mascota encontrada. Algoritmo de emparejamiento estructurado (especie, colonia, color, tamaño, descripción) que sugiere posibles dueños. El algoritmo es público y abierto a contribuciones de la comunidad.' },
 				{ icon: '⏳', title: 'Sprint 5 — Similitud visual por imagen', desc: 'Embeddings de imagen con Replicate (CLIP) almacenados en pgvector. Solo se ejecutan en candidatos "tibios" del algoritmo para mantener costos bajos. Mejora la precisión del emparejamiento cuando hay fotos disponibles.' },
