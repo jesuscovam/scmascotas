@@ -164,6 +164,34 @@ export const SpottedPetsService = {
 		return row ?? null;
 	},
 
+	async archive(id: string, userId: string) {
+		const [row] = await db
+			.select({ reporterUserId: spottedPets.reporterUserId })
+			.from(spottedPets)
+			.where(eq(spottedPets.id, id))
+			.limit(1);
+		if (!row) throw new Error('NOT_FOUND');
+		if (row.reporterUserId !== userId) throw new Error('FORBIDDEN');
+		await db
+			.update(spottedPets)
+			.set({ status: 'archived', updatedAt: new Date() })
+			.where(eq(spottedPets.id, id));
+	},
+
+	async unarchive(id: string, userId: string) {
+		const [row] = await db
+			.select({ reporterUserId: spottedPets.reporterUserId })
+			.from(spottedPets)
+			.where(eq(spottedPets.id, id))
+			.limit(1);
+		if (!row) throw new Error('NOT_FOUND');
+		if (row.reporterUserId !== userId) throw new Error('FORBIDDEN');
+		await db
+			.update(spottedPets)
+			.set({ status: 'open', updatedAt: new Date() })
+			.where(eq(spottedPets.id, id));
+	},
+
 	async uploadPhoto(id: string, file: File) {
 		const blob = await put(`spotted/${id}/${file.name}`, file, { access: 'public' });
 		await db
