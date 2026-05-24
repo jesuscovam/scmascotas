@@ -8,8 +8,7 @@
 </svelte:head>
 
 <div
-	class="min-h-screen bg-[#faf9f7] dark:bg-warm-900 flex flex-col"
-	style="background-image: radial-gradient(circle, rgba(180,140,60,0.07) 1px, transparent 1px); background-size: 22px 22px;"
+	class="min-h-screen bg-[#faf9f7] dark:bg-warm-900 flex flex-col bg-dots-amber"
 >
 	<!-- Back link -->
 	<div class="px-6 pt-6">
@@ -25,7 +24,7 @@
 	</div>
 
 	<!-- Main content -->
-	<div class="flex-1 flex flex-col items-center justify-center px-4 py-12 sm:py-16">
+	<div class="flex-1 flex flex-col items-center justify-start px-4 pt-8 pb-12 sm:pt-10 sm:pb-16">
 
 		<!-- Header -->
 		<div class="text-center mb-10 flex flex-col items-center gap-3">
