@@ -1,1 +1,1 @@
-ALTER TABLE "match_results" ADD COLUMN "visual_score" integer;
+ALTER TABLE "match_results" ADD COLUMN IF NOT EXISTS "visual_score" integer;
