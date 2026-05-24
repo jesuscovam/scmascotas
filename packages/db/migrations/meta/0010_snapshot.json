@@ -1,6 +1,6 @@
 {
-  "id": "f6e9e8f6-4d37-4d61-8f48-43e927813fba",
-  "prevId": "f517a39f-fbf9-4f83-b24a-e432bad6d8da",
+  "id": "76e3195e-cf57-47a6-abc4-2c6a3731505e",
+  "prevId": "f6e9e8f6-4d37-4d61-8f48-43e927813fba",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1355,6 +1355,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "visual_score": {
+          "name": "visual_score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "human_verdict": {
           "name": "human_verdict",
           "type": "text",
@@ -1491,7 +1497,8 @@
       "schema": "public",
       "values": [
         "open",
-        "resolved"
+        "resolved",
+        "archived"
       ]
     }
   },
