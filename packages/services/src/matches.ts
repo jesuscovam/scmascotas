@@ -13,6 +13,7 @@ export const MatchesService = {
       .select({
         id:                 matchResults.id,
         score:              matchResults.score,
+        visualScore:        matchResults.visualScore,
         humanVerdict:       matchResults.humanVerdict,
         petId:              pets.id,
         petSlug:            pets.slug,
@@ -33,15 +34,18 @@ export const MatchesService = {
       .where(eq(matchResults.spottedPetId, spottedPetId))
       .orderBy(desc(matchResults.score));
 
-    if (existing.length > 0) return existing;
+    // Return cache unless all rows pre-date visual scoring (visual_score IS NULL means
+    // the row was computed before Sprint 5 embeddings were tracked — recompute once).
+    if (existing.length > 0 && existing.some(r => r.visualScore !== null)) return existing;
 
-    // First visit — run scoring and persist
+    // First visit (or stale pre-embedding cache) — run scoring and persist
     await _computeAndSave(spottedPetId);
 
     return db
       .select({
         id:                 matchResults.id,
         score:              matchResults.score,
+        visualScore:        matchResults.visualScore,
         humanVerdict:       matchResults.humanVerdict,
         petId:              pets.id,
         petSlug:            pets.slug,
@@ -94,13 +98,13 @@ async function _computeAndSave(spottedPetId: string) {
   const candidates = await PetsService.listActiveForMatching({ type: spotted.type });
 
   const topMatches = candidates
-    .map(pet => ({
-      pet,
-      score: scoreMatch(
+    .map(pet => {
+      const breakdown = scoreMatch(
         { ...spotted, embedding: spotted.embedding },
         { ...pet,     embedding: pet.embedding },
-      ).total,
-    }))
+      );
+      return { pet, score: breakdown.total, visualScore: breakdown.visual };
+    })
     .filter(({ score }) => score >= MATCH_THRESHOLD)
     .sort((a, b) => b.score - a.score)
     .slice(0, MAX_RESULTS);
@@ -109,16 +113,18 @@ async function _computeAndSave(spottedPetId: string) {
 
   await db
     .insert(matchResults)
-    .values(topMatches.map(({ pet, score }) => ({
+    .values(topMatches.map(({ pet, score, visualScore }) => ({
       spottedPetId: spotted.id,
       petId:        pet.id,
       score,
+      visualScore,
     })))
     .onConflictDoUpdate({
       target: [matchResults.spottedPetId, matchResults.petId],
       set: {
-        score:     sql`excluded.score`,
-        updatedAt: sql`now()`,
+        score:       sql`excluded.score`,
+        visualScore: sql`excluded.visual_score`,
+        updatedAt:   sql`now()`,
       },
     });
 }

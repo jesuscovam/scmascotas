@@ -4,6 +4,7 @@
   type MatchResult = {
     id: string;
     score: number;
+    visualScore?: number | null;
     petSlug: string;
     petName: string | null;
     petType: 'dog' | 'cat' | 'other';
@@ -83,6 +84,30 @@
   }
 </script>
 
+<style>
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
+  }
+  .badge-identical {
+    background: linear-gradient(
+      90deg,
+      #f59e0b 0%,
+      #fbbf24 30%,
+      #fde68a 50%,
+      #fbbf24 70%,
+      #f59e0b 100%
+    );
+    background-size: 200% auto;
+    animation: shimmer 2.4s linear infinite;
+    color: #78350f;
+    font-weight: 600;
+  }
+  :global(.dark) .badge-identical {
+    color: #fef3c7;
+  }
+</style>
+
 {#if matches.length > 0}
   <div class="bg-white dark:bg-warm-800 rounded-3xl border border-warm-200 dark:border-warm-700 shadow-sm overflow-hidden">
 
@@ -159,6 +184,33 @@
                 <span class="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full {sameSize ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-medium' : 'bg-warm-100 dark:bg-warm-700 text-warm-400 dark:text-warm-500'}">
                   {sizeLabel[match.petSize] ?? match.petSize}
                 </span>
+              {/if}
+              {#if match.visualScore && match.visualScore > 0}
+                {@const vTier = match.visualScore >= 20 ? 'identical' : match.visualScore >= 10 ? 'similar' : 'partial'}
+                {#if vTier === 'identical'}
+                  <span class="badge-identical inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full">
+                    <svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M8 1.5L9.5 6h4.5l-3.6 2.6 1.4 4.4L8 10.4l-3.8 2.6 1.4-4.4L2 6h4.5z" fill="currentColor"/>
+                    </svg>
+                    Imagen idéntica
+                  </span>
+                {:else if vTier === 'similar'}
+                  <span class="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-medium">
+                    <svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <circle cx="8" cy="8" r="3"/>
+                      <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/>
+                    </svg>
+                    Imagen similar
+                  </span>
+                {:else}
+                  <span class="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-sky-50 dark:bg-sky-900/20 text-sky-600 dark:text-sky-400">
+                    <svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <circle cx="8" cy="8" r="3"/>
+                      <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke-dasharray="2 2"/>
+                    </svg>
+                    Parecido visual
+                  </span>
+                {/if}
               {/if}
             </div>
 
