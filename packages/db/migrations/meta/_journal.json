@@ -78,6 +78,27 @@
       "when": 1779661251782,
       "tag": "0010_match_visual_score",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1780009365560,
+      "tag": "0011_small_brood",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1780009366560,
+      "tag": "0012_colonia_centroids",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1780009367560,
+      "tag": "0013_backfill_locations",
+      "breakpoints": true
     }
   ]
 }
