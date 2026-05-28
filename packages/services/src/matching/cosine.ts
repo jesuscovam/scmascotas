@@ -16,14 +16,18 @@ export function cosineSimilarity(a: number[], b: number[]): number {
 }
 
 /**
- * Convert cosine similarity [−1, 1] to a 0–20 point bonus.
- * Thresholds tuned for CLIP ViT-L/14 embeddings of real pet photos.
- * Calibrate further once human_verdict data is available.
+ * Convert CLIP cosine similarity into a 0–60 point bonus.
+ *
+ * Tiers tuned to be conservative: CLIP ViT-L/14 routinely returns 0.6–0.7
+ * cosines between two different cats in similar poses, so the badge floor
+ * is 0.78 ("Parecido") and only 0.92+ earns the "Imagen idéntica" payout.
+ *
+ * Recalibrate once we have ~50 labeled human_verdict rows.
  */
 export function visualScore(sim: number): number {
-  if (sim >= 0.90) return 20;
-  if (sim >= 0.80) return 15;
+  if (sim >= 0.92) return 60;
+  if (sim >= 0.85) return 45;
+  if (sim >= 0.78) return 25;
   if (sim >= 0.70) return 10;
-  if (sim >= 0.60) return 5;
   return 0;
 }

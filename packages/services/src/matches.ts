@@ -1,5 +1,5 @@
 import { db, matchResults, spottedPets, pets, petPhotos, colonias } from '@scmascotas/db';
-import { eq, desc, and, sql } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 import { PetsService } from './pets.js';
 import { scoreMatch } from './matching/score.js';
 
@@ -34,11 +34,21 @@ export const MatchesService = {
       .where(eq(matchResults.spottedPetId, spottedPetId))
       .orderBy(desc(matchResults.score));
 
-    // Return cache unless all rows pre-date visual scoring (visual_score IS NULL means
-    // the row was computed before Sprint 5 embeddings were tracked — recompute once).
-    if (existing.length > 0 && existing.some(r => r.visualScore !== null)) return existing;
+    // Return cache when it's on the current (v0.10) scoring scale. Recompute when:
+    //   - any row has score > 100        → pre-v0.10 (old 0–120 scale)
+    //   - any row has visualScore in     → pre-v0.10 (old tiers used {5,15,20};
+    //     {5, 15, 20}                       new tiers use {0,10,25,45,60})
+    //   - all rows have visualScore=NULL → pre-v0.9 (Sprint 5 didn't track visual)
+    // Any of those → recompute once and overwrite.
+    const STALE_VISUAL = new Set([5, 15, 20]);
+    const cacheIsFresh =
+      existing.length > 0 &&
+      existing.every(r => r.score <= 100) &&
+      existing.every(r => r.visualScore === null || !STALE_VISUAL.has(r.visualScore)) &&
+      existing.some(r => r.visualScore !== null);
+    if (cacheIsFresh) return existing;
 
-    // First visit (or stale pre-embedding cache) — run scoring and persist
+    // First visit, or stale cache from a previous scoring version — recompute and persist
     await _computeAndSave(spottedPetId);
 
     return db
@@ -109,22 +119,17 @@ async function _computeAndSave(spottedPetId: string) {
     .sort((a, b) => b.score - a.score)
     .slice(0, MAX_RESULTS);
 
+  // Clear stale rows for this sighting so candidates that no longer cross threshold
+  // (or that scored higher on the old 0–120 scale) get removed, not just overwritten.
+  // human_verdict on the deleted rows is lost — acceptable for a one-time rescore.
+  await db.delete(matchResults).where(eq(matchResults.spottedPetId, spotted.id));
+
   if (topMatches.length === 0) return;
 
-  await db
-    .insert(matchResults)
-    .values(topMatches.map(({ pet, score, visualScore }) => ({
-      spottedPetId: spotted.id,
-      petId:        pet.id,
-      score,
-      visualScore,
-    })))
-    .onConflictDoUpdate({
-      target: [matchResults.spottedPetId, matchResults.petId],
-      set: {
-        score:       sql`excluded.score`,
-        visualScore: sql`excluded.visual_score`,
-        updatedAt:   sql`now()`,
-      },
-    });
+  await db.insert(matchResults).values(topMatches.map(({ pet, score, visualScore }) => ({
+    spottedPetId: spotted.id,
+    petId:        pet.id,
+    score,
+    visualScore,
+  })));
 }
