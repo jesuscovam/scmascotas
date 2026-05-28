@@ -1,10 +1,12 @@
 import { pgTable, uuid, text, timestamp, pgEnum } from 'drizzle-orm/pg-core';
 import { colonias } from './colonias.js';
+import { geographyPointColumn } from './geography-type.js';
 
 export const petTypeEnum = pgEnum('pet_type', ['dog', 'cat', 'other']);
 export const petStatusEnum = pgEnum('pet_status', ['missing', 'reunited', 'archived']);
 export const petSexEnum = pgEnum('pet_sex', ['male', 'female', 'unknown']);
 export const petSizeEnum = pgEnum('pet_size', ['small', 'medium', 'large']);
+export const locationPrecisionEnum = pgEnum('location_precision', ['precise', 'colonia', 'unknown']);
 
 export const pets = pgTable('pets', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -26,6 +28,8 @@ export const pets = pgTable('pets', {
   reporterUserId: text('reporter_user_id'),
   reporterIpHash: text('reporter_ip_hash'),
   reunitedAt: timestamp('reunited_at', { withTimezone: true }),
+  location: geographyPointColumn('location'),
+  locationPrecision: locationPrecisionEnum('location_precision').notNull().default('unknown'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
 });
