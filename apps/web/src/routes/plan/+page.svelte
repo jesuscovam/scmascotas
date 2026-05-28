@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Progress, Card } from '@scmascotas/ui';
 
-	const TOTAL_PHASES = 7;
+	const TOTAL_PHASES = 8;
 	const DONE_PHASES = 6;
 	const progress = Math.round((DONE_PHASES / TOTAL_PHASES) * 100);
 </script>
@@ -135,7 +135,8 @@
 		</h2>
 		<div class="flex flex-col gap-4">
 			{#each [
-				{ icon: '⏳', title: 'Fase 7 — PWA, moderación y lanzamiento', desc: 'Instalable como app en celular (PWA). Panel de moderación. Seguimiento de errores con Sentry. Pruebas en dispositivos reales con datos móviles lentos. Contacto con los admins del grupo de Facebook. Lanzamiento suave.' },
+				{ icon: '🗺️', title: 'Fase 7 — Mapas y geografía', desc: 'Mapa interactivo de San Cristóbal con PostGIS + Leaflet. Al reportar una mascota perdida o un avistamiento, eliges el punto exacto arrastrando un pin sobre el mapa. Botón "Cómo llegar" que abre Google Maps en Android y Apple Maps en iPhone. La distancia geográfica se suma al algoritmo de emparejamiento (0–20 pts por proximidad).' },
+				{ icon: '⏳', title: 'Fase 8 — PWA, moderación y lanzamiento', desc: 'Instalable como app en celular (PWA). Panel de moderación. Seguimiento de errores con Sentry. Pruebas en dispositivos reales con datos móviles lentos. Contacto con los admins del grupo de Facebook. Lanzamiento suave.' },
 			] as sprint (sprint.title)}
 				<Card.Root class="border-warm-200 dark:border-warm-700">
 					<Card.Content class="pt-5 pb-5">
@@ -159,7 +160,6 @@
 		</h2>
 		<div class="flex flex-col gap-3">
 			{#each [
-				{ icon: '🗺️', title: 'Mapas y geografía', desc: 'PostGIS + Leaflet con tiles de OpenStreetMap para ver mascotas en un mapa interactivo de San Cristóbal.' },
 				{ icon: '📱', title: 'App móvil nativa', desc: 'Capacitor con SvelteKit en modo SPA. Reutiliza los paquetes `@scmascotas/ui` y `@scmascotas/schemas`. Autenticación vía llaves de API.' },
 				{ icon: '🔔', title: 'Notificaciones push', desc: 'Web Push para avisar al dueño cuando alguien reporta haber visto a su mascota o cuando el algoritmo encuentra una coincidencia.' },
 				{ icon: '🌆', title: 'Soporte multi-ciudad', desc: 'Refactorizar el supuesto de "San Cristóbal" para que cualquier ciudad pueda hacer fork y desplegar su propia instancia.' },
