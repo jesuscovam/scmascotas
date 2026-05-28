@@ -144,3 +144,75 @@ describe('scoreMatch — total never exceeds 100', () => {
     expect(result.total).toBeLessThanOrEqual(100);
   });
 });
+
+describe('scoreMatch — geo proximity (Sprint 6)', () => {
+  const precise = { locationPrecision: 'precise' as const };
+  const CENTRO = { lat: 16.737, lng: -92.6376 };
+  // ~1km east of CENTRO at SC latitude (1 deg lng ≈ 106 km at 16.7°N)
+  const EAST_1KM = { lat: 16.737, lng: -92.6282 };
+  // ~3km east
+  const EAST_3KM = { lat: 16.737, lng: -92.6094 };
+
+  it('reports proximityMeters when both sides have precise locations', () => {
+    const result = scoreMatch(
+      { ...base.spotted, ...precise, ...CENTRO },
+      { ...base.missing, ...precise, ...CENTRO },
+    );
+    expect(result.proximityMeters).toBeGreaterThanOrEqual(0);
+    expect(result.proximityMeters).toBeLessThan(1);
+  });
+
+  it('within 500m: colonia score holds at full weight (metadata-only)', () => {
+    const result = scoreMatch(
+      { ...base.spotted, ...precise, ...CENTRO },
+      { ...base.missing, ...precise, lat: 16.7373, lng: -92.6376 }, // ~30m north
+    );
+    expect(result.colonia).toBe(40);
+  });
+
+  it('at ~1750m: colonia score halves (metadata-only)', () => {
+    const result = scoreMatch(
+      { ...base.spotted, ...precise, ...CENTRO },
+      { ...base.missing, ...precise, lat: 16.737, lng: -92.6258 }, // ~1.25km east → midway
+    );
+    // 40 * (1 - (1250-500)/2500) = 40 * 0.7 = 28
+    expect(result.colonia).toBeGreaterThanOrEqual(25);
+    expect(result.colonia).toBeLessThanOrEqual(35);
+  });
+
+  it('beyond 3km: colonia score drops to 0 even when colonia IDs match', () => {
+    const result = scoreMatch(
+      { ...base.spotted, ...precise, ...CENTRO },
+      { ...base.missing, ...precise, ...EAST_3KM }, // same coloniaId but far apart
+    );
+    expect(result.colonia).toBe(0);
+  });
+
+  it('photo-backed path: geo modulates the 15-pt colonia component', () => {
+    const result = scoreMatch(
+      { ...base.spotted, ...precise, ...CENTRO, embedding: embA },
+      { ...base.missing, ...precise, ...EAST_3KM, embedding: embA_copy },
+    );
+    expect(result.hasVisual).toBe(true);
+    expect(result.colonia).toBe(0);
+    expect(result.visual).toBe(60); // visual still fires — embeddings match
+  });
+
+  it('legacy rows (one side colonia-precision): falls back to colonia-ID match', () => {
+    const result = scoreMatch(
+      { ...base.spotted, ...precise, ...CENTRO },
+      { ...base.missing, locationPrecision: 'colonia', lat: null, lng: null },
+    );
+    // Same coloniaId → falls back to 1.0 confidence
+    expect(result.colonia).toBe(40);
+    expect(result.proximityMeters).toBeNull();
+  });
+
+  it('legacy rows with different colonias: 0 colonia score, no geo bonus', () => {
+    const result = scoreMatch(
+      { ...base.spotted, ...precise, ...CENTRO, coloniaId: 'col-a' },
+      { ...base.missing, locationPrecision: 'unknown', lat: null, lng: null, coloniaId: 'col-b' },
+    );
+    expect(result.colonia).toBe(0);
+  });
+});

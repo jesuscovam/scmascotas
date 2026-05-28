@@ -1,5 +1,5 @@
 import { db, matchResults, spottedPets, pets, petPhotos, colonias } from '@scmascotas/db';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, sql } from 'drizzle-orm';
 import { PetsService } from './pets.js';
 import { scoreMatch } from './matching/score.js';
 
@@ -34,12 +34,16 @@ export const MatchesService = {
       .where(eq(matchResults.spottedPetId, spottedPetId))
       .orderBy(desc(matchResults.score));
 
-    // Return cache when it's on the current (v0.10) scoring scale. Recompute when:
+    // Return cache when it's on a known-good scoring version. Recompute when:
     //   - any row has score > 100        → pre-v0.10 (old 0–120 scale)
     //   - any row has visualScore in     → pre-v0.10 (old tiers used {5,15,20};
     //     {5, 15, 20}                       new tiers use {0,10,25,45,60})
     //   - all rows have visualScore=NULL → pre-v0.9 (Sprint 5 didn't track visual)
-    // Any of those → recompute once and overwrite.
+    //
+    // v0.11 (Sprint 6) added a geo-distance modulator on the colonia score, but
+    // we don't force-recompute v0.10 cache here. Old rows age out naturally as
+    // new spotted-pets come in; the score drift is bounded (a row that scored
+    // 40 for "same colonia" might actually be 25 if pets are 2km apart).
     const STALE_VISUAL = new Set([5, 15, 20]);
     const cacheIsFresh =
       existing.length > 0 &&
@@ -90,13 +94,16 @@ export const MatchesService = {
 async function _computeAndSave(spottedPetId: string) {
   const [spotted] = await db
     .select({
-      id:        spottedPets.id,
-      type:      spottedPets.type,
-      coloniaId: spottedPets.coloniaId,
-      color:     spottedPets.color,
-      size:      spottedPets.size,
-      createdAt: spottedPets.createdAt,
-      embedding: spottedPets.embedding,  // Sprint 5+
+      id:                spottedPets.id,
+      type:              spottedPets.type,
+      coloniaId:         spottedPets.coloniaId,
+      color:             spottedPets.color,
+      size:              spottedPets.size,
+      createdAt:         spottedPets.createdAt,
+      embedding:         spottedPets.embedding,  // Sprint 5+
+      lat:               sql<number | null>`ST_Y(${spottedPets.location}::geometry)`.as('lat'),
+      lng:               sql<number | null>`ST_X(${spottedPets.location}::geometry)`.as('lng'),
+      locationPrecision: spottedPets.locationPrecision,
     })
     .from(spottedPets)
     .where(eq(spottedPets.id, spottedPetId))
@@ -110,8 +117,20 @@ async function _computeAndSave(spottedPetId: string) {
   const topMatches = candidates
     .map(pet => {
       const breakdown = scoreMatch(
-        { ...spotted, embedding: spotted.embedding },
-        { ...pet,     embedding: pet.embedding },
+        {
+          ...spotted,
+          embedding: spotted.embedding,
+          lat: spotted.lat,
+          lng: spotted.lng,
+          locationPrecision: spotted.locationPrecision,
+        },
+        {
+          ...pet,
+          embedding: pet.embedding,
+          lat: pet.lat,
+          lng: pet.lng,
+          locationPrecision: pet.locationPrecision,
+        },
       );
       return { pet, score: breakdown.total, visualScore: breakdown.visual };
     })

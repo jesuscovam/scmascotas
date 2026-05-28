@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { latLngSchema } from './location.js';
 
 export const createMissingPetSchema = z.object({
   name: z.string().min(1).max(100).optional(),
@@ -12,7 +13,8 @@ export const createMissingPetSchema = z.object({
   description: z.string().max(1000).optional(),
   contact_whatsapp: z.string().max(20).optional(),
   contact_name: z.string().max(100).optional(),
-  anonymous: z.boolean().default(false)
+  anonymous: z.boolean().default(false),
+  location: latLngSchema.optional()
 });
 
 export type CreateMissingPet = z.infer<typeof createMissingPetSchema>;
