@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { MapPin, Info } from '@lucide/svelte';
+  import { Info } from '@lucide/svelte';
   import OpenInMapsButton from './open-in-maps-button.svelte';
 
   type Props = {
@@ -26,7 +26,9 @@
   let container: HTMLDivElement | undefined = $state();
   let isReady = $state(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let L: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mapInstance: any = null;
 
   function pinHtml() {
@@ -62,6 +64,7 @@
       const mod = await import('leaflet');
       // Stylesheet loaded by the consuming app's global CSS — see apps/web/src/app.css.
       if (disposed || !container) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       L = (mod as any).default ?? mod;
 
       mapInstance = L.map(container, {

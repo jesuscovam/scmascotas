@@ -34,8 +34,11 @@
 
   // Leaflet runtime + handles — never proxied through $state because Leaflet
   // mutates these objects internally and Svelte's proxy throws on map ops.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let L: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mapInstance: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let markerInstance: any = null;
   let flashTimer: ReturnType<typeof setTimeout> | null = null;
   let recenterArmed = false;
@@ -126,6 +129,7 @@
       // Leaflet's stylesheet is imported by the consuming app's global CSS
       // (apps/web/src/app.css) — this component assumes it's already loaded.
       if (disposed || !container) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       L = (mod as any).default ?? mod;
 
       mapInstance = L.map(container, {
@@ -138,6 +142,7 @@
 
       L.tileLayer(tileUrl, { attribution: tileAttribution, maxZoom: 19 }).addTo(mapInstance);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       mapInstance.on('click', (e: any) => placeOrMove({ lat: e.latlng.lat, lng: e.latlng.lng }));
       isReady = true;
     })();
