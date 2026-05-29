@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Badge, Button, Card, SightingsList, ShareButton, MapPreview } from '@scmascotas/ui';
-	import { whatsappUrl as buildWhatsappUrl, googleMapsDirectionsUrl, appleMapsUrl } from '@scmascotas/services';
+	import { whatsappUrl as buildWhatsappUrl, googleMapsDirectionsUrl, appleMapsUrl } from '@scmascotas/services/browser';
 	import { tileUrl, tileAttribution } from '$lib/client/tiles';
 	let { data } = $props();
 	const pet = $derived(data.pet);

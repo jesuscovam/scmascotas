@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MatchSuggestions, MapPreview } from '@scmascotas/ui';
-	import { whatsappUrl as buildWhatsappUrl, googleMapsDirectionsUrl, appleMapsUrl } from '@scmascotas/services';
+	import { whatsappUrl as buildWhatsappUrl, googleMapsDirectionsUrl, appleMapsUrl } from '@scmascotas/services/browser';
 	import { tileUrl, tileAttribution } from '$lib/client/tiles';
 	import type { PageData } from './$types';
 
