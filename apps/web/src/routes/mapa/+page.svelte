@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { MapView, Select } from '@scmascotas/ui';
 	import { tileUrl, tileAttribution, SC_CENTER, SC_DEFAULT_ZOOM } from '$lib/client/tiles';
 
@@ -11,7 +10,7 @@
 		type: 'dog' | 'cat' | 'other';
 		name: string | null;
 		photoUrl: string | null;
-		lastSeenAt?: string;
+		layer: 'missing' | 'spotted';
 	};
 
 	let markers = $state<Marker[]>([]);
@@ -23,31 +22,38 @@
 		lastBounds = b;
 		inFlight = true;
 		try {
-			const u = new URL('/api/pets/map', window.location.origin);
-			u.searchParams.set('north', String(b.north));
-			u.searchParams.set('south', String(b.south));
-			u.searchParams.set('east', String(b.east));
-			u.searchParams.set('west', String(b.west));
-			if (filterType !== 'all') u.searchParams.set('type', filterType);
-			const res = await fetch(u);
-			if (res.ok) {
-				const data = await res.json();
-				markers = data.points ?? [];
-			}
+			const params = new URLSearchParams({
+				north: String(b.north),
+				south: String(b.south),
+				east: String(b.east),
+				west: String(b.west),
+				...(filterType !== 'all' ? { type: filterType } : {})
+			});
+
+			const [petsRes, spottedRes] = await Promise.all([
+				fetch(`/api/pets/map?${params}`),
+				fetch(`/api/spotted-pets/map?${params}`)
+			]);
+
+			const petsData = petsRes.ok ? await petsRes.json() : { points: [] };
+			const spottedData = spottedRes.ok ? await spottedRes.json() : { points: [] };
+
+			markers = [
+				...(petsData.points ?? []).map((p: Omit<Marker, 'layer'>) => ({ ...p, layer: 'missing' as const })),
+				...(spottedData.points ?? []).map((p: Omit<Marker, 'layer'>) => ({ ...p, layer: 'spotted' as const }))
+			];
 		} finally {
 			inFlight = false;
 		}
 	}
 
-	function onMarker(slug: string) {
-		goto(`/mascota/${slug}`);
-	}
-
 	$effect(() => {
-		// Refetch when the filter changes, reusing the last viewport bounds.
 		filterType;
 		if (lastBounds) loadBounds(lastBounds);
 	});
+
+	const missingCount = $derived(markers.filter(m => m.layer === 'missing').length);
+	const spottedCount = $derived(markers.filter(m => m.layer === 'spotted').length);
 
 	const filterLabel = $derived(
 		filterType === 'dog' ? 'Perritos' :
@@ -58,8 +64,8 @@
 </script>
 
 <svelte:head>
-	<title>Mapa de mascotas perdidas — SC Mascotas</title>
-	<meta name="description" content="Mapa interactivo de mascotas perdidas en San Cristóbal de las Casas." />
+	<title>Mapa — SC Mascotas</title>
+	<meta name="description" content="Mapa interactivo de mascotas perdidas y avistamientos en San Cristóbal de las Casas." />
 </svelte:head>
 
 <div class="relative w-full h-[calc(100vh-4rem)] bg-warm-50 dark:bg-warm-900">
@@ -68,12 +74,15 @@
 	<div class="absolute top-3 left-3 right-3 z-[600] flex flex-wrap items-center gap-2 pointer-events-none">
 		<div class="pointer-events-auto inline-flex items-center gap-2 bg-white/95 dark:bg-warm-800/95 backdrop-blur border border-warm-200 dark:border-warm-700 rounded-full pl-3 pr-2 py-1.5 shadow-md shadow-warm-900/5">
 			<span class="text-lg" aria-hidden="true">🗺️</span>
-			<h1 class="font-display text-sm font-bold text-warm-900 dark:text-warm-50">
-				Mascotas perdidas
-			</h1>
-			<span class="text-xs text-warm-500 dark:text-warm-400 tabular-nums ml-1">
-				{markers.length}
-			</span>
+			<h1 class="font-display text-sm font-bold text-warm-900 dark:text-warm-50">Mapa</h1>
+			<div class="flex items-center gap-1.5 ml-1">
+				<span class="inline-flex items-center gap-1 text-[11px] font-semibold tabular-nums bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-full px-2 py-0.5">
+					🐾 {missingCount}
+				</span>
+				<span class="inline-flex items-center gap-1 text-[11px] font-semibold tabular-nums bg-teal-100 dark:bg-teal-900/40 text-teal-800 dark:text-teal-300 rounded-full px-2 py-0.5">
+					👀 {spottedCount}
+				</span>
+			</div>
 		</div>
 
 		<div class="pointer-events-auto bg-white/95 dark:bg-warm-800/95 backdrop-blur border border-warm-200 dark:border-warm-700 rounded-full px-2 py-1 shadow-md shadow-warm-900/5">
@@ -98,22 +107,12 @@
 		{/if}
 	</div>
 
-	<!-- Switch-variant link (bottom-right floating chip) -->
-	<a
-		href="/mapa/avistamientos"
-		class="absolute bottom-4 right-4 z-[600] inline-flex items-center gap-1.5 text-xs font-semibold bg-white/95 dark:bg-warm-800/95 backdrop-blur border border-warm-200 dark:border-warm-700 rounded-full px-3 py-2 shadow-md shadow-warm-900/10 text-warm-700 dark:text-warm-200 hover:text-amber-700 dark:hover:text-amber-400 hover:border-amber-300 dark:hover:border-amber-700 transition-colors"
-	>
-		🔍 Ver avistamientos
-	</a>
-
 	<MapView
 		{markers}
 		{tileUrl}
 		{tileAttribution}
 		initialCenter={SC_CENTER}
 		initialZoom={SC_DEFAULT_ZOOM}
-		variant="missing"
 		onBoundsChange={loadBounds}
-		onMarkerClick={onMarker}
 	/>
 </div>

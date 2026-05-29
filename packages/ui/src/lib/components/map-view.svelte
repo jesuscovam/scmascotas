@@ -10,6 +10,8 @@
     type: 'dog' | 'cat' | 'other';
     photoUrl?: string | null;
     name?: string | null;
+    /** Per-marker override. When absent, falls back to the component-level `variant` prop. */
+    layer?: 'missing' | 'spotted';
   };
   type Bounds = { north: number; south: number; east: number; west: number };
 
@@ -50,15 +52,16 @@
     other: 'Mascota',
   };
 
-  function pinHtml(type: MapMarker['type']) {
-    const bg = variant === 'spotted' ? '#fbbf24' : '#b45309';
-    const ring = variant === 'spotted' ? '#78350f' : '#fef3c7';
-    const inner = variant === 'spotted' ? '#fef3c7' : '#ffffff';
-    const gradTop = variant === 'spotted' ? '#fcd34d' : '#d97706';
-    const gradBot = variant === 'spotted' ? '#d97706' : '#78350f';
-    const filterId = `pin-shadow-${variant}`;
-    const gradId = `pin-grad-${variant}`;
-    const badge = variant === 'spotted'
+  function pinHtml(type: MapMarker['type'], markerLayer?: 'missing' | 'spotted') {
+    const eff = markerLayer ?? variant;
+    const bg = eff === 'spotted' ? '#fbbf24' : '#b45309';
+    const ring = eff === 'spotted' ? '#78350f' : '#fef3c7';
+    const inner = eff === 'spotted' ? '#fef3c7' : '#ffffff';
+    const gradTop = eff === 'spotted' ? '#fcd34d' : '#d97706';
+    const gradBot = eff === 'spotted' ? '#d97706' : '#78350f';
+    const filterId = `pin-shadow-${eff}-${type}`;
+    const gradId = `pin-grad-${eff}-${type}`;
+    const badge = eff === 'spotted'
       ? `<g>
            <circle cx="30" cy="9" r="7" fill="#78350f" stroke="#fef3c7" stroke-width="1.6"/>
            <g transform="translate(26.4, 5.4)" stroke="#fef3c7" stroke-width="1.5" stroke-linecap="round" fill="none">
@@ -100,17 +103,20 @@
   }
 
   function popoverHtml(m: MapMarker) {
+    const eff = m.layer ?? variant;
     const photo = m.photoUrl
       ? `<img src="${m.photoUrl}" alt="${m.name ?? TYPE_LABEL[m.type]}" class="sc-pop-thumb" loading="lazy"/>`
       : `<div class="sc-pop-thumb sc-pop-thumb-empty">${EMOJI[m.type]}</div>`;
-    const accent = variant === 'spotted' ? 'sc-pop-accent-spotted' : 'sc-pop-accent-missing';
+    const accent = eff === 'spotted' ? 'sc-pop-accent-spotted' : 'sc-pop-accent-missing';
+    const href = eff === 'spotted' ? `/avistamientos/${m.slug}` : `/mascota/${m.slug}`;
+    const label = eff === 'spotted' ? 'Ver avistamiento' : 'Ver mascota';
     return `
-      <a href="/mascota/${m.slug}" class="sc-pop-link">
+      <a href="${href}" class="sc-pop-link">
         <div class="sc-pop-row">
           ${photo}
           <div class="sc-pop-text">
             <div class="sc-pop-name">${escapeHtml(m.name ?? TYPE_LABEL[m.type])}</div>
-            <div class="sc-pop-cta ${accent}">${variant === 'spotted' ? 'Ver avistamiento' : 'Ver mascota'} →</div>
+            <div class="sc-pop-cta ${accent}">${label} →</div>
           </div>
         </div>
       </a>
@@ -150,7 +156,7 @@
         iconSize: [36, 44],
         iconAnchor: [18, 43],
         popupAnchor: [0, -38],
-        html: pinHtml(m.type),
+        html: pinHtml(m.type, m.layer),
       });
 
       const marker = L.marker([m.lat, m.lng], { icon, riseOnHover: true })
