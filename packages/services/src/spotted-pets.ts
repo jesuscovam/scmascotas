@@ -66,6 +66,9 @@ export const SpottedPetsService = {
 				matchedPetSlug: pets.slug,
 				matchedPetName: pets.name,
 				matchedPetType: pets.type,
+				locationPrecision: spottedPets.locationPrecision,
+				lat: sql<number | null>`ST_Y(${spottedPets.location}::geometry)`.as('lat'),
+				lng: sql<number | null>`ST_X(${spottedPets.location}::geometry)`.as('lng'),
 			})
 			.from(spottedPets)
 			.leftJoin(colonias, eq(spottedPets.coloniaId, colonias.id))

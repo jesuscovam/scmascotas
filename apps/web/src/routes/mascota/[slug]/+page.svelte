@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { Badge, Button, Card, SightingsList, ShareButton } from '@scmascotas/ui';
+	import { Badge, Button, Card, SightingsList, ShareButton, MapPreview } from '@scmascotas/ui';
+	import { whatsappUrl as buildWhatsappUrl, googleMapsDirectionsUrl, appleMapsUrl } from '@scmascotas/services';
+	import { tileUrl, tileAttribution } from '$lib/client/tiles';
 	let { data } = $props();
 	const pet = $derived(data.pet);
 	const sightings = $derived(data.sightings ?? []);
@@ -21,9 +23,14 @@
 	let activePhoto = $state(0);
 
 	const primaryPhoto = $derived(pet.photos?.[activePhoto]);
+	const hasMapLocation = $derived(typeof pet.lat === 'number' && typeof pet.lng === 'number');
 	const whatsappUrl = $derived(
 		pet.contactWhatsapp
-			? `https://wa.me/${pet.contactWhatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola, vi el reporte de tu mascota en SC Mascotas: ${pet.name ?? 'sin nombre'}`)}`
+			? buildWhatsappUrl(
+				pet.contactWhatsapp,
+				`Hola, vi el reporte de tu mascota en SC Mascotas: ${pet.name ?? 'sin nombre'}`,
+				hasMapLocation ? { lat: pet.lat as number, lng: pet.lng as number } : undefined
+			)
 			: null
 	);
 
@@ -140,6 +147,19 @@
 				</Card.Root>
 			{/if}
 
+			<!-- Map preview -->
+			{#if hasMapLocation}
+				<MapPreview
+					lat={pet.lat as number}
+					lng={pet.lng as number}
+					{tileUrl}
+					{tileAttribution}
+					precision={pet.locationPrecision}
+					googleMapsHref={googleMapsDirectionsUrl(pet.lat as number, pet.lng as number)}
+					appleMapsHref={appleMapsUrl(pet.lat as number, pet.lng as number)}
+				/>
+			{/if}
+
 			<!-- Contact -->
 			{#if !pet.anonymous && whatsappUrl}
 				<Button.Root
@@ -164,6 +184,8 @@
 					petName={pet.name}
 					petType={pet.type}
 					{siteUrl}
+					lat={pet.lat}
+					lng={pet.lng}
 				/>
 				<a
 					href="/mascota/{pet.slug}/editar"

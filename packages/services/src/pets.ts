@@ -71,8 +71,36 @@ export const PetsService = {
   },
 
   async getBySlug(slug: string) {
+    // Explicit projection: skip the raw `location` column (PostGIS returns it
+    // as hex EWKB which our custom Drizzle type can't parse) and use ST_X / ST_Y
+    // to surface usable lat/lng instead.
     const [pet] = await db
-      .select()
+      .select({
+        id: pets.id,
+        slug: pets.slug,
+        type: pets.type,
+        name: pets.name,
+        description: pets.description,
+        coloniaId: pets.coloniaId,
+        lastSeenAt: pets.lastSeenAt,
+        status: pets.status,
+        color: pets.color,
+        sex: pets.sex,
+        size: pets.size,
+        breed: pets.breed,
+        contactWhatsapp: pets.contactWhatsapp,
+        contactName: pets.contactName,
+        anonymous: pets.anonymous,
+        editToken: pets.editToken,
+        reporterUserId: pets.reporterUserId,
+        reunitedAt: pets.reunitedAt,
+        createdAt: pets.createdAt,
+        updatedAt: pets.updatedAt,
+        locationPrecision: pets.locationPrecision,
+        lat: sql<number | null>`ST_Y(${pets.location}::geometry)`.as('lat'),
+        lng: sql<number | null>`ST_X(${pets.location}::geometry)`.as('lng'),
+        colonia: colonias.name
+      })
       .from(pets)
       .leftJoin(colonias, eq(pets.coloniaId, colonias.id))
       .where(eq(pets.slug, slug))
@@ -83,10 +111,10 @@ export const PetsService = {
     const photos = await db
       .select()
       .from(petPhotos)
-      .where(eq(petPhotos.petId, pet.pets.id))
+      .where(eq(petPhotos.petId, pet.id))
       .orderBy(desc(petPhotos.isPrimary));
 
-    return { ...pet.pets, colonia: pet.colonias?.name ?? null, photos };
+    return { ...pet, photos };
   },
 
   async create(data: CreateMissingPet, { ipHash, userId }: { ipHash?: string; userId?: string } = {}) {
