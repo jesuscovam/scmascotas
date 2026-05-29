@@ -44,7 +44,7 @@
 	}
 
 	$effect(() => {
-		filterType;
+		void filterType;
 		if (lastBounds) loadBounds(lastBounds);
 	});
 

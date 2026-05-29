@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteDate } from 'svelte/reactivity';
 	import { MapView, Select } from '@scmascotas/ui';
 	import { tileUrl, tileAttribution, SC_CENTER, SC_DEFAULT_ZOOM } from '$lib/client/tiles';
 
@@ -22,11 +23,14 @@
 
 	function sinceDate(range: TimeRange): string | null {
 		if (range === 'all') return null;
-		const d = new Date();
-		if (range === 'today') d.setHours(0, 0, 0, 0);
-		else if (range === '7d') d.setDate(d.getDate() - 7);
-		else if (range === '14d') d.setDate(d.getDate() - 14);
-		return d.toISOString();
+		const DAY_MS = 86_400_000;
+		if (range === 'today') {
+			const d = new SvelteDate();
+			d.setHours(0, 0, 0, 0);
+			return d.toISOString();
+		}
+		const days = range === '7d' ? 7 : 14;
+		return new SvelteDate(Date.now() - days * DAY_MS).toISOString();
 	}
 
 	async function loadBounds(b: { north: number; south: number; east: number; west: number }) {
@@ -62,12 +66,9 @@
 	}
 
 	$effect(() => {
-		filterType;
-		if (lastBounds) loadBounds(lastBounds);
-	});
-
-	$effect(() => {
-		filterTime;
+		// Track both filters so either change triggers a refetch.
+		void filterType;
+		void filterTime;
 		if (lastBounds) loadBounds(lastBounds);
 	});
 
@@ -88,9 +89,7 @@
 		{ value: '14d',  label: '2 semanas',       short: '2s' },
 	];
 
-	const activeTimeLabel = $derived(
-		TIME_SEGMENTS.find(s => s.value === filterTime)?.label ?? 'Todo'
-	);
+
 </script>
 
 <svelte:head>
