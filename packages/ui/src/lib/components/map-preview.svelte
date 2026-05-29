@@ -127,8 +127,9 @@
 </style>
 
 <div class="w-full">
-  <!-- Map -->
-  <div class="sc-mp-container relative rounded-3xl overflow-hidden border border-warm-200 dark:border-warm-700 shadow-sm">
+  <!-- Map. `isolate` seals Leaflet's pane z-indices so they don't paint over
+       the nav header or portal'd overlays elsewhere on the page. -->
+  <div class="sc-mp-container relative isolate rounded-3xl overflow-hidden border border-warm-200 dark:border-warm-700 shadow-sm">
     <div bind:this={container} class="h-60 w-full"></div>
 
     {#if !isReady}

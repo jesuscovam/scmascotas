@@ -341,7 +341,10 @@
   :global(.dark .leaflet-control-attribution a) { color: #fcd34d !important; }
 </style>
 
-<div class="relative w-full h-full">
+<!-- `isolate` seals Leaflet's pane z-indices (200–700) into a local stacking
+     context so they don't paint over the page's nav header or portal'd
+     overlays. Without it the tile pane bleeds above sticky/fixed chrome. -->
+<div class="relative isolate w-full h-full">
   <div bind:this={container} class="absolute inset-0"></div>
 
   {#if !isReady}

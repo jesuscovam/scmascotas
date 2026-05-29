@@ -33,6 +33,7 @@
   let mapInstance: any = null;
   let markerInstance: any = null;
   let flashTimer: ReturnType<typeof setTimeout> | null = null;
+  let recenterArmed = false;
 
   function flash() {
     if (flashTimer) clearTimeout(flashTimer);
@@ -149,6 +150,21 @@
   function fmt(n: number) {
     return n.toFixed(4);
   }
+
+  // Re-center the map when the parent changes `initialCenter` (e.g. the
+  // wizard's colonia select updated). First arm-and-skip after the map
+  // becomes ready so we don't re-fly on the initial mount — Leaflet already
+  // centered correctly via `L.map({ center })`.
+  $effect(() => {
+    const lat = initialCenter.lat;
+    const lng = initialCenter.lng;
+    if (!isReady || !mapInstance || !L) return;
+    if (!recenterArmed) {
+      recenterArmed = true;
+      return;
+    }
+    mapInstance.flyTo([lat, lng], initialZoom, { animate: true, duration: 0.8 });
+  });
 </script>
 
 <style>
@@ -236,8 +252,9 @@
     </div>
   </div>
 
-  <!-- Map shell -->
-  <div class="relative rounded-3xl overflow-hidden border-2 border-warm-200 dark:border-warm-700 shadow-sm bg-warm-100 dark:bg-warm-800">
+  <!-- Map shell — `isolate` seals Leaflet's internal pane z-indices (200–700)
+       so they don't paint over portal'd overlays like Select dropdowns. -->
+  <div class="relative isolate rounded-3xl overflow-hidden border-2 border-warm-200 dark:border-warm-700 shadow-sm bg-warm-100 dark:bg-warm-800">
     <div bind:this={container} class="sc-picker-map h-80 w-full"></div>
 
     {#if !isReady}
