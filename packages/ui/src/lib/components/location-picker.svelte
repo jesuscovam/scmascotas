@@ -7,6 +7,10 @@
   type Props = {
     initialCenter?: LatLng;
     initialZoom?: number;
+    /** Zoom level used when the map re-centers on an `initialCenter` change
+     * (e.g. colonia switch). Defaults to 16 — close enough to read street
+     * names while keeping a few surrounding blocks visible for context. */
+    recenterZoom?: number;
     onLocationChange: (latLng: LatLng | null) => void;
     tileUrl: string;
     tileAttribution: string;
@@ -16,6 +20,7 @@
   let {
     initialCenter = { lat: 16.737, lng: -92.6376 },
     initialZoom = 14,
+    recenterZoom = 16,
     onLocationChange,
     tileUrl,
     tileAttribution,
@@ -163,7 +168,7 @@
       recenterArmed = true;
       return;
     }
-    mapInstance.flyTo([lat, lng], initialZoom, { animate: true, duration: 0.8 });
+    mapInstance.flyTo([lat, lng], recenterZoom, { animate: true, duration: 0.9 });
   });
 </script>
 
