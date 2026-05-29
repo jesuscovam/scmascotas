@@ -62,7 +62,7 @@
 </svelte:head>
 
 <div class="relative w-full h-[calc(100vh-4rem)] bg-warm-50 dark:bg-warm-900">
-	<div class="absolute top-3 left-3 right-3 z-[600] flex flex-wrap items-center gap-2 pointer-events-none">
+	<div class="absolute top-3 left-16 right-3 z-[600] flex flex-wrap items-center gap-2 pointer-events-none">
 		<div class="pointer-events-auto inline-flex items-center gap-2 bg-white/95 dark:bg-warm-800/95 backdrop-blur border border-warm-200 dark:border-warm-700 rounded-full pl-3 pr-2 py-1.5 shadow-md shadow-warm-900/5">
 			<span class="text-lg" aria-hidden="true">🔍</span>
 			<h1 class="font-display text-sm font-bold text-warm-900 dark:text-warm-50">
