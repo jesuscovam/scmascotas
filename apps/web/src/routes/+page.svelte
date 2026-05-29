@@ -205,17 +205,17 @@
 			<div class="bg-warm-900/60 border-2 border-dashed border-warm-700 rounded-2xl p-6 flex flex-col gap-4 opacity-75">
 				<div class="flex items-center justify-between">
 					<div class="w-8 h-8 rounded-full bg-warm-800 border border-warm-700 flex items-center justify-center text-warm-500 text-sm font-bold font-display">4</div>
-					<span class="text-2xl grayscale">🗺️</span>
+					<span class="text-2xl">🗺️</span>
 				</div>
 				<div>
-					<div class="inline-flex items-center gap-1 bg-warm-800 text-warm-500 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2">
-						Próximamente
-					</div>
+					<a href="/mapa" class="inline-flex items-center gap-1 bg-brand-700 text-brand-100 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2 hover:bg-brand-600 transition-colors">
+						Nuevo ✓
+					</a>
 					<h3 class="font-display font-bold text-warm-300 text-base leading-snug mb-2">
 						Reportes en el mapa
 					</h3>
 					<p class="text-warm-500 text-xs leading-relaxed">
-						Un mapa interactivo mostrará todos los reportes activos cerca de ti en tiempo real.
+						Mapa interactivo con todas las mascotas perdidas y avistamientos de San Cristóbal. Filtra por especie y tiempo.
 					</p>
 				</div>
 			</div>
