@@ -6,6 +6,9 @@ import { colonias } from './schema/index.js';
 
 initDb(process.env.DATABASE_URL!);
 
+// Colonia names. Centroids are seeded by migration 0012, not here — the
+// migration is the source of truth so production deploys (which run migrate
+// but not seed) get the data.
 const SANCRIS_COLONIAS = [
   'Barrio de Cuxtitali',
   'Barrio de Mexicanos',

@@ -5,7 +5,8 @@
   "type": "module",
   "license": "MIT",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./browser": "./src/browser.ts"
   },
   "dependencies": {
     "@scmascotas/db": "workspace:*",

@@ -5,9 +5,19 @@
 		petType: 'dog' | 'cat' | 'other';
 		siteUrl: string;
 		fbGroupId?: string;
+		lat?: number | null;
+		lng?: number | null;
 	};
 
-	let { petSlug, petName, petType, siteUrl, fbGroupId = '' }: Props = $props();
+	let {
+		petSlug,
+		petName,
+		petType,
+		siteUrl,
+		fbGroupId = '',
+		lat = null,
+		lng = null,
+	}: Props = $props();
 
 	let showFallback = $state(false);
 	let copied = $state(false);
@@ -16,9 +26,14 @@
 		petType === 'dog' ? 'perro' : petType === 'cat' ? 'gato' : 'mascota'
 	);
 	const url = $derived(`${siteUrl}/mascota/${petSlug}`);
+	const mapsLine = $derived(
+		typeof lat === 'number' && typeof lng === 'number'
+			? `\n📍 Cómo llegar: https://www.google.com/maps?q=${lat.toFixed(6)},${lng.toFixed(6)}`
+			: ''
+	);
 	const shareTitle = $derived(`Mascota perdida: ${petName ?? typeLabel}`);
 	const shareText = $derived(
-		`¡Ayuda a encontrar a ${petName ?? typeLabel}! Ver reporte: ${url}`
+		`¡Ayuda a encontrar a ${petName ?? typeLabel}! Ver reporte: ${url}${mapsLine}`
 	);
 
 	async function share() {

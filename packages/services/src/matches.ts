@@ -34,11 +34,25 @@ export const MatchesService = {
       .where(eq(matchResults.spottedPetId, spottedPetId))
       .orderBy(desc(matchResults.score));
 
-    // Return cache unless all rows pre-date visual scoring (visual_score IS NULL means
-    // the row was computed before Sprint 5 embeddings were tracked — recompute once).
-    if (existing.length > 0 && existing.some(r => r.visualScore !== null)) return existing;
+    // Return cache when it's on a known-good scoring version. Recompute when:
+    //   - any row has score > 100        → pre-v0.10 (old 0–120 scale)
+    //   - any row has visualScore in     → pre-v0.10 (old tiers used {5,15,20};
+    //     {5, 15, 20}                       new tiers use {0,10,25,45,60})
+    //   - all rows have visualScore=NULL → pre-v0.9 (Sprint 5 didn't track visual)
+    //
+    // v0.11 (Sprint 6) added a geo-distance modulator on the colonia score, but
+    // we don't force-recompute v0.10 cache here. Old rows age out naturally as
+    // new spotted-pets come in; the score drift is bounded (a row that scored
+    // 40 for "same colonia" might actually be 25 if pets are 2km apart).
+    const STALE_VISUAL = new Set([5, 15, 20]);
+    const cacheIsFresh =
+      existing.length > 0 &&
+      existing.every(r => r.score <= 100) &&
+      existing.every(r => r.visualScore === null || !STALE_VISUAL.has(r.visualScore)) &&
+      existing.some(r => r.visualScore !== null);
+    if (cacheIsFresh) return existing;
 
-    // First visit (or stale pre-embedding cache) — run scoring and persist
+    // First visit, or stale cache from a previous scoring version — recompute and persist
     await _computeAndSave(spottedPetId);
 
     return db
@@ -80,13 +94,16 @@ export const MatchesService = {
 async function _computeAndSave(spottedPetId: string) {
   const [spotted] = await db
     .select({
-      id:        spottedPets.id,
-      type:      spottedPets.type,
-      coloniaId: spottedPets.coloniaId,
-      color:     spottedPets.color,
-      size:      spottedPets.size,
-      createdAt: spottedPets.createdAt,
-      embedding: spottedPets.embedding,  // Sprint 5+
+      id:                spottedPets.id,
+      type:              spottedPets.type,
+      coloniaId:         spottedPets.coloniaId,
+      color:             spottedPets.color,
+      size:              spottedPets.size,
+      createdAt:         spottedPets.createdAt,
+      embedding:         spottedPets.embedding,  // Sprint 5+
+      lat:               sql<number | null>`ST_Y(${spottedPets.location}::geometry)`.as('lat'),
+      lng:               sql<number | null>`ST_X(${spottedPets.location}::geometry)`.as('lng'),
+      locationPrecision: spottedPets.locationPrecision,
     })
     .from(spottedPets)
     .where(eq(spottedPets.id, spottedPetId))
@@ -100,8 +117,20 @@ async function _computeAndSave(spottedPetId: string) {
   const topMatches = candidates
     .map(pet => {
       const breakdown = scoreMatch(
-        { ...spotted, embedding: spotted.embedding },
-        { ...pet,     embedding: pet.embedding },
+        {
+          ...spotted,
+          embedding: spotted.embedding,
+          lat: spotted.lat,
+          lng: spotted.lng,
+          locationPrecision: spotted.locationPrecision,
+        },
+        {
+          ...pet,
+          embedding: pet.embedding,
+          lat: pet.lat,
+          lng: pet.lng,
+          locationPrecision: pet.locationPrecision,
+        },
       );
       return { pet, score: breakdown.total, visualScore: breakdown.visual };
     })
@@ -109,22 +138,17 @@ async function _computeAndSave(spottedPetId: string) {
     .sort((a, b) => b.score - a.score)
     .slice(0, MAX_RESULTS);
 
+  // Clear stale rows for this sighting so candidates that no longer cross threshold
+  // (or that scored higher on the old 0–120 scale) get removed, not just overwritten.
+  // human_verdict on the deleted rows is lost — acceptable for a one-time rescore.
+  await db.delete(matchResults).where(eq(matchResults.spottedPetId, spotted.id));
+
   if (topMatches.length === 0) return;
 
-  await db
-    .insert(matchResults)
-    .values(topMatches.map(({ pet, score, visualScore }) => ({
-      spottedPetId: spotted.id,
-      petId:        pet.id,
-      score,
-      visualScore,
-    })))
-    .onConflictDoUpdate({
-      target: [matchResults.spottedPetId, matchResults.petId],
-      set: {
-        score:       sql`excluded.score`,
-        visualScore: sql`excluded.visual_score`,
-        updatedAt:   sql`now()`,
-      },
-    });
+  await db.insert(matchResults).values(topMatches.map(({ pet, score, visualScore }) => ({
+    spottedPetId: spotted.id,
+    petId:        pet.id,
+    score,
+    visualScore,
+  })));
 }

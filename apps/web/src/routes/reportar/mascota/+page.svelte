@@ -4,13 +4,15 @@
 	import { untrack } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	import { Select, Calendar, Popover, Button, Spinner, SpeciesPicker } from '@scmascotas/ui';
+	import { Select, Calendar, Popover, Button, Spinner, SpeciesPicker, LocationPicker } from '@scmascotas/ui';
+	import { tileUrl, tileAttribution, SC_CENTER, SC_DEFAULT_ZOOM } from '$lib/client/tiles';
 	import AlphaBanner from '$lib/components/AlphaBanner.svelte';
 	import PhotoPicker from '$lib/components/PhotoPicker.svelte';
 	import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 	import type { CalendarDate as CalendarDateType } from '@internationalized/date';
 
-	type Colonia = { id: string; name: string };
+	type Colonia = { id: string; name: string; lat: number | null; lng: number | null };
+	type LatLng = { lat: number; lng: number };
 
 	type FormSnapshot = {
 		name: string;
@@ -25,6 +27,7 @@
 		contact_whatsapp: string;
 		contact_name: string;
 		anonymous: boolean;
+		location: LatLng | null;
 	};
 
 	let colonias = $state<Colonia[]>([]);
@@ -42,10 +45,21 @@
 	let contact_whatsapp = $state('');
 	let contact_name = $state('');
 	let anonymous = $state(false);
+	let location = $state<LatLng | null>(null);
 	let photoFiles = $state<File[]>([]);
 	let submitting = $state(false);
 	let formError = $state('');
 	let rateLimited = $state(false);
+
+	// Pre-center the location picker on the selected colonia's centroid when
+	// available — otherwise fall back to San Cristóbal centre.
+	const pickerCenter = $derived.by(() => {
+		const c = colonias.find(c => c.id === colonia_id);
+		if (c && typeof c.lat === 'number' && typeof c.lng === 'number') {
+			return { lat: c.lat, lng: c.lng };
+		}
+		return SC_CENTER;
+	});
 
 	let calendarValue = $state<CalendarDateType | undefined>(undefined);
 	let calendarOpen = $state(false);
@@ -65,7 +79,7 @@
 	let currentStep = $state(0);
 	let animDir = $state(1);
 
-	const STEPS = ['Especie', 'Detalles', 'Ubicación', 'Contacto'];
+	const STEPS = ['Especie', 'Detalles', 'Ubicación', 'En el mapa', 'Contacto'];
 
 	// Sync URL ?step param → currentStep + animDir.
 	// untrack(currentStep) avoids a dependency cycle while still reading the previous value for direction.
@@ -100,11 +114,11 @@
 		capture: (): FormSnapshot => ({
 			name, species, breed, color, sex, size,
 			colonia_id, last_seen_at, description,
-			contact_whatsapp, contact_name, anonymous
+			contact_whatsapp, contact_name, anonymous, location
 		}),
 		restore: (data: FormSnapshot) => {
 			({ name, species, breed, color, sex, size, colonia_id,
-			   last_seen_at, description, contact_whatsapp, contact_name, anonymous } = data);
+			   last_seen_at, description, contact_whatsapp, contact_name, anonymous, location } = data);
 			if (data.last_seen_at) {
 				const [y, m, d] = data.last_seen_at.split('-').map(Number);
 				calendarValue = new CalendarDate(y, m, d);
@@ -151,7 +165,8 @@
 					description: description || undefined,
 					contact_whatsapp: contact_whatsapp || undefined,
 					contact_name: contact_name || undefined,
-					anonymous
+					anonymous,
+					location: location ?? undefined
 				})
 			});
 
@@ -470,8 +485,31 @@
 							</div>
 						</div>
 
-					<!-- ── STEP 3: Photos & contact ── -->
+					<!-- ── STEP 3: Pin on map ── -->
 					{:else if currentStep === 3}
+						<div class="bg-white dark:bg-warm-800 rounded-3xl border border-warm-200 dark:border-warm-700 shadow-sm p-6 flex flex-col gap-5">
+							<div class="flex items-center gap-3 pb-3 border-b border-warm-100 dark:border-warm-700">
+								<div class="w-9 h-9 rounded-xl flex items-center justify-center text-xl" style="background: linear-gradient(135deg,#FEF3C7,#FDE68A);">
+									🗺️
+								</div>
+								<div>
+									<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-lg">Marca el punto exacto</h2>
+									<p class="text-xs text-warm-400 dark:text-warm-500">Opcional — si lo omites, usaremos el centro de la colonia</p>
+								</div>
+							</div>
+
+							<LocationPicker
+								initialCenter={pickerCenter}
+								initialZoom={SC_DEFAULT_ZOOM}
+								{tileUrl}
+								{tileAttribution}
+								onLocationChange={(loc) => (location = loc)}
+								label="Arrastra el pin al lugar exacto donde se perdió tu mascota"
+							/>
+						</div>
+
+					<!-- ── STEP 4: Photos & contact ── -->
+					{:else if currentStep === 4}
 						<div class="flex flex-col gap-5">
 							<!-- Photos -->
 							<div class="bg-white dark:bg-warm-800 rounded-3xl border border-warm-200 dark:border-warm-700 shadow-sm p-6 flex flex-col gap-4">

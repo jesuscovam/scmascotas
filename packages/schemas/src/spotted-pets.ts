@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { latLngSchema } from './location.js';
 
 export const createSpottedPetSchema = z.object({
 	type:            z.enum(['dog', 'cat', 'other']),
@@ -8,6 +9,7 @@ export const createSpottedPetSchema = z.object({
 	size:            z.enum(['small', 'medium', 'large']).optional(),
 	contactWhatsapp: z.string().max(20).optional(),
 	matchedPetId:    z.string().uuid().optional(),
+	location:        latLngSchema.optional(),
 });
 
 export type CreateSpottedPet = z.infer<typeof createSpottedPetSchema>;

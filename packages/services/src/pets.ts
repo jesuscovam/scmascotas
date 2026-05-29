@@ -1,5 +1,5 @@
 import { db, pets, petPhotos, colonias } from '@scmascotas/db';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, sql } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 import type { CreateMissingPet, UpdatePet } from '@scmascotas/schemas';
 
@@ -34,7 +34,10 @@ export const PetsService = {
         colonia: colonias.name,
         coloniaId: pets.coloniaId,
         photoUrl:  petPhotos.url,
-      embedding: petPhotos.embedding,
+        embedding: petPhotos.embedding,
+        lat: sql<number | null>`ST_Y(${pets.location}::geometry)`.as('lat'),
+        lng: sql<number | null>`ST_X(${pets.location}::geometry)`.as('lng'),
+        locationPrecision: pets.locationPrecision,
       })
       .from(pets)
       .leftJoin(colonias, eq(pets.coloniaId, colonias.id))
@@ -68,8 +71,36 @@ export const PetsService = {
   },
 
   async getBySlug(slug: string) {
+    // Explicit projection: skip the raw `location` column (PostGIS returns it
+    // as hex EWKB which our custom Drizzle type can't parse) and use ST_X / ST_Y
+    // to surface usable lat/lng instead.
     const [pet] = await db
-      .select()
+      .select({
+        id: pets.id,
+        slug: pets.slug,
+        type: pets.type,
+        name: pets.name,
+        description: pets.description,
+        coloniaId: pets.coloniaId,
+        lastSeenAt: pets.lastSeenAt,
+        status: pets.status,
+        color: pets.color,
+        sex: pets.sex,
+        size: pets.size,
+        breed: pets.breed,
+        contactWhatsapp: pets.contactWhatsapp,
+        contactName: pets.contactName,
+        anonymous: pets.anonymous,
+        editToken: pets.editToken,
+        reporterUserId: pets.reporterUserId,
+        reunitedAt: pets.reunitedAt,
+        createdAt: pets.createdAt,
+        updatedAt: pets.updatedAt,
+        locationPrecision: pets.locationPrecision,
+        lat: sql<number | null>`ST_Y(${pets.location}::geometry)`.as('lat'),
+        lng: sql<number | null>`ST_X(${pets.location}::geometry)`.as('lng'),
+        colonia: colonias.name
+      })
       .from(pets)
       .leftJoin(colonias, eq(pets.coloniaId, colonias.id))
       .where(eq(pets.slug, slug))
@@ -80,10 +111,10 @@ export const PetsService = {
     const photos = await db
       .select()
       .from(petPhotos)
-      .where(eq(petPhotos.petId, pet.pets.id))
+      .where(eq(petPhotos.petId, pet.id))
       .orderBy(desc(petPhotos.isPrimary));
 
-    return { ...pet.pets, colonia: pet.colonias?.name ?? null, photos };
+    return { ...pet, photos };
   },
 
   async create(data: CreateMissingPet, { ipHash, userId }: { ipHash?: string; userId?: string } = {}) {
@@ -108,11 +139,56 @@ export const PetsService = {
         contactName: data.contact_name,
         anonymous: String(data.anonymous),
         reporterIpHash: ipHash,
-        reporterUserId: userId
+        reporterUserId: userId,
+        location: data.location,
+        locationPrecision: data.location ? 'precise' : 'unknown'
       })
       .returning();
 
     return { ...pet, editToken };
+  },
+
+  /**
+   * Pets whose precise (server-side) location falls inside the given viewport,
+   * returned with fuzzed coordinates for public display. Reporter exact addresses
+   * never leave the server.
+   */
+  async listInBounds(opts: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+    status?: 'missing' | 'reunited' | 'archived';
+    type?: 'dog' | 'cat' | 'other';
+    since?: Date;
+    limit?: number;
+  }) {
+    const { north, south, east, west, status = 'missing', type, since, limit = 500 } = opts;
+    const conditions = [
+      eq(pets.status, status),
+      sql`${pets.location} IS NOT NULL`,
+      sql`${pets.location} && ST_MakeEnvelope(${west}, ${south}, ${east}, ${north}, 4326)::geography`
+    ];
+    if (type) conditions.push(eq(pets.type, type));
+    if (since) conditions.push(sql`${pets.createdAt} >= ${since}`);
+
+    return db
+      .select({
+        id: pets.id,
+        slug: pets.slug,
+        name: pets.name,
+        type: pets.type,
+        lat: sql<number>`ST_Y(${pets.location}::geometry)`.as('lat'),
+        lng: sql<number>`ST_X(${pets.location}::geometry)`.as('lng'),
+        locationPrecision: pets.locationPrecision,
+        photoUrl: petPhotos.url,
+        lastSeenAt: pets.lastSeenAt
+      })
+      .from(pets)
+      .leftJoin(petPhotos, and(eq(petPhotos.petId, pets.id), eq(petPhotos.isPrimary, true)))
+      .where(and(...conditions))
+      .orderBy(desc(pets.lastSeenAt))
+      .limit(limit);
   },
 
   async listByUser(userId: string) {
@@ -185,6 +261,10 @@ export const PetsService = {
     if (fields.last_seen_at !== undefined) mapped.lastSeenAt = fields.last_seen_at;
     if (fields.contact_whatsapp !== undefined) mapped.contactWhatsapp = fields.contact_whatsapp;
     if (fields.contact_name !== undefined) mapped.contactName = fields.contact_name;
+    if (fields.location !== undefined) {
+      mapped.location = fields.location;
+      mapped.locationPrecision = fields.location ? 'precise' : 'unknown';
+    }
     await db.update(pets).set(mapped).where(eq(pets.id, petId));
   }
 };

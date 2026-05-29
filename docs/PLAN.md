@@ -64,6 +64,9 @@ The pitch to FB group admins, once Sprint 3 is live:
 | Forms | **sveltekit-superforms + zod v4** | Same Zod schemas reused on client (validation) and server (API route bodies). |
 | Hosting | **Vercel** (hobby tier) | Zero-config SvelteKit deploys. Free tier handles this scale. |
 | PWA | **vite-plugin-pwa** | Install banner, offline shell. |
+| Maps (client) | **Leaflet 1.9.x** + `svelte-leafletjs` | Smallest, most-vetted JS map library. SSR-safe via dynamic import. MIT. |
+| Map tiles | **Stadia Maps** (free tier) → OSM fallback | 200k req/mo free; falls back to `tile.openstreetmap.org` for forks without an API key. |
+| Geospatial | **PostGIS** (Neon extension) | `geography(Point, 4326)` columns + `ST_DWithin` for matching. No infra cost on Neon. |
 | CI | **GitHub Actions** | Free for public repos. Lint, type-check, test, db-migrate-dry-run on PRs. |
 | License | **MIT** | Maximum adoption. (Tradeoff discussion in §13.) |
 
@@ -81,6 +84,8 @@ The pitch to FB group admins, once Sprint 3 is live:
 - better-auth latest (+ passkey, apiKey plugins)
 - sveltekit-superforms latest
 - zod 4.x
+- Leaflet 1.9.x (Sprint 6)
+- `svelte-leafletjs` latest — verify Svelte 5 support at sprint start (Sprint 6)
 
 ---
 
@@ -472,6 +477,25 @@ The migrate script applies all `.sql` files in order — both generated and hand
 ### 5.4 Edit tokens vs auth
 
 Sprint 1 ships with anonymous reporting + edit tokens (lowest-friction adoption). Sprint 2 adds better-auth. Users who reported anonymously can claim their pet by entering the edit token while signed in — `PetsService.claim(petId, { editToken, userId })` ties `reporterUserId` to the auth user.
+
+### 5.5 Spatial data (Sprint 6)
+
+```sql
+CREATE EXTENSION IF NOT EXISTS postgis;
+```
+
+Two columns added to `pets` and `spotted_pets`:
+
+- `location geography(Point, 4326)` — precise pin location chosen by reporter. NULL allowed for legacy rows pending backfill.
+- `location_precision text` (`'precise' | 'colonia' | 'unknown'`) — provenance flag so the UI can show "ubicación aproximada (colonia)" vs "ubicación exacta".
+
+One column added to `colonias`:
+
+- `centroid geography(Point, 4326)` — used for backfilling and as fallback when reporter skips pin-drop.
+
+Spatial GIST index on both `location` columns. Migration `0011_postgis.sql` is hand-rolled (Drizzle doesn't manage PostGIS extension activation). Migration `0012_colonia_centroids.sql` seeds centroids for the existing colonia list (research-derived coordinates committed to git). Migration `0013_backfill_locations.sql` backfills existing `pets` and `spotted_pets` rows to their colonia centroid with `location_precision='colonia'`.
+
+**Privacy rule.** Precise coordinates never leave the server unfiltered. Every public-facing API endpoint that returns coordinates calls `LocationService.fuzz()` first — see §7 / Sprint 6 for the deterministic fuzzing helper.
 
 ---
 
@@ -1016,6 +1040,19 @@ export function scoreMatch(found: FoundReport, missing: Pet): MatchBreakdown {
 }
 ```
 
+**Sprint 6 augmentation: geographic distance.** Once `pets.location` and `spotted_pets.location` are populated, `scoreMatch()` gains a `geo` field:
+
+```ts
+// Within 500m: full 20 pts. Linear decay to 0 at 3000m. Beyond 3km: 0.
+const geo = distanceMeters <= 500
+  ? 20
+  : distanceMeters >= 3000
+    ? 0
+    : 20 * (1 - (distanceMeters - 500) / 2500);
+```
+
+Geo augments — does not replace — the colonia score (which remains a useful fallback when `location_precision='colonia'` on both sides). When both reports are `'precise'`, geo carries the weight; when either is `'colonia'`, colonia carries the weight.
+
 ### 11.2 Cold → warm → hot lead model
 
 This is the key insight that justifies the architecture: **image embedding is expensive, so we use cheap signals to decide when to fire it.**
@@ -1050,6 +1087,8 @@ This is the key insight that justifies the architecture: **image embedding is ex
 ```
 
 The threshold for "warm enough to be worth embedding" (currently score ≥ 30) is tunable and PR-discussable.
+
+**Sprint 6 addition to Layer 1:** when both the spotted-pet and missing-pet rows have `location_precision='precise'`, the SQL candidate filter adds `ST_DWithin(spotted.location, missing.location, 5000)` (5km radius) before scoring. This cuts the candidate set further when precise locations are available, while keeping the colonia-only fallback path for legacy/unfilled rows.
 
 ### 11.3 `packages/services/src/matching/README.md`
 
@@ -1177,6 +1216,9 @@ PUBLIC_SITE_URL="http://localhost:5173"
 
 # Sprint 5+: image embeddings
 REPLICATE_API_TOKEN=""
+
+# Sprint 6: maps — get from https://client.stadiamaps.com → API Keys (free tier: 200k req/mo)
+PUBLIC_STADIA_MAPS_KEY=""   # empty → falls back to direct OSM tiles
 
 # Admin
 ADMIN_EMAILS=""  # comma-separated
@@ -1401,7 +1443,103 @@ Each sprint ≈ one week of focused evening/weekend work (~10-12h). Ship somethi
 
 **Deliverable:** Visual matching for warm leads. Documented cost profile in repo.
 
-### Sprint 6: Polish, PWA, moderation, launch hardening
+### Sprint 6: Maps & geography
+
+**Goal:** Every missing-pet and spotted-pet report carries a precise location. Users browse pets on an interactive map of San Cristóbal. The matching score uses geographic distance as a primary signal. Sharing a pet sends recipients straight into Google Maps with a marker — the way Mexican users actually navigate.
+
+**Why this sprint exists at all:** Mexican users overwhelmingly use Google Maps to get to a place. Shipping v1.0 without that integration reduces every sighting to free-text. Colonia-only granularity is also too coarse — barrios in San Cristóbal can stretch >1km, which both inflates false positives and misses real matches.
+
+**Migrations:**
+
+- [ ] `0011_postgis.sql` — `CREATE EXTENSION IF NOT EXISTS postgis;` + `geography(Point, 4326)` columns on `pets`, `spotted_pets`, `colonias.centroid`. Add `location_precision` enum. Add GIST indexes on both `location` columns.
+- [ ] `0012_colonia_centroids.sql` — seed centroids for the existing `colonias` rows (San Cristóbal neighborhoods, coordinates curated and committed).
+- [ ] `0013_backfill_locations.sql` — backfill `pets.location` and `spotted_pets.location` from `colonias.centroid` where NULL, setting `location_precision='colonia'`.
+
+**Schemas (`@scmascotas/schemas`):**
+
+- [ ] `latLngSchema` — `{ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }`.
+- [ ] Extend `createMissingPetSchema` and `createSpottedPetSchema` with `location: latLngSchema.optional()`. Optional because legacy clients/forks may submit without; service layer falls back to colonia centroid.
+
+**Service layer (`@scmascotas/services`):**
+
+- [ ] `LocationService.fuzz(point, meters=150, seed)` — deterministic per-pet random offset (seeded from pet ID) so the public point stays stable across renders.
+- [ ] `LocationService.googleMapsUrl(lat, lng)` and `appleMapsUrl(lat, lng)` — pure helpers, no deps.
+- [ ] `PetsService.create()` / `SpottedPetsService.create()` accept `location?: LatLng`. Default to colonia centroid + `location_precision='colonia'` when omitted.
+- [ ] `PetsService.listInBounds({ north, south, east, west, status })` — returns pets whose **fuzzed** point falls inside the map viewport. Used by `GET /api/pets/map`.
+- [ ] `MatchesService.scoreMatch()` — extend with the `geo` field per §11.
+- [ ] `MatchesService` Layer 1 SQL filter — gains `ST_DWithin(...)` when both reports are `location_precision='precise'`.
+
+**API routes:**
+
+- [ ] `GET /api/pets/map?bounds=...&status=missing` — viewport-scoped lookups, returns `{ slug, lat, lng, type, name, photoUrl }[]`. **Returns fuzzed coordinates only.**
+- [ ] `GET /api/spotted-pets/map?bounds=...` — same shape for spotted pets.
+- [ ] `POST /api/pets` and `POST /api/spotted-pets` accept the new optional `location` field via the extended schemas.
+
+**UI components (`@scmascotas/ui`) — built via the `frontend-design:frontend-design` skill:**
+
+All four components below are produced through dedicated `frontend-design` sessions, not hand-built mid-sprint. The prop contracts here are the *minimum* interface — the skill is free to add polish (loading/empty states, "ubicación aproximada" badges, marker clustering) within them.
+
+- [ ] `LocationPicker.svelte` — draggable marker on a Leaflet map.
+  - Props: `initialCenter` (default San Cristóbal `16.7370, -92.6376`), `initialZoom?`, `onLocationChange(latLng)`.
+  - Uses dynamic `import('leaflet')` for SSR-safety.
+  - Includes "Usar centroide de colonia" fallback button.
+  - Design brief: forgiving form step with clear microcopy ("Arrastra el pin al lugar exacto") and obvious feedback when the pin moves.
+
+- [ ] `MapView.svelte` — full-page map.
+  - Props: `markers: { slug, lat, lng, type, photoUrl, name? }[]`, `onMarkerClick(slug)`, `tileUrl`, `tileAttribution`, `onBoundsChange?(bounds)`.
+  - No data fetching (presentational discipline per §8.2).
+  - Design brief: marquee page of v1.0. Dog/cat marker icons distinct from spotted-pet amber pins. Hover-popovers showing pet cards. Graceful "no pets in this area" empty state.
+
+- [ ] `MapPreview.svelte` — small embedded map (~300px) for pet detail pages.
+  - Read-only. Shows fuzzed point + "Cómo llegar" CTA.
+  - Design brief: visually lightweight so it doesn't dominate the contact card. Bonus: static-image fallback for reduced-motion / no-JS.
+
+- [ ] `OpenInMapsButton.svelte` — single button. Detects iOS via `navigator.platform` → Apple Maps; otherwise Google Maps.
+  - Server-renders to the Google Maps URL (works without JS); client-side enhances to swap href for iOS.
+  - Design brief: this is the button Mexican users will tap most. Treat as a primary CTA with a clear "Cómo llegar (Google Maps)" label.
+
+When invoking `frontend-design`, hand it the prop contract, the existing `packages/ui/src/lib/components/` directory for style match, the Tailwind config from `@scmascotas/tailwind-config`, and `MatchSuggestions.svelte` as a precedent for the spotted-pet amber palette.
+
+**App routes (`apps/web`):**
+
+- [ ] `/mapa` — full-page map of all active missing pets. Bounded queries as user pans. URL hash sync (`#16.737,-92.638,14z`) for shareability.
+- [ ] `/mapa/avistamientos` — same for spotted pets, amber styling.
+- [ ] `/reportar` and `/reportar/vi` — add `LocationPicker` step *after* the colonia select. Submission omits `location` if the user skipped pin-drop.
+- [ ] `/mascota/[slug]` and `/avistamientos/[slug]` — `MapPreview` block above the contact card. "Cómo llegar (Google Maps)" CTA wired to `OpenInMapsButton`.
+
+**Share & WhatsApp integration:**
+
+- [ ] `ShareButton` — append a Google Maps URL line to the prefilled share text: `📍 Cómo llegar: https://www.google.com/maps?q=16.737,-92.638` (using fuzzed point).
+- [ ] `waLink()` helper in `@scmascotas/services/src/utils/whatsapp.ts` — accept optional `location` arg; if provided, append `\n📍 https://www.google.com/maps?q=...` to the message body. Audit call sites (`/mascota/[slug]` contact CTA, spotted-pet "this might be yours" notify) to opt in.
+
+**Tile config (`apps/web/src/lib/client/tiles.ts`):**
+
+- [ ] One module exporting `tileUrl` / `tileAttribution`. Reads `PUBLIC_STADIA_MAPS_KEY` from `$env/static/public`. If empty, falls back to `https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png` with OSM attribution. Single import point for every map in the app.
+
+**Cost monitoring:**
+
+- [ ] `.env.example` documents Stadia Maps free tier limits.
+- [ ] One paragraph in `CONTRIBUTING.md` under "Deploy your own city" explaining the tile-provider choice for forks (default to direct OSM if no key, swap to Stadia Maps for production-grade reliability).
+
+**Verification:**
+
+- [ ] Manual: report a missing pet → confirm pin saved → view on `/mapa` → confirm fuzzed point visible → confirm "Cómo llegar" opens Google Maps app on Android, Apple Maps on iOS.
+- [ ] Unit: `LocationService.fuzz()` is deterministic per-id; output stays within 150m of input.
+- [ ] Unit: `scoreMatch()` geo signal matches the spec curve (500m=20, 1750m=10, 3000m=0).
+- [ ] Integration: existing pets (Sprint 3 era) appear on `/mapa` at their colonia centroid with `location_precision='colonia'` badge visible.
+- [ ] Lighthouse mobile pass on `/mapa` — interactive in <3s on slow 3G.
+
+**Out of scope (deferred to future sprints / PRs):**
+
+- Address geocoding / typeahead (Nominatim or Mapbox dependency).
+- Heatmaps / marker clustering at scale.
+- User-controlled privacy fuzzing radius (ship the 150m default).
+- Multi-city geography refactor (still lives in §15).
+- Real-time pet location tracking — out of scope forever; this is a registry, not a tracker.
+
+**Deliverable:** Live `/mapa` page. Every report carries lat/lng. Score uses distance. Google Maps deep-linking from every share/contact action. — v0.8.0
+
+### Sprint 7: Polish, PWA, moderation, launch hardening
 
 - [ ] PWA: manifest, install banner, offline shell, app icons.
 - [ ] Admin moderation page.
@@ -1415,7 +1553,7 @@ Each sprint ≈ one week of focused evening/weekend work (~10-12h). Ship somethi
 
 **Deliverable:** Soft launch.
 
-### Buffer sprint 7
+### Buffer sprint 8
 
 - [ ] Bugs from real usage.
 - [ ] One post-launch UX issue.
@@ -1425,7 +1563,6 @@ Each sprint ≈ one week of focused evening/weekend work (~10-12h). Ship somethi
 
 ## 15. Future phases
 
-- **Maps & geography.** PostGIS, Leaflet + OSM tiles.
 - **Push notifications.** Web Push.
 - **Capacitor mobile app (`apps/mobile`).** SvelteKit SPA, shares `@scmascotas/ui` + `@scmascotas/schemas`. Auth via better-auth API key plugin.
 - **WhatsApp Business API.** Proactive alerts.

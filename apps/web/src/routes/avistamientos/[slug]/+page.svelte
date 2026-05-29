@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { MatchSuggestions } from '@scmascotas/ui';
+	import { MatchSuggestions, MapPreview } from '@scmascotas/ui';
+	import { whatsappUrl as buildWhatsappUrl, googleMapsDirectionsUrl, appleMapsUrl } from '@scmascotas/services/browser';
+	import { tileUrl, tileAttribution } from '$lib/client/tiles';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -11,9 +13,14 @@
 	const sizeLabel: Record<string, string> = { small: 'Pequeño', medium: 'Mediano', large: 'Grande' };
 	const statusLabel: Record<string, string> = { open: 'Abierto', resolved: 'Resuelto ✓' };
 
+	const hasMapLocation = $derived(typeof s.lat === 'number' && typeof s.lng === 'number');
 	const whatsappUrl = $derived(
 		s.contactWhatsapp
-			? `https://wa.me/${s.contactWhatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hola, vi tu avistamiento en SC Mascotas y me gustaría darte más información.')}`
+			? buildWhatsappUrl(
+				s.contactWhatsapp,
+				'Hola, vi tu avistamiento en SC Mascotas y me gustaría darte más información.',
+				hasMapLocation ? { lat: s.lat as number, lng: s.lng as number } : undefined
+			)
 			: null
 	);
 
@@ -165,6 +172,21 @@
 				</div>
 			{/if}
 		</div>
+
+		<!-- Map preview -->
+		{#if hasMapLocation}
+			<div class="reveal mb-4" style="animation-delay: 150ms">
+				<MapPreview
+					lat={s.lat as number}
+					lng={s.lng as number}
+					{tileUrl}
+					{tileAttribution}
+					precision={s.locationPrecision}
+					googleMapsHref={googleMapsDirectionsUrl(s.lat as number, s.lng as number)}
+					appleMapsHref={appleMapsUrl(s.lat as number, s.lng as number)}
+				/>
+			</div>
+		{/if}
 
 		<!-- Match suggestions (shown when no manual match is set) -->
 		{#if data.matches.length > 0}

@@ -1,53 +1,131 @@
 import { colorsOverlap } from './color-normalize.js';
 import { cosineSimilarity, visualScore } from './cosine.js';
+import { haversineMeters } from '../location.js';
 
 export type SpottedInput = {
-  type:       'dog' | 'cat' | 'other';
-  coloniaId:  string | null | undefined;
-  color:      string | null | undefined;
-  size:       string | null | undefined;
-  createdAt:  Date | string;
-  embedding?: number[] | null;  // Sprint 5+
+  type:               'dog' | 'cat' | 'other';
+  coloniaId:          string | null | undefined;
+  color:              string | null | undefined;
+  size:               string | null | undefined;
+  createdAt:          Date | string;
+  embedding?:         number[] | null;
+  lat?:               number | null;
+  lng?:               number | null;
+  locationPrecision?: 'precise' | 'colonia' | 'unknown' | null;
 };
 
 export type MissingInput = {
-  type:       'dog' | 'cat' | 'other';
-  coloniaId:  string | null | undefined;
-  color:      string | null | undefined;
-  size:       string | null | undefined;
-  lastSeenAt: Date | string;
-  embedding?: number[] | null;  // Sprint 5+
+  type:               'dog' | 'cat' | 'other';
+  coloniaId:          string | null | undefined;
+  color:              string | null | undefined;
+  size:               string | null | undefined;
+  lastSeenAt:         Date | string;
+  embedding?:         number[] | null;
+  lat?:               number | null;
+  lng?:               number | null;
+  locationPrecision?: 'precise' | 'colonia' | 'unknown' | null;
 };
 
 export type MatchBreakdown = {
-  type:    number;  // 0 or 40
-  colonia: number;  // 0 or 30
-  color:   number;  // 0 or 10
-  size:    number;  // 0 or 10
-  recency: number;  // 0 or 10
-  visual:  number;  // 0, 5, 10, 15, or 20 — only when both embeddings present
-  total:   number;  // max 120 with visual, 100 without
+  colonia:        number;
+  color:          number;
+  size:           number;
+  recency:        number;
+  visual:         number;
+  total:          number;   // 0–100
+  hasVisual:      boolean;  // true → photo-backed scoring path was used
+  proximityMeters: number | null; // null when geo distance wasn't available
 };
 
-export function scoreMatch(spotted: SpottedInput, missing: MissingInput): MatchBreakdown {
-  const zero = { type: 0, colonia: 0, color: 0, size: 0, recency: 0, visual: 0, total: 0 };
-  if (spotted.type !== missing.type) return zero;
+/**
+ * Proximity confidence 0..1.
+ *   When both reports have precise lat/lng: 1 within 500m, linear decay
+ *   to 0 at 3000m. This modulates the colonia score so two pets in the
+ *   same colonia but 2km apart score lower than two pets 100m apart.
+ *
+ *   When either side lacks precise location: fall back to colonia-ID
+ *   match (1 if same colonia, 0 otherwise) — preserves pre-Sprint 6
+ *   behaviour for legacy / centroid-only rows.
+ */
+function proximityConfidence(
+  spotted: SpottedInput,
+  missing: MissingInput,
+): { confidence: number; meters: number | null } {
+  const bothPrecise =
+    spotted.locationPrecision === 'precise' &&
+    missing.locationPrecision === 'precise' &&
+    typeof spotted.lat === 'number' && typeof spotted.lng === 'number' &&
+    typeof missing.lat === 'number' && typeof missing.lng === 'number';
 
-  const typeScore    = 40;
-  const coloniaScore = spotted.coloniaId && missing.coloniaId
-    && spotted.coloniaId === missing.coloniaId ? 30 : 0;
-  const colorScore   = colorsOverlap(spotted.color, missing.color) ? 10 : 0;
-  const sizeScore    = spotted.size && missing.size && spotted.size === missing.size ? 10 : 0;
-  const daysDiff     = Math.abs(
-    (new Date(spotted.createdAt).getTime() - new Date(missing.lastSeenAt).getTime()) / 86_400_000,
-  );
-  const recencyScore = daysDiff <= 30 ? 10 : 0;
-
-  let visual = 0;
-  if (spotted.embedding?.length === 768 && missing.embedding?.length === 768) {
-    visual = visualScore(cosineSimilarity(spotted.embedding, missing.embedding));
+  if (bothPrecise) {
+    const meters = haversineMeters(
+      { lat: spotted.lat!, lng: spotted.lng! },
+      { lat: missing.lat!, lng: missing.lng! },
+    );
+    if (meters <= 500) return { confidence: 1, meters };
+    if (meters >= 3000) return { confidence: 0, meters };
+    return { confidence: 1 - (meters - 500) / 2500, meters };
   }
 
-  const total = typeScore + coloniaScore + colorScore + sizeScore + recencyScore + visual;
-  return { type: typeScore, colonia: coloniaScore, color: colorScore, size: sizeScore, recency: recencyScore, visual, total };
+  const sameColonia = !!spotted.coloniaId && !!missing.coloniaId && spotted.coloniaId === missing.coloniaId;
+  return { confidence: sameColonia ? 1 : 0, meters: null };
+}
+
+/**
+ * Score a candidate match on a 0–100 scale.
+ *
+ * Type is a gatekeeper, not a score component: mismatched species → 0.
+ *
+ * Two scoring paths share the same ceiling so a user never sees "90/100"
+ * without real visual evidence to back it up:
+ *
+ *   Photo-backed (both sides have an embedding):
+ *     visual 0–60 + colonia 0–15 + color 0–10 + size 0–8 + recency 0–7 = max 100
+ *
+ *   Metadata-only (at least one side missing embedding):
+ *     colonia 0–40 + color 0–25 + size 0–20 + recency 0–15 = max 100
+ */
+export function scoreMatch(spotted: SpottedInput, missing: MissingInput): MatchBreakdown {
+  const zero: MatchBreakdown = {
+    colonia: 0, color: 0, size: 0, recency: 0, visual: 0, total: 0, hasVisual: false, proximityMeters: null,
+  };
+  if (spotted.type !== missing.type) return zero;
+
+  const { confidence: proximity, meters: proximityMeters } = proximityConfidence(spotted, missing);
+  const sameSize    = !!spotted.size && !!missing.size && spotted.size === missing.size;
+  const colorMatch  = colorsOverlap(spotted.color, missing.color);
+  const daysApart   = Math.abs(
+    (new Date(spotted.createdAt).getTime() - new Date(missing.lastSeenAt).getTime()) / 86_400_000,
+  );
+  const recent = daysApart <= 30;
+
+  const hasVisual =
+    spotted.embedding?.length === 768 &&
+    missing.embedding?.length === 768;
+
+  if (hasVisual) {
+    const visual  = visualScore(cosineSimilarity(spotted.embedding!, missing.embedding!));
+    const colonia = Math.round(15 * proximity);
+    const color   = colorMatch ? 10 : 0;
+    const size    = sameSize   ? 8  : 0;
+    const recency = recent     ? 7  : 0;
+    return {
+      colonia, color, size, recency, visual,
+      total: visual + colonia + color + size + recency,
+      hasVisual: true,
+      proximityMeters,
+    };
+  }
+
+  // Metadata-only: expand weights to fill 0–100 since no visual evidence is available.
+  const colonia = Math.round(40 * proximity);
+  const color   = colorMatch ? 25 : 0;
+  const size    = sameSize   ? 20 : 0;
+  const recency = recent     ? 15 : 0;
+  return {
+    colonia, color, size, recency, visual: 0,
+    total: colonia + color + size + recency,
+    hasVisual: false,
+    proximityMeters,
+  };
 }

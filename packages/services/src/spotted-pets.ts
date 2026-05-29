@@ -1,5 +1,5 @@
 import { db, spottedPets, colonias, pets } from '@scmascotas/db';
-import { eq, desc, and, isNull } from 'drizzle-orm';
+import { eq, desc, and, isNull, sql } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 import { put } from '@vercel/blob';
 import type { CreateSpottedPet } from '@scmascotas/schemas';
@@ -31,6 +31,8 @@ export const SpottedPetsService = {
 				matchedPetId: data.matchedPetId,
 				reporterUserId: ctx.userId,
 				reporterIpHash: ctx.ipHash,
+				location: data.location,
+				locationPrecision: data.location ? 'precise' : 'unknown',
 			})
 			.returning();
 
@@ -64,6 +66,9 @@ export const SpottedPetsService = {
 				matchedPetSlug: pets.slug,
 				matchedPetName: pets.name,
 				matchedPetType: pets.type,
+				locationPrecision: spottedPets.locationPrecision,
+				lat: sql<number | null>`ST_Y(${spottedPets.location}::geometry)`.as('lat'),
+				lng: sql<number | null>`ST_X(${spottedPets.location}::geometry)`.as('lng'),
 			})
 			.from(spottedPets)
 			.leftJoin(colonias, eq(spottedPets.coloniaId, colonias.id))
@@ -212,5 +217,47 @@ export const SpottedPetsService = {
 			.catch((err) => console.error('[embeddings] spotted pet failed, id=', id, err));
 
 		return blob.url;
+	},
+
+	/**
+	 * Spotted-pet reports inside a map viewport. Returns precise coordinates
+	 * from the DB — callers are responsible for fuzzing before exposing them
+	 * publicly. See `LocationService.fuzz` and the `/api/spotted-pets/map`
+	 * route for the public-facing path.
+	 */
+	async listInBounds(opts: {
+		north: number;
+		south: number;
+		east: number;
+		west: number;
+		status?: 'open' | 'resolved' | 'archived';
+		type?: 'dog' | 'cat' | 'other';
+		since?: Date;
+		limit?: number;
+	}) {
+		const { north, south, east, west, status = 'open', type, since, limit = 500 } = opts;
+		const conditions = [
+			eq(spottedPets.status, status),
+			sql`${spottedPets.location} IS NOT NULL`,
+			sql`${spottedPets.location} && ST_MakeEnvelope(${west}, ${south}, ${east}, ${north}, 4326)::geography`,
+		];
+		if (type) conditions.push(eq(spottedPets.type, type));
+		if (since) conditions.push(sql`${spottedPets.createdAt} >= ${since}`);
+
+		return db
+			.select({
+				id: spottedPets.id,
+				slug: spottedPets.slug,
+				type: spottedPets.type,
+				lat: sql<number>`ST_Y(${spottedPets.location}::geometry)`.as('lat'),
+				lng: sql<number>`ST_X(${spottedPets.location}::geometry)`.as('lng'),
+				locationPrecision: spottedPets.locationPrecision,
+				photoUrl: spottedPets.photoUrl,
+				createdAt: spottedPets.createdAt,
+			})
+			.from(spottedPets)
+			.where(and(...conditions))
+			.orderBy(desc(spottedPets.createdAt))
+			.limit(limit);
 	},
 };
