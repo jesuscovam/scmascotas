@@ -2,7 +2,7 @@
 	import { Progress, Card } from '@scmascotas/ui';
 
 	const TOTAL_PHASES = 8;
-	const DONE_PHASES = 6;
+	const DONE_PHASES = 7;
 	const progress = Math.round((DONE_PHASES / TOTAL_PHASES) * 100);
 </script>
 
@@ -125,6 +125,20 @@
 					</div>
 				</Card.Content>
 			</Card.Root>
+
+			<Card.Root class="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
+				<Card.Content class="pt-5 pb-5">
+					<div class="flex items-start gap-3">
+						<span class="text-lg mt-0.5">✅</span>
+						<div>
+							<p class="font-semibold text-warm-800 dark:text-warm-100">Fase 7 — Mapas y geografía</p>
+							<p class="text-sm text-warm-500 dark:text-warm-400 mt-1">
+								Mapa interactivo de San Cristóbal con PostGIS + Leaflet y tiles de Stadia Maps. Al reportar una mascota perdida o un avistamiento se puede marcar el punto exacto arrastrando un pin. Las páginas de detalle muestran un mapa pequeño con botón "Cómo llegar" que abre Google Maps en Android y Apple Maps en iPhone. La distancia geográfica se suma al algoritmo de emparejamiento (0–20 pts por proximidad). Filtro por especie y tiempo en /mapa.
+							</p>
+						</div>
+					</div>
+				</Card.Content>
+			</Card.Root>
 		</div>
 	</section>
 
@@ -135,7 +149,6 @@
 		</h2>
 		<div class="flex flex-col gap-4">
 			{#each [
-				{ icon: '🗺️', title: 'Fase 7 — Mapas y geografía', desc: 'Mapa interactivo de San Cristóbal con PostGIS + Leaflet. Al reportar una mascota perdida o un avistamiento, eliges el punto exacto arrastrando un pin sobre el mapa. Botón "Cómo llegar" que abre Google Maps en Android y Apple Maps en iPhone. La distancia geográfica se suma al algoritmo de emparejamiento (0–20 pts por proximidad).' },
 				{ icon: '⏳', title: 'Fase 8 — PWA, moderación y lanzamiento', desc: 'Instalable como app en celular (PWA). Panel de moderación. Seguimiento de errores con Sentry. Pruebas en dispositivos reales con datos móviles lentos. Contacto con los admins del grupo de Facebook. Lanzamiento suave.' },
 			] as sprint (sprint.title)}
 				<Card.Root class="border-warm-200 dark:border-warm-700">
