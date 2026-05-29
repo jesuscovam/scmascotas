@@ -54,17 +54,18 @@
 
   function pinHtml(type: MapMarker['type'], markerLayer?: 'missing' | 'spotted') {
     const eff = markerLayer ?? variant;
-    const bg = eff === 'spotted' ? '#fbbf24' : '#b45309';
-    const ring = eff === 'spotted' ? '#78350f' : '#fef3c7';
-    const inner = eff === 'spotted' ? '#fef3c7' : '#ffffff';
-    const gradTop = eff === 'spotted' ? '#fcd34d' : '#d97706';
-    const gradBot = eff === 'spotted' ? '#d97706' : '#78350f';
+    // Spotted: teal-600/700 gradient — matches the avistamientos teal accent in the rest of the UI.
+    // Missing: amber-600/800 gradient — matches the mascota amber palette.
+    const gradTop = eff === 'spotted' ? '#14b8a6' : '#d97706';
+    const gradBot = eff === 'spotted' ? '#0f766e' : '#78350f';
+    const ring    = eff === 'spotted' ? '#f0fdfa' : '#fef3c7';
+    const inner   = eff === 'spotted' ? '#f0fdfa' : '#ffffff';
     const filterId = `pin-shadow-${eff}-${type}`;
     const gradId = `pin-grad-${eff}-${type}`;
     const badge = eff === 'spotted'
       ? `<g>
-           <circle cx="30" cy="9" r="7" fill="#78350f" stroke="#fef3c7" stroke-width="1.6"/>
-           <g transform="translate(26.4, 5.4)" stroke="#fef3c7" stroke-width="1.5" stroke-linecap="round" fill="none">
+           <circle cx="30" cy="9" r="7" fill="#0f766e" stroke="#f0fdfa" stroke-width="1.6"/>
+           <g transform="translate(26.4, 5.4)" stroke="#f0fdfa" stroke-width="1.5" stroke-linecap="round" fill="none">
              <circle cx="3.4" cy="3.4" r="2.2"/>
              <path d="M5.2 5.2L7.2 7.2"/>
            </g>
