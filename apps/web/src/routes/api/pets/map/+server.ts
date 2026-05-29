@@ -15,11 +15,14 @@ export const GET: RequestHandler = async ({ url }) => {
   const east = parseBound(url.searchParams.get('east'), 'east');
   const west = parseBound(url.searchParams.get('west'), 'west');
   const type = url.searchParams.get('type') as 'dog' | 'cat' | 'other' | null;
+  const sinceParam = url.searchParams.get('since');
+  const since = sinceParam ? new Date(sinceParam) : undefined;
 
   const rows = await PetsService.listInBounds({
     north, south, east, west,
     type: type ?? undefined,
     status: 'missing',
+    since,
   });
 
   // Fuzz coordinates before exposing publicly. Precise coords never leave the server.

@@ -160,15 +160,17 @@ export const PetsService = {
     west: number;
     status?: 'missing' | 'reunited' | 'archived';
     type?: 'dog' | 'cat' | 'other';
+    since?: Date;
     limit?: number;
   }) {
-    const { north, south, east, west, status = 'missing', type, limit = 500 } = opts;
+    const { north, south, east, west, status = 'missing', type, since, limit = 500 } = opts;
     const conditions = [
       eq(pets.status, status),
       sql`${pets.location} IS NOT NULL`,
       sql`${pets.location} && ST_MakeEnvelope(${west}, ${south}, ${east}, ${north}, 4326)::geography`
     ];
     if (type) conditions.push(eq(pets.type, type));
+    if (since) conditions.push(sql`${pets.createdAt} >= ${since}`);
 
     return db
       .select({

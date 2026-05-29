@@ -232,15 +232,17 @@ export const SpottedPetsService = {
 		west: number;
 		status?: 'open' | 'resolved' | 'archived';
 		type?: 'dog' | 'cat' | 'other';
+		since?: Date;
 		limit?: number;
 	}) {
-		const { north, south, east, west, status = 'open', type, limit = 500 } = opts;
+		const { north, south, east, west, status = 'open', type, since, limit = 500 } = opts;
 		const conditions = [
 			eq(spottedPets.status, status),
 			sql`${spottedPets.location} IS NOT NULL`,
 			sql`${spottedPets.location} && ST_MakeEnvelope(${west}, ${south}, ${east}, ${north}, 4326)::geography`,
 		];
 		if (type) conditions.push(eq(spottedPets.type, type));
+		if (since) conditions.push(sql`${spottedPets.createdAt} >= ${since}`);
 
 		return db
 			.select({
