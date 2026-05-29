@@ -20,3 +20,7 @@ export { default as SightingsList } from './lib/components/sightings-list.svelte
 export { default as ShareButton } from './lib/components/share-button.svelte';
 export { default as SpeciesPicker } from './lib/components/species-picker.svelte';
 export { default as MatchSuggestions } from './lib/components/match-suggestions.svelte';
+export { default as LocationPicker } from './lib/components/location-picker.svelte';
+export { default as MapView } from './lib/components/map-view.svelte';
+export { default as MapPreview } from './lib/components/map-preview.svelte';
+export { default as OpenInMapsButton } from './lib/components/open-in-maps-button.svelte';
