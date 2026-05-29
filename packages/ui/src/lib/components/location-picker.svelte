@@ -8,8 +8,8 @@
     initialCenter?: LatLng;
     initialZoom?: number;
     /** Zoom level used when the map re-centers on an `initialCenter` change
-     * (e.g. colonia switch). Defaults to 16 — close enough to read street
-     * names while keeping a few surrounding blocks visible for context. */
+     * (e.g. colonia switch). Defaults to 15 — neighborhood-level: the barrio
+     * outline plus a couple of adjacent ones for orientation. */
     recenterZoom?: number;
     onLocationChange: (latLng: LatLng | null) => void;
     tileUrl: string;
@@ -20,7 +20,7 @@
   let {
     initialCenter = { lat: 16.737, lng: -92.6376 },
     initialZoom = 14,
-    recenterZoom = 16,
+    recenterZoom = 15,
     onLocationChange,
     tileUrl,
     tileAttribution,
