@@ -7,6 +7,10 @@
   type Props = {
     initialCenter?: LatLng;
     initialZoom?: number;
+    /** Zoom level used when the map re-centers on an `initialCenter` change
+     * (e.g. colonia switch). Defaults to 15 — neighborhood-level: the barrio
+     * outline plus a couple of adjacent ones for orientation. */
+    recenterZoom?: number;
     onLocationChange: (latLng: LatLng | null) => void;
     tileUrl: string;
     tileAttribution: string;
@@ -16,6 +20,7 @@
   let {
     initialCenter = { lat: 16.737, lng: -92.6376 },
     initialZoom = 14,
+    recenterZoom = 15,
     onLocationChange,
     tileUrl,
     tileAttribution,
@@ -29,10 +34,14 @@
 
   // Leaflet runtime + handles — never proxied through $state because Leaflet
   // mutates these objects internally and Svelte's proxy throws on map ops.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let L: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mapInstance: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let markerInstance: any = null;
   let flashTimer: ReturnType<typeof setTimeout> | null = null;
+  let recenterArmed = false;
 
   function flash() {
     if (flashTimer) clearTimeout(flashTimer);
@@ -120,6 +129,7 @@
       // Leaflet's stylesheet is imported by the consuming app's global CSS
       // (apps/web/src/app.css) — this component assumes it's already loaded.
       if (disposed || !container) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       L = (mod as any).default ?? mod;
 
       mapInstance = L.map(container, {
@@ -132,6 +142,7 @@
 
       L.tileLayer(tileUrl, { attribution: tileAttribution, maxZoom: 19 }).addTo(mapInstance);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       mapInstance.on('click', (e: any) => placeOrMove({ lat: e.latlng.lat, lng: e.latlng.lng }));
       isReady = true;
     })();
@@ -149,6 +160,21 @@
   function fmt(n: number) {
     return n.toFixed(4);
   }
+
+  // Re-center the map when the parent changes `initialCenter` (e.g. the
+  // wizard's colonia select updated). First arm-and-skip after the map
+  // becomes ready so we don't re-fly on the initial mount — Leaflet already
+  // centered correctly via `L.map({ center })`.
+  $effect(() => {
+    const lat = initialCenter.lat;
+    const lng = initialCenter.lng;
+    if (!isReady || !mapInstance || !L) return;
+    if (!recenterArmed) {
+      recenterArmed = true;
+      return;
+    }
+    mapInstance.flyTo([lat, lng], recenterZoom, { animate: true, duration: 0.9 });
+  });
 </script>
 
 <style>
@@ -236,8 +262,9 @@
     </div>
   </div>
 
-  <!-- Map shell -->
-  <div class="relative rounded-3xl overflow-hidden border-2 border-warm-200 dark:border-warm-700 shadow-sm bg-warm-100 dark:bg-warm-800">
+  <!-- Map shell — `isolate` seals Leaflet's internal pane z-indices (200–700)
+       so they don't paint over portal'd overlays like Select dropdowns. -->
+  <div class="relative isolate rounded-3xl overflow-hidden border-2 border-warm-200 dark:border-warm-700 shadow-sm bg-warm-100 dark:bg-warm-800">
     <div bind:this={container} class="sc-picker-map h-80 w-full"></div>
 
     {#if !isReady}

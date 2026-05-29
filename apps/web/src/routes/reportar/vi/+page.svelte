@@ -5,7 +5,8 @@
 	import { fly, fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
-	import { Select, SpeciesPicker } from '@scmascotas/ui';
+	import { Select, SpeciesPicker, LocationPicker } from '@scmascotas/ui';
+	import { tileUrl, tileAttribution, SC_CENTER, SC_DEFAULT_ZOOM } from '$lib/client/tiles';
 	import PhotoPicker from '$lib/components/PhotoPicker.svelte';
 	import type { PageData } from './$types';
 
@@ -13,6 +14,7 @@
 
 	type PetType = 'dog' | 'cat' | 'other';
 	type SizeType = 'small' | 'medium' | 'large';
+	type LatLng = { lat: number; lng: number };
 	type MatchPet = {
 		id: string; slug: string; name: string | null; type: string;
 		color: string | null; lastSeenAt: string; colonia: string | null; photoUrl: string | null;
@@ -40,12 +42,21 @@
 	// ── Form fields ──
 	let selectedType = $state<PetType | ''>('');
 	let selectedColoniaId = $state('');
-	let locationHint = $state('');   // "¿Dónde exactamente?" — prepended to description
+	let locationHint = $state('');   // "Pista adicional" — prepended to description
+	let location = $state<LatLng | null>(null);
 	let color = $state('');
 	let size = $state<SizeType | ''>('');
 	let description = $state('');
 	let contactWhatsapp = $state('');
 	let photoFiles = $state<File[]>([]);
+
+	const pickerCenter = $derived.by(() => {
+		const c = data.colonias.find(c => c.id === selectedColoniaId);
+		if (c && typeof c.lat === 'number' && typeof c.lng === 'number') {
+			return { lat: c.lat, lng: c.lng };
+		}
+		return SC_CENTER;
+	});
 
 	// ── Match step state ──
 	let matchedPetId = $state<string | null>(null);
@@ -122,6 +133,7 @@
 					size: size || undefined,
 					contactWhatsapp: contactWhatsapp.trim() || undefined,
 					matchedPetId: matchedPetId ?? undefined,
+					location: location ?? undefined,
 				})
 			});
 
@@ -300,14 +312,23 @@
 								</Select.Root>
 							</div>
 
+							<LocationPicker
+								initialCenter={pickerCenter}
+								initialZoom={SC_DEFAULT_ZOOM}
+								{tileUrl}
+								{tileAttribution}
+								onLocationChange={(loc) => (location = loc)}
+								label="Arrastra el pin al lugar exacto donde la viste"
+							/>
+
 							<div>
-								<p class={labelClass}>¿En qué parte exactamente? <span class="text-warm-400 font-normal">(opcional)</span></p>
+								<p class="block text-xs font-medium text-warm-500 dark:text-warm-400 mb-1.5">Pista adicional <span class="text-warm-400 dark:text-warm-500 font-normal">(opcional)</span></p>
 								<input
 									type="text"
 									bind:value={locationHint}
 									maxlength={120}
-									placeholder="Ej: Cerca del mercado, frente a la iglesia…"
-									class={inputClass}
+									placeholder="Cerca del Walmart, frente a la iglesia…"
+									class="w-full border border-warm-200 dark:border-warm-700 rounded-xl px-3 py-2 text-sm bg-warm-50 dark:bg-warm-900 text-warm-800 dark:text-warm-100 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-400 transition-all placeholder:text-warm-400 dark:placeholder:text-warm-500"
 								/>
 							</div>
 						</div>

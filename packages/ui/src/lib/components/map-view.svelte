@@ -10,6 +10,8 @@
     type: 'dog' | 'cat' | 'other';
     photoUrl?: string | null;
     name?: string | null;
+    /** Per-marker override. When absent, falls back to the component-level `variant` prop. */
+    layer?: 'missing' | 'spotted';
   };
   type Bounds = { north: number; south: number; east: number; west: number };
 
@@ -38,8 +40,11 @@
   let container: HTMLDivElement | undefined = $state();
   let isReady = $state(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let L: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mapInstance: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let markerLayers: any[] = [];
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -50,18 +55,20 @@
     other: 'Mascota',
   };
 
-  function pinHtml(type: MapMarker['type']) {
-    const bg = variant === 'spotted' ? '#fbbf24' : '#b45309';
-    const ring = variant === 'spotted' ? '#78350f' : '#fef3c7';
-    const inner = variant === 'spotted' ? '#fef3c7' : '#ffffff';
-    const gradTop = variant === 'spotted' ? '#fcd34d' : '#d97706';
-    const gradBot = variant === 'spotted' ? '#d97706' : '#78350f';
-    const filterId = `pin-shadow-${variant}`;
-    const gradId = `pin-grad-${variant}`;
-    const badge = variant === 'spotted'
+  function pinHtml(type: MapMarker['type'], markerLayer?: 'missing' | 'spotted') {
+    const eff = markerLayer ?? variant;
+    // Spotted: teal-600/700 gradient — matches the avistamientos teal accent in the rest of the UI.
+    // Missing: amber-600/800 gradient — matches the mascota amber palette.
+    const gradTop = eff === 'spotted' ? '#14b8a6' : '#d97706';
+    const gradBot = eff === 'spotted' ? '#0f766e' : '#78350f';
+    const ring    = eff === 'spotted' ? '#f0fdfa' : '#fef3c7';
+    const inner   = eff === 'spotted' ? '#f0fdfa' : '#ffffff';
+    const filterId = `pin-shadow-${eff}-${type}`;
+    const gradId = `pin-grad-${eff}-${type}`;
+    const badge = eff === 'spotted'
       ? `<g>
-           <circle cx="30" cy="9" r="7" fill="#78350f" stroke="#fef3c7" stroke-width="1.6"/>
-           <g transform="translate(26.4, 5.4)" stroke="#fef3c7" stroke-width="1.5" stroke-linecap="round" fill="none">
+           <circle cx="30" cy="9" r="7" fill="#0f766e" stroke="#f0fdfa" stroke-width="1.6"/>
+           <g transform="translate(26.4, 5.4)" stroke="#f0fdfa" stroke-width="1.5" stroke-linecap="round" fill="none">
              <circle cx="3.4" cy="3.4" r="2.2"/>
              <path d="M5.2 5.2L7.2 7.2"/>
            </g>
@@ -100,17 +107,20 @@
   }
 
   function popoverHtml(m: MapMarker) {
+    const eff = m.layer ?? variant;
     const photo = m.photoUrl
       ? `<img src="${m.photoUrl}" alt="${m.name ?? TYPE_LABEL[m.type]}" class="sc-pop-thumb" loading="lazy"/>`
       : `<div class="sc-pop-thumb sc-pop-thumb-empty">${EMOJI[m.type]}</div>`;
-    const accent = variant === 'spotted' ? 'sc-pop-accent-spotted' : 'sc-pop-accent-missing';
+    const accent = eff === 'spotted' ? 'sc-pop-accent-spotted' : 'sc-pop-accent-missing';
+    const href = eff === 'spotted' ? `/avistamientos/${m.slug}` : `/mascota/${m.slug}`;
+    const label = eff === 'spotted' ? 'Ver avistamiento' : 'Ver mascota';
     return `
-      <a href="/mascota/${m.slug}" class="sc-pop-link">
+      <a href="${href}" class="sc-pop-link">
         <div class="sc-pop-row">
           ${photo}
           <div class="sc-pop-text">
             <div class="sc-pop-name">${escapeHtml(m.name ?? TYPE_LABEL[m.type])}</div>
-            <div class="sc-pop-cta ${accent}">${variant === 'spotted' ? 'Ver avistamiento' : 'Ver mascota'} →</div>
+            <div class="sc-pop-cta ${accent}">${label} →</div>
           </div>
         </div>
       </a>
@@ -150,7 +160,7 @@
         iconSize: [36, 44],
         iconAnchor: [18, 43],
         popupAnchor: [0, -38],
-        html: pinHtml(m.type),
+        html: pinHtml(m.type, m.layer),
       });
 
       const marker = L.marker([m.lat, m.lng], { icon, riseOnHover: true })
@@ -179,6 +189,7 @@
       const mod = await import('leaflet');
       // Stylesheet loaded by the consuming app's global CSS — see apps/web/src/app.css.
       if (disposed || !container) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       L = (mod as any).default ?? mod;
 
       mapInstance = L.map(container, {
@@ -341,7 +352,10 @@
   :global(.dark .leaflet-control-attribution a) { color: #fcd34d !important; }
 </style>
 
-<div class="relative w-full h-full">
+<!-- `isolate` seals Leaflet's pane z-indices (200–700) into a local stacking
+     context so they don't paint over the page's nav header or portal'd
+     overlays. Without it the tile pane bleeds above sticky/fixed chrome. -->
+<div class="relative isolate w-full h-full">
   <div bind:this={container} class="absolute inset-0"></div>
 
   {#if !isReady}

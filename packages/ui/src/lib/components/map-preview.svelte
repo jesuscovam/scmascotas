@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { MapPin, Info } from '@lucide/svelte';
+  import { Info } from '@lucide/svelte';
   import OpenInMapsButton from './open-in-maps-button.svelte';
 
   type Props = {
@@ -26,7 +26,9 @@
   let container: HTMLDivElement | undefined = $state();
   let isReady = $state(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let L: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mapInstance: any = null;
 
   function pinHtml() {
@@ -62,6 +64,7 @@
       const mod = await import('leaflet');
       // Stylesheet loaded by the consuming app's global CSS — see apps/web/src/app.css.
       if (disposed || !container) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       L = (mod as any).default ?? mod;
 
       mapInstance = L.map(container, {
@@ -127,8 +130,9 @@
 </style>
 
 <div class="w-full">
-  <!-- Map -->
-  <div class="sc-mp-container relative rounded-3xl overflow-hidden border border-warm-200 dark:border-warm-700 shadow-sm">
+  <!-- Map. `isolate` seals Leaflet's pane z-indices so they don't paint over
+       the nav header or portal'd overlays elsewhere on the page. -->
+  <div class="sc-mp-container relative isolate rounded-3xl overflow-hidden border border-warm-200 dark:border-warm-700 shadow-sm">
     <div bind:this={container} class="h-60 w-full"></div>
 
     {#if !isReady}

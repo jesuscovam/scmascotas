@@ -6,3 +6,4 @@ export * from './spotted-pets.js';
 export * from './matches.js';
 export * from './embeddings.js';
 export * from './location.js';
+export * from './utils/whatsapp.js';

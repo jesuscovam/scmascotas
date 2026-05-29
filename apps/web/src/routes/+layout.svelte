@@ -56,7 +56,7 @@
 					class="beta-stamp self-start mt-[5px] inline-block px-[5px] py-[2px] border border-amber-600/55 text-amber-700/75 text-[7.5px] font-mono font-bold uppercase tracking-[0.2em] select-none pointer-events-none"
 					style="transform: rotate(-9deg); box-shadow: inset 0 0 0 1px rgba(180,100,20,0.12);"
 				>
-					alfa
+					beta
 				</span>
 			</a>
 
@@ -88,6 +88,19 @@
 							>
 								<span class="text-base leading-none">👀</span>
 								Avistamientos
+							</NavigationMenu.Link>
+						</NavigationMenu.Item>
+
+						<!-- Mapa -->
+						<NavigationMenu.Item>
+							<NavigationMenu.Link
+								href="/mapa"
+								class="text-sm font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 {page.url.pathname.startsWith('/mapa')
+									? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300'
+									: 'text-warm-500 dark:text-warm-400 hover:text-amber-700 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'}"
+							>
+								<span class="text-base leading-none">🗺️</span>
+								Mapa
 							</NavigationMenu.Link>
 						</NavigationMenu.Item>
 
@@ -243,6 +256,14 @@
 							: 'text-warm-700 dark:text-warm-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 hover:text-teal-700 dark:hover:text-teal-300'}"
 					>
 						👀 Avistamientos
+					</a>
+					<a
+						href="/mapa"
+						class="flex items-center gap-2 text-sm font-semibold rounded-lg px-3 py-2.5 transition-colors {page.url.pathname.startsWith('/mapa')
+							? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300'
+							: 'text-warm-700 dark:text-warm-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-300'}"
+					>
+						🗺️ Mapa
 					</a>
 					<div class="my-1 h-px bg-warm-100 dark:bg-warm-800"></div>
 					<a

@@ -20,10 +20,10 @@
 					<path d="M8 1a.5.5 0 0 1 .437.257l6.5 11A.5.5 0 0 1 14.5 13H1.5a.5.5 0 0 1-.437-.743l6.5-11A.5.5 0 0 1 8 1zm0 1.882L2.19 12h11.62L8 2.882zM7.5 6.5a.5.5 0 0 1 1 0v2.5a.5.5 0 0 1-1 0V6.5zm.5 5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z"/>
 				</svg>
 
-				<span class="shrink-0 font-mono font-bold uppercase tracking-wider text-[10px] bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 px-1.5 py-0.5 rounded-sm">ALFA</span>
+				<span class="shrink-0 font-mono font-bold uppercase tracking-wider text-[10px] bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 px-1.5 py-0.5 rounded-sm">BETA</span>
 
 				<p class="flex-1 text-sm text-amber-900 dark:text-amber-200">
-					<span class="font-medium">Estás en versión alfa.</span>
+					<span class="font-medium">Estás en versión beta.</span>
 					Los datos actuales son de prueba — las mascotas que ves no son reales. Siéntete libre de explorar.
 				</p>
 
