@@ -1,5 +1,15 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* bits-ui data-state variants — required for shadcn-svelte components in Tailwind v4.
+   bits-ui v2 uses data-state="checked|unchecked|open|closed" rather than bare attributes. */
+@custom-variant data-checked (&[data-state="checked"]);
+@custom-variant data-unchecked (&[data-state="unchecked"]);
+@custom-variant data-open (&[data-state="open"]);
+@custom-variant data-closed (&[data-state="closed"]);
+@custom-variant data-disabled (&[data-disabled]);
+@custom-variant data-selected (&[data-selected]);
+@custom-variant data-highlighted (&[data-highlighted]);
+
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 @source "../../../packages/ui/src";

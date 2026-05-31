@@ -2,9 +2,9 @@
 	import '../app.css';
 	import { dev } from '$app/environment';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
-	import { onNavigate, goto } from '$app/navigation';
+	import { onNavigate, goto, invalidateAll } from '$app/navigation';
 	import { ModeWatcher } from 'mode-watcher';
-	import { NavigationMenu, Button } from '@scmascotas/ui';
+	import { NavigationMenu, Button, NotificationBell } from '@scmascotas/ui';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { signOut } from '$lib/auth-client';
 	import { page } from '$app/state';
@@ -19,8 +19,20 @@
 	let { children, data } = $props();
 
 	const user = $derived(data.user);
+	const notifications = $derived(data.notifications ?? []);
+	const unreadCount = $derived(data.unreadCount ?? 0);
 
 	let mobileMenuOpen = $state(false);
+
+	async function markNotificationRead(id: string) {
+		await fetch(`/api/notifications/${id}/read`, { method: 'POST' });
+		await invalidateAll();
+	}
+
+	async function markAllNotificationsRead() {
+		await fetch('/api/notifications/read-all', { method: 'POST' });
+		await invalidateAll();
+	}
 
 	onNavigate((navigation) => {
 		mobileMenuOpen = false;
@@ -205,6 +217,15 @@
 					</a>
 				{/if}
 
+				{#if user}
+					<NotificationBell
+						{notifications}
+						{unreadCount}
+						onMarkRead={markNotificationRead}
+						onMarkAllRead={markAllNotificationsRead}
+					/>
+				{/if}
+
 				<Button.Root
 					href="/reportar"
 					class="rounded-full text-sm font-semibold px-4 py-2"
@@ -213,7 +234,22 @@
 				</Button.Root>
 			</nav>
 
-			<ThemeToggle />
+			<!-- Mobile right cluster: bell + theme -->
+			<div class="flex md:hidden items-center gap-1">
+				{#if user}
+					<NotificationBell
+						{notifications}
+						{unreadCount}
+						onMarkRead={markNotificationRead}
+						onMarkAllRead={markAllNotificationsRead}
+					/>
+				{/if}
+				<ThemeToggle />
+			</div>
+
+			<div class="hidden md:block">
+				<ThemeToggle />
+			</div>
 
 			<!-- Mobile hamburger -->
 			<button
@@ -296,6 +332,17 @@
 							class="text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
 						>
 							👀 Mis avistamientos
+						</a>
+						<a
+							href="/cuenta/notificaciones"
+							class="flex items-center justify-between text-sm font-medium text-warm-700 dark:text-warm-300 hover:text-warm-900 dark:hover:text-warm-50 hover:bg-warm-100 dark:hover:bg-warm-800 rounded-lg px-3 py-2.5 transition-colors"
+						>
+							<span>🔔 Notificaciones</span>
+							{#if unreadCount > 0}
+								<span class="min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 dark:bg-amber-400 text-[10px] font-bold text-white dark:text-warm-900 flex items-center justify-center tabular-nums">
+									{unreadCount > 9 ? '9+' : unreadCount}
+								</span>
+							{/if}
 						</a>
 						<a
 							href="/perfil"

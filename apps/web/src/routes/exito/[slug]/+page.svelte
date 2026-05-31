@@ -6,6 +6,7 @@
 	const token = $derived($page.url.searchParams.get('token') ?? '');
 	const shareUrl = $derived(`${$page.url.origin}/mascota/${slug}`);
 	const siteUrl = $derived($page.url.origin ?? '');
+	const signedIn = $derived(!!$page.data.user);
 
 	let copied = $state(false);
 	let copiedLink = $state(false);
@@ -89,6 +90,38 @@
 			<ShareButton petSlug={slug} petName={null} petType={'dog' as const} {siteUrl} />
 		</Card.Content>
 	</Card.Root>
+
+	<!-- Alerts confirmation (signed-in) / nudge (anonymous) -->
+	{#if signedIn}
+		<div class="w-full flex items-start gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl px-5 py-4">
+			<svg class="w-5 h-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+			<div>
+				<p class="text-sm font-semibold text-green-800 dark:text-green-200">Las alertas ya están activas</p>
+				<p class="text-xs text-green-700/70 dark:text-green-400/70 mt-0.5 leading-relaxed">
+					Te avisaremos por correo si alguien reporta un avistamiento de tu mascota. Puedes ajustar las alertas en
+					<a href="/mascota/{slug}/editar" class="underline hover:text-green-900 dark:hover:text-green-200 transition-colors">el reporte</a>.
+				</p>
+			</div>
+		</div>
+	{:else}
+		<Card.Root class="w-full bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/15 dark:to-warm-800 border-amber-200 dark:border-amber-700">
+			<Card.Content class="pt-6 pb-6 flex flex-col gap-3 text-left">
+				<div class="flex items-start gap-3">
+					<span class="text-2xl shrink-0">🔔</span>
+					<div>
+						<p class="font-semibold text-warm-900 dark:text-warm-50 text-sm">Recibe alertas de avistamientos</p>
+						<p class="text-xs text-warm-500 dark:text-warm-400 mt-1 leading-relaxed">
+							Crea tu cuenta y reclama este reporte con tu código de edición para que te avisemos por correo
+							cuando alguien vea a tu mascota.
+						</p>
+					</div>
+				</div>
+				<Button.Root href="/login" class="rounded-xl text-sm font-semibold self-start px-5">
+					Iniciar sesión para recibir alertas
+				</Button.Root>
+			</Card.Content>
+		</Card.Root>
+	{/if}
 
 	<div class="flex flex-col sm:flex-row gap-3 w-full">
 		<Button.Root

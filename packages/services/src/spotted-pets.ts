@@ -4,6 +4,7 @@ import { randomBytes } from 'node:crypto';
 import { put } from '@vercel/blob';
 import type { CreateSpottedPet } from '@scmascotas/schemas';
 import { EmbeddingsService } from './embeddings.js';
+import { NotificationsService } from './notifications.js';
 
 function generateSlug(): string {
 	return `avistamiento-${randomBytes(4).toString('hex')}`;
@@ -43,6 +44,12 @@ export const SpottedPetsService = {
 				.set({ lastSeenAt: new Date(), updatedAt: new Date() })
 				.where(eq(pets.id, data.matchedPetId));
 		}
+
+		// Fire-and-forget: alert owners of matching missing pets. Don't block the
+		// response (mirrors the embedding pattern below). Embedding isn't ready
+		// yet, so this scores on structured signals only — see NotificationsService.
+		NotificationsService.notifyOwnersForSpottedPet(record.id, { excludeUserId: ctx.userId })
+			.catch((err) => console.error('[notify] spotted pet failed, id=', record.id, err));
 
 		return { ...record, editToken };
 	},

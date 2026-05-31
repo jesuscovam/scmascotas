@@ -7,6 +7,11 @@ export const petStatusEnum = pgEnum('pet_status', ['missing', 'reunited', 'archi
 export const petSexEnum = pgEnum('pet_sex', ['male', 'female', 'unknown']);
 export const petSizeEnum = pgEnum('pet_size', ['small', 'medium', 'large']);
 export const locationPrecisionEnum = pgEnum('location_precision', ['precise', 'colonia', 'unknown']);
+// Per-pet "how aggressive" notification dial chosen by the owner.
+//   'matches'  — only when a sighting plausibly matches this pet (score ≥ NOTIFY_THRESHOLD)
+//   'colonia'  — also any new sighting in this pet's colonia
+//   'off'      — never
+export const petNotifyLevelEnum = pgEnum('pet_notify_level', ['off', 'matches', 'colonia']);
 
 export const pets = pgTable('pets', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -30,6 +35,7 @@ export const pets = pgTable('pets', {
   reunitedAt: timestamp('reunited_at', { withTimezone: true }),
   location: geographyPointColumn('location'),
   locationPrecision: locationPrecisionEnum('location_precision').notNull().default('unknown'),
+  notifyLevel: petNotifyLevelEnum('notify_level').notNull().default('matches'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
 });
