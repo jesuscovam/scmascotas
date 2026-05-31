@@ -15,6 +15,23 @@
 	let nameError = $state('');
 	let nameSuccess = $state(false);
 
+	// Resend verification state
+	let resendLoading = $state(false);
+	let resendSent = $state(false);
+	let resendError = $state('');
+
+	async function resendVerification() {
+		resendLoading = true;
+		resendError = '';
+		const result = await authClient.sendVerificationEmail({ email: user.email, callbackURL: '/perfil' });
+		resendLoading = false;
+		if (result.error) {
+			resendError = result.error.message ?? 'No se pudo enviar el correo. Intenta de nuevo.';
+		} else {
+			resendSent = true;
+		}
+	}
+
 	// Password change state
 	let currentPassword = $state('');
 	let newPassword = $state('');
@@ -220,11 +237,28 @@
 							<svg class="w-3.5 h-3.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3" /></svg>
 							Verificado
 						</span>
+					{:else if resendSent}
+						<span class="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400 shrink-0">
+							<svg class="w-3.5 h-3.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+							Correo enviado
+						</span>
 					{:else}
-						<span class="text-xs text-amber-600 dark:text-amber-400 shrink-0">No verificado</span>
+						<button
+							onclick={resendVerification}
+							disabled={resendLoading}
+							class="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 transition-colors disabled:opacity-60 shrink-0"
+						>
+							{#if resendLoading}
+								<svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+							{/if}
+							Reenviar verificación
+						</button>
 					{/if}
 				</div>
 				<p class="text-warm-800 dark:text-warm-200 font-medium font-mono text-sm">{user.email}</p>
+				{#if resendError}
+					<p class="text-xs text-red-600 dark:text-red-400 mt-1">{resendError}</p>
+				{/if}
 				<p class="text-xs text-warm-400 dark:text-warm-500 mt-2">Para cambiar tu correo contacta al soporte</p>
 			</Card.Content>
 		</Card.Root>

@@ -23,7 +23,7 @@
       value: 'colonia',
       emoji: '📍',
       title: 'Toda mi colonia',
-      desc: 'Además, cualquier avistamiento nuevo en tu colonia.',
+      desc: 'Te avisamos de cada avistamiento de la misma especie reportado en tu colonia.',
     },
     {
       value: 'off',

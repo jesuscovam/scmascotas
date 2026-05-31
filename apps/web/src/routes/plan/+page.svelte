@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Progress, Card } from '@scmascotas/ui';
 
-	const TOTAL_PHASES = 8;
-	const DONE_PHASES = 7;
+	const TOTAL_PHASES = 9;
+	const DONE_PHASES = 8;
 	const progress = Math.round((DONE_PHASES / TOTAL_PHASES) * 100);
 </script>
 
@@ -139,6 +139,20 @@
 					</div>
 				</Card.Content>
 			</Card.Root>
+
+			<Card.Root class="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
+				<Card.Content class="pt-5 pb-5">
+					<div class="flex items-start gap-3">
+						<span class="text-lg mt-0.5">✅</span>
+						<div>
+							<p class="font-semibold text-warm-800 dark:text-warm-100">Fase 8 — Notificaciones</p>
+							<p class="text-sm text-warm-500 dark:text-warm-400 mt-1">
+								Los dueños con cuenta reciben un aviso en la app y por correo cuando un avistamiento coincide con su mascota (score ≥ 60). Cada mascota tiene su propio dial de agresividad: solo coincidencias, toda la colonia, o desactivado. Centro de notificaciones con campana en la navegación, página de preferencias y baja por correo con un clic. El canal de WhatsApp está preparado y se activará cuando el costo del Business API lo justifique.
+							</p>
+						</div>
+					</div>
+				</Card.Content>
+			</Card.Root>
 		</div>
 	</section>
 
@@ -149,7 +163,7 @@
 		</h2>
 		<div class="flex flex-col gap-4">
 			{#each [
-				{ icon: '⏳', title: 'Fase 8 — PWA, moderación y lanzamiento', desc: 'Instalable como app en celular (PWA). Panel de moderación. Seguimiento de errores con Sentry. Pruebas en dispositivos reales con datos móviles lentos. Contacto con los admins del grupo de Facebook. Lanzamiento suave.' },
+				{ icon: '⏳', title: 'Fase 9 — PWA, moderación y lanzamiento', desc: 'Instalable como app en celular (PWA) con notificaciones Web Push. Panel de moderación. Seguimiento de errores con Sentry. Pruebas en dispositivos reales con datos móviles lentos. Contacto con los admins del grupo de Facebook. Lanzamiento suave.' },
 			] as sprint (sprint.title)}
 				<Card.Root class="border-warm-200 dark:border-warm-700">
 					<Card.Content class="pt-5 pb-5">
@@ -174,7 +188,7 @@
 		<div class="flex flex-col gap-3">
 			{#each [
 				{ icon: '📱', title: 'App móvil nativa', desc: 'Capacitor con SvelteKit en modo SPA. Reutiliza los paquetes `@scmascotas/ui` y `@scmascotas/schemas`. Autenticación vía llaves de API.' },
-				{ icon: '🔔', title: 'Notificaciones push', desc: 'Web Push para avisar al dueño cuando alguien reporta haber visto a su mascota o cuando el algoritmo encuentra una coincidencia.' },
+				{ icon: '💬', title: 'Alertas por WhatsApp', desc: 'El canal ya está preparado en la infraestructura de notificaciones. Se activará cuando el costo del Business API (por conversación + aprobación de plantillas) sea razonable para el volumen de la plataforma.' },
 				{ icon: '🌆', title: 'Soporte multi-ciudad', desc: 'Refactorizar el supuesto de "San Cristóbal" para que cualquier ciudad pueda hacer fork y desplegar su propia instancia.' },
 			] as phase (phase.title)}
 				<div class="flex items-start gap-3 p-4 rounded-lg bg-warm-50 dark:bg-warm-800 border border-warm-100 dark:border-warm-700">

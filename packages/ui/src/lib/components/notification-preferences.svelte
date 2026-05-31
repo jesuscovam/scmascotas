@@ -35,16 +35,16 @@
       <div class="flex-1 min-w-0">
         <p class="font-semibold text-sm text-warm-900 dark:text-warm-50">Correo electrónico</p>
         <p class="text-xs text-warm-500 dark:text-warm-400 mt-0.5 leading-relaxed">
-          {#if emailVerified}
-            Recibe un correo cuando haya un posible avistamiento.
+          {#if !emailVerified && channelEmail}
+            Verifica tu correo para empezar a recibir alertas.
           {:else}
-            Verifica tu correo para recibir alertas por email.
+            Recibe un correo cuando haya un posible avistamiento.
           {/if}
         </p>
       </div>
       <Switch
         checked={channelEmail}
-        disabled={saving || !emailVerified}
+        disabled={saving}
         onCheckedChange={toggleEmail}
         aria-label="Alertas por correo"
       />
