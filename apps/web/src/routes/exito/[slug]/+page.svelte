@@ -6,6 +6,7 @@
 	const token = $derived($page.url.searchParams.get('token') ?? '');
 	const shareUrl = $derived(`${$page.url.origin}/mascota/${slug}`);
 	const siteUrl = $derived($page.url.origin ?? '');
+	const signedIn = $derived(!!$page.data.user);
 
 	let copied = $state(false);
 	let copiedLink = $state(false);
@@ -89,6 +90,27 @@
 			<ShareButton petSlug={slug} petName={null} petType={'dog' as const} {siteUrl} />
 		</Card.Content>
 	</Card.Root>
+
+	<!-- Alerts nudge (anonymous reporters) -->
+	{#if !signedIn}
+		<Card.Root class="w-full bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/15 dark:to-warm-800 border-amber-200 dark:border-amber-700">
+			<Card.Content class="pt-6 pb-6 flex flex-col gap-3 text-left">
+				<div class="flex items-start gap-3">
+					<span class="text-2xl shrink-0">🔔</span>
+					<div>
+						<p class="font-semibold text-warm-900 dark:text-warm-50 text-sm">Recibe alertas de avistamientos</p>
+						<p class="text-xs text-warm-500 dark:text-warm-400 mt-1 leading-relaxed">
+							Crea tu cuenta y reclama este reporte con tu código de edición para que te avisemos por correo
+							cuando alguien vea a tu mascota.
+						</p>
+					</div>
+				</div>
+				<Button.Root href="/login" class="rounded-xl text-sm font-semibold self-start px-5">
+					Iniciar sesión para recibir alertas
+				</Button.Root>
+			</Card.Content>
+		</Card.Root>
+	{/if}
 
 	<div class="flex flex-col sm:flex-row gap-3 w-full">
 		<Button.Root

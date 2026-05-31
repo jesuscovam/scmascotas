@@ -1,11 +1,36 @@
 <script lang="ts">
-	import { Card } from '@scmascotas/ui';
+	import { Card, PetNotifyLevelSelect } from '@scmascotas/ui';
+	import { invalidateAll } from '$app/navigation';
 
 	let { data } = $props();
 	const pet = $derived(data.pet);
 	const user = $derived(data.user ?? null);
 
 	const isOwner = $derived(!!user?.id && user.id === pet.reporterUserId);
+
+	let notifyLevel = $state<'off' | 'matches' | 'colonia'>(
+		(pet.notifyLevel as 'off' | 'matches' | 'colonia') ?? 'matches'
+	);
+	let savingNotify = $state(false);
+
+	async function changeNotifyLevel(level: 'off' | 'matches' | 'colonia') {
+		const previous = notifyLevel;
+		notifyLevel = level;
+		savingNotify = true;
+		try {
+			const res = await fetch(`/api/pets/${pet.id}/notify-level`, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ level })
+			});
+			if (!res.ok) notifyLevel = previous;
+			else await invalidateAll();
+		} catch {
+			notifyLevel = previous;
+		} finally {
+			savingNotify = false;
+		}
+	}
 
 	// Pre-fill edit token from URL if present
 	const urlToken = typeof window !== 'undefined'
@@ -299,4 +324,26 @@
 			</button>
 		</div>
 	</div>
+
+	{#if isOwner}
+		<!-- Notification preferences for this pet -->
+		<div class="bg-white dark:bg-warm-800 border border-warm-200 dark:border-warm-700 rounded-2xl overflow-hidden shadow-sm">
+			<div class="px-6 py-4 border-b border-warm-100 dark:border-warm-700 flex items-center gap-2">
+				<span>🔔</span>
+				<div>
+					<h2 class="font-display font-semibold text-warm-900 dark:text-warm-50 text-base">Notificaciones</h2>
+					<p class="text-xs text-warm-500 dark:text-warm-400 mt-0.5">
+						¿Cuándo quieres que te avisemos sobre esta mascota?
+					</p>
+				</div>
+			</div>
+			<div class="p-6">
+				<PetNotifyLevelSelect value={notifyLevel} saving={savingNotify} onChange={changeNotifyLevel} />
+				<p class="text-xs text-warm-400 dark:text-warm-500 mt-3 leading-relaxed">
+					Recibirás los avisos por correo y dentro de la app. Ajusta tus canales en
+					<a href="/cuenta/notificaciones" class="underline hover:text-amber-600 dark:hover:text-amber-400">tus preferencias</a>.
+				</p>
+			</div>
+		</div>
+	{/if}
 </div>

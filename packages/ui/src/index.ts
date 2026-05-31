@@ -16,6 +16,8 @@ export * as Input from './lib/components/ui/input/index.js';
 export * as Empty from './lib/components/ui/empty/index.js';
 export * as Item from './lib/components/ui/item/index.js';
 export * as Label from './lib/components/ui/label/index.js';
+export * as Switch from './lib/components/ui/switch/index.js';
+export * as RadioGroup from './lib/components/ui/radio-group/index.js';
 export { default as SightingsList } from './lib/components/sightings-list.svelte';
 export { default as ShareButton } from './lib/components/share-button.svelte';
 export { default as SpeciesPicker } from './lib/components/species-picker.svelte';
@@ -24,3 +26,7 @@ export { default as LocationPicker } from './lib/components/location-picker.svel
 export { default as MapView } from './lib/components/map-view.svelte';
 export { default as MapPreview } from './lib/components/map-preview.svelte';
 export { default as OpenInMapsButton } from './lib/components/open-in-maps-button.svelte';
+export { default as NotificationBell } from './lib/components/notification-bell.svelte';
+export { default as NotificationList, type NotificationItem } from './lib/components/notification-list.svelte';
+export { default as NotificationPreferences } from './lib/components/notification-preferences.svelte';
+export { default as PetNotifyLevelSelect } from './lib/components/pet-notify-level-select.svelte';

@@ -94,6 +94,7 @@ export const PetsService = {
         editToken: pets.editToken,
         reporterUserId: pets.reporterUserId,
         reunitedAt: pets.reunitedAt,
+        notifyLevel: pets.notifyLevel,
         createdAt: pets.createdAt,
         updatedAt: pets.updatedAt,
         locationPrecision: pets.locationPrecision,
@@ -203,6 +204,7 @@ export const PetsService = {
         status: pets.status,
         lastSeenAt: pets.lastSeenAt,
         colonia: colonias.name,
+        notifyLevel: pets.notifyLevel,
         createdAt: pets.createdAt
       })
       .from(pets)

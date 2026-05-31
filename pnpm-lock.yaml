@@ -221,6 +221,9 @@ importers:
       replicate:
         specifier: ^1.4.0
         version: 1.4.0
+      resend:
+        specifier: ^6.12.3
+        version: 6.12.3
     devDependencies:
       '@scmascotas/typescript-config':
         specifier: workspace:*
@@ -261,8 +264,8 @@ importers:
         specifier: ^3.12.0
         version: 3.12.1
       '@lucide/svelte':
-        specifier: ^1.16.0
-        version: 1.16.0(svelte@5.54.1)
+        specifier: ^1.17.0
+        version: 1.17.0(svelte@5.54.1)
       '@scmascotas/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -1253,6 +1256,11 @@ packages:
 
   '@lucide/svelte@1.16.0':
     resolution: {integrity: sha512-AvvPJnaWxeiNkAljI5MsSEc84yHPLMaWQIAJOcbX7k9au/f9ITS7cxTTQiautDiOFKVOXiYdZ+d6mtl88J+Kbg==}
+    peerDependencies:
+      svelte: ^5
+
+  '@lucide/svelte@1.17.0':
+    resolution: {integrity: sha512-q06YCFBN5CO8cd1ADmLCxWRVMVb7xxvHzqC0lvNoxGa+FLW6Cd1Y1AOxgbQk4Iwe68vkAMCRveNHint4WoaVKg==}
     peerDependencies:
       svelte: ^5
 
@@ -4647,6 +4655,10 @@ snapshots:
   '@levischuck/tiny-cbor@0.2.11': {}
 
   '@lucide/svelte@1.16.0(svelte@5.54.1)':
+    dependencies:
+      svelte: 5.54.1
+
+  '@lucide/svelte@1.17.0(svelte@5.54.1)':
     dependencies:
       svelte: 5.54.1
 

@@ -112,7 +112,7 @@ scpets/
 │   │   └── package.json
 │   │
 │   └── mobile/                       # Future: Capacitor + SvelteKit SPA
-│       └── (placeholder — Sprint 7+)
+│       └── (placeholder — Sprint 8+)
 │
 ├── packages/
 │   ├── db/                           # @scmascotas/db — schema, migrations, client
@@ -1539,9 +1539,46 @@ When invoking `frontend-design`, hand it the prop contract, the existing `packag
 
 **Deliverable:** Live `/mapa` page. Every report carries lat/lng. Score uses distance. Google Maps deep-linking from every share/contact action. — v0.8.0
 
-### Sprint 7: Polish, PWA, moderation, launch hardening
+### Sprint 7: Notifications
+
+**Goal:** Missing-pet owners find out when something relevant happens — above all, when a reported sighting plausibly matches their pet. Owners pick how aggressive the alerts are, manage them in a notification center + preferences panel, and receive them in-app and by email (Resend). WhatsApp is a cost-gated seam (off); Web Push is deferred to the PWA sprint (it needs the service worker).
+
+**Why this sprint exists:** Matches are computed *lazily* today — `MatchesService.getMatchesFor` only runs when someone views a spotted-pet page. Nothing proactively reaches the owner. This sprint adds the proactive side-effect, the data model for preferences, and the in-app surfaces.
+
+**Decisions:**
+- **Auth-gated alerts.** Only signed-in owners get email + in-app alerts. Anonymous reporters see a "Inicia sesión para recibir alertas" nudge and can claim their pet. Email also requires `user.emailVerified`.
+- **Instant only.** Fire-and-forget at sighting creation. The daily colonia-activity digest + Vercel Cron is deferred to a later post-process sprint.
+- **WhatsApp seam, OFF.** Pluggable channel abstraction; `whatsapp` stubbed behind `NOTIFY_WHATSAPP_ENABLED` + user opt-in (Business API is per-message billed + needs template approval).
+
+**Migrations:**
+- [x] `0014_notifications.sql` — `notifications` table (in-app feed + dedup ledger; unique `(user_id,type,pet_id,spotted_pet_id)`), `notification_preferences` table (per-user channel toggles + `unsubscribe_token`), `pets.notify_level` enum (`off|matches|colonia`, default `matches`).
+
+**Schemas (`@scmascotas/schemas`):**
+- [x] `petNotifyLevelSchema`, `setPetNotifyLevelSchema`, `notificationPreferencesSchema`.
+
+**Service layer (`@scmascotas/services`):**
+- [x] `EmailService` — centralizes Resend (API key + `from` + shared inline-CSS shell with unsubscribe link).
+- [x] `notifications/channels.ts` — `NotificationChannel` seam: `EmailChannel` (verified email only), `WhatsappChannel` (stub, flag-gated). In-app is the always-on ledger.
+- [x] `NotificationsService` — `notifyOwnersForSpottedPet()` (structured-scores active owned pets, threshold 60 = PLAN §11.2, respects `notifyLevel`, no self-notify, dedup), `dispatch()`, `list/unreadCount/markRead/markAllRead`, `getPreferences/updatePreferences`, `setPetNotifyLevel`, `unsubscribeByToken`.
+- [x] Trigger: fire-and-forget call wired into `SpottedPetsService.create()` (mirrors the embedding pattern).
+
+**API routes:**
+- [x] `POST /api/notifications/[id]/read`, `POST /api/notifications/read-all`, `PATCH /api/notifications/preferences`, `PATCH /api/pets/[id]/notify-level`.
+
+**UI components (`@scmascotas/ui`, via `frontend-design`):**
+- [x] Installed `switch` + `radio-group` primitives. `NotificationBell`, `NotificationList`, `NotificationPreferences`, `PetNotifyLevelSelect`.
+
+**App routes (`apps/web`):**
+- [x] Bell + unread badge in the nav (`+layout.svelte` / `+layout.server.ts`).
+- [x] `/cuenta/notificaciones` — feed + preferences. `/notificaciones/baja?token=` — one-click unsubscribe.
+- [x] Per-pet dial on `/mascota/[slug]/editar` (owner-only). Anonymous "recibe alertas" nudge on `/exito/[slug]`.
+
+**Deliverable:** Owners get instant in-app + email alerts on likely sightings, with a per-pet aggressiveness dial and a notification center. — v0.12.0
+
+### Sprint 8: Polish, PWA, moderation, launch hardening
 
 - [ ] PWA: manifest, install banner, offline shell, app icons.
+- [ ] Web Push notifications (needs the PWA service worker) — add a `WebPushChannel` to the notifications channel seam from Sprint 7.
 - [ ] Admin moderation page.
 - [ ] Rate-limit hardening.
 - [ ] Error tracking (Sentry free tier).
@@ -1553,7 +1590,7 @@ When invoking `frontend-design`, hand it the prop contract, the existing `packag
 
 **Deliverable:** Soft launch.
 
-### Buffer sprint 8
+### Buffer sprint 9
 
 - [ ] Bugs from real usage.
 - [ ] One post-launch UX issue.
@@ -1563,9 +1600,10 @@ When invoking `frontend-design`, hand it the prop contract, the existing `packag
 
 ## 15. Future phases
 
-- **Push notifications.** Web Push.
+- **Push notifications.** Web Push — lands in Sprint 8 (PWA) as a `WebPushChannel` on the Sprint 7 channel seam.
+- **Daily colonia-activity digest.** A once-daily Vercel Cron summarizing new sightings in each owner's colonia (deferred post-process sprint; the instant path shipped in Sprint 7).
 - **Capacitor mobile app (`apps/mobile`).** SvelteKit SPA, shares `@scmascotas/ui` + `@scmascotas/schemas`. Auth via better-auth API key plugin.
-- **WhatsApp Business API.** Proactive alerts.
+- **WhatsApp Business API.** Proactive alerts — the `WhatsappChannel` seam ships (off) in Sprint 7; flip it on when the per-message cost + template approval are worth it.
 - **Multi-city.** Refactor "San Cristóbal" out of assumptions.
 - **Bring-your-own LLM key.** Only when AI features land that are per-user.
 
